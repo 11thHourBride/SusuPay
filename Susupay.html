@@ -638,5 +638,100 @@
         // Initialize the app when page loads
         window.onload = initializeApp;
     </script>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+  import { 
+    getAuth, 
+    onAuthStateChanged, 
+    signOut 
+  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+  import { 
+    getFirestore, 
+    doc, 
+    getDoc, 
+    setDoc, 
+    onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+  // ==== Your Firebase Config ====
+  const firebaseConfig = {
+    apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
+    authDomain: "susupay-5286e.firebaseapp.com",
+    projectId: "susupay-5286e",
+    storageBucket: "susupay-5286e.firebasestorage.app",
+    messagingSenderId: "83852132974",
+    appId: "1:83852132974:web:2d8be2d1adb7e7639f5c7f",
+    measurementId: "G-EQM64CTX83"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // 🔐 Make sure only logged-in users see dashboard
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      // Not logged in → back to login page
+      window.location.href = "index.html";
+      return;
+    }
+
+    // Load user profile from Firestore
+    const userDoc = await getDoc(doc(db, "users", user.uid));
+    if (userDoc.exists()) {
+      const profile = userDoc.data();
+
+      // Fill name field automatically
+      document.getElementById("user-name").value = profile.firstName + " " + profile.surname;
+
+      // If user already set a daily rate earlier, show it
+      if (profile.dailyRate) {
+        userData.dailyRate = profile.dailyRate;
+        document.getElementById("daily-rate-input").value = profile.dailyRate;
+        updateStats();
+      }
+
+      // Listen for live updates on this user
+      onSnapshot(doc(db, "users", user.uid), (docSnap) => {
+        if (docSnap.exists()) {
+          const liveData = docSnap.data();
+          console.log("Live profile update:", liveData);
+        }
+      });
+    }
+  });
+
+  // 🔄 Sync daily rate with Firestore when user sets it
+  window.setUserRate = async function() {
+    const rate = parseFloat(document.getElementById("daily-rate-input").value);
+    const name = document.getElementById("user-name").value.trim();
+    if (!name || !rate) return;
+
+    userData.name = name;
+    userData.dailyRate = rate;
+
+    // Save to Firestore too
+    const user = auth.currentUser;
+    if (user) {
+      await setDoc(doc(db, "users", user.uid), {
+        firstName: name.split(" ")[0] || "",
+        surname: name.split(" ")[1] || "",
+        dailyRate: rate
+      }, { merge: true });
+    }
+
+    updateStats();
+    generateCalendar();
+    showAlert(`Rate set successfully! Daily contribution: ₵${rate}`, "success");
+  };
+
+  // (Optional) Add logout
+  window.logout = function() {
+    signOut(auth).then(() => {
+      window.location.href = "index.html";
+    });
+  };
+</script>
+
 </body>
 </html>
