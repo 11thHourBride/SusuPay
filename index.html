@@ -411,38 +411,29 @@
         </div>
     </div>
 
-    <script type="module">
-  // Import Firebase modules
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    sendPasswordResetEmail 
-  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-  import { 
-    getFirestore, 
-    doc, 
-    setDoc, 
-    getDoc, 
-    onSnapshot 
-  } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+  <script type="module">
+        // Import Firebase functions
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
-  // ==== FIREBASE CONFIG - your real config ====
-  const firebaseConfig = {
-    apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
-    authDomain: "susupay-5286e.firebaseapp.com",
-    projectId: "susupay-5286e",
-    storageBucket: "susupay-5286e.firebasestorage.app",
-    messagingSenderId: "83852132974",
-    appId: "1:83852132974:web:2d8be2d1adb7e7639f5c7f",
-    measurementId: "G-EQM64CTX83"
-  };
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
+            authDomain: "susupay-5286e.firebaseapp.com",
+            projectId: "susupay-5286e",
+            storageBucket: "susupay-5286e.firebasestorage.app",
+            messagingSenderId: "83852132974",
+            appId: "1:83852132974:web:2d8be2d1adb7e7639f5c7f",
+            measurementId: "G-EQM64CTX83"
+        };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const analytics = getAnalytics(app);
 
   // Switch tabs
   function switchTab(tabName) {
