@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SusuPay - Professional Daily Savings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .user-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .user-panel h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-withdraw {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-withdraw:hover {
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .contribution-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .month-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .month-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .month-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .contribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .day-cell.contributed {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .day-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .transaction-history {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: 30px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: #f7fafc;
+            transform: translateX(5px);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-type {
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .contribution {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .withdrawal {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .contribution-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            
+            .month-selector {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏦 SusuPay</h1>
+            <p>Professional Daily Savings & Contribution Management</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <div class="dashboard">
+            <div class="user-panel">
+                <h2>👤 User Dashboard</h2>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="total-balance">₵0</h3>
+                        <p>Total Balance</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="daily-rate">₵0</h3>
+                        <p>Daily Rate</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="month-progress">0%</h3>
+                        <p>Month Progress</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="user-name">👤 Your Name</label>
+                    <input type="text" id="user-name" placeholder="Enter your name">
+                </div>
+
+                <div class="form-group">
+                    <label for="daily-rate-input">💰 Daily Contribution Rate (GH₵)</label>
+                    <input type="number" id="daily-rate-input" placeholder="e.g., 10" min="1">
+                </div>
+
+                <button class="btn" onclick="setUserRate()">Set Rate</button>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="withdrawal-amount">💸 Withdrawal Amount (GH₵)</label>
+                    <input type="number" id="withdrawal-amount" placeholder="Amount to withdraw" min="1">
+                </div>
+
+                <button class="btn btn-withdraw" onclick="processWithdrawal()">Process Withdrawal</button>
+            </div>
+
+            <div class="contribution-area">
+                <h2>📅 Monthly Contributions</h2>
+                
+                <div class="month-selector">
+                    <div class="month-btn active" onclick="selectMonth(0)">Jan</div>
+                    <div class="month-btn" onclick="selectMonth(1)">Feb</div>
+                    <div class="month-btn" onclick="selectMonth(2)">Mar</div>
+                    <div class="month-btn" onclick="selectMonth(3)">Apr</div>
+                    <div class="month-btn" onclick="selectMonth(4)">May</div>
+                    <div class="month-btn" onclick="selectMonth(5)">Jun</div>
+                    <div class="month-btn" onclick="selectMonth(6)">Jul</div>
+                    <div class="month-btn" onclick="selectMonth(7)">Aug</div>
+                    <div class="month-btn" onclick="selectMonth(8)">Sep</div>
+                    <div class="month-btn" onclick="selectMonth(9)">Oct</div>
+                    <div class="month-btn" onclick="selectMonth(10)">Nov</div>
+                    <div class="month-btn" onclick="selectMonth(11)">Dec</div>
+                </div>
+
+                <div id="current-month-display">
+                    <h3>January 2025</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="month-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="contribution-grid" id="contribution-grid">
+                    <!-- Days will be populated by JavaScript -->
+                </div>
+
+                <button class="btn" onclick="contributeToday()" id="contribute-btn">
+                    💰 Contribute Today (₵<span id="contribute-amount">0</span>)
+                </button>
+            </div>
+        </div>
+
+        <div class="transaction-history">
+            <h2>📊 Transaction History</h2>
+            <div id="transactions-list">
+                <p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let userData = {
+            name: '',
+            dailyRate: 0,
+            balance: 0,
+            contributions: {}, // { month: { day: amount } }
+            transactions: []
+        };
+
+        let currentMonth = 0;
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // Initialize the application
+        function initializeApp() {
+            loadUserData();
+            generateCalendar();
+            updateStats();
+            updateTransactionHistory();
+        }
+
+        // Load user data from memory
+        function loadUserData() {
+            // In a real app, this would load from a database
+            if (userData.name) {
+                document.getElementById('user-name').value = userData.name;
+            }
+            if (userData.dailyRate) {
+                document.getElementById('daily-rate-input').value = userData.dailyRate;
+            }
+        }
+
+        // Set user rate
+        function setUserRate() {
+            const name = document.getElementById('user-name').value.trim();
+            const rate = parseFloat(document.getElementById('daily-rate-input').value);
+
+            if (!name) {
+                showAlert('Please enter your name!', 'error');
+                return;
+            }
+
+            if (!rate || rate <= 0) {
+                showAlert('Please enter a valid daily rate!', 'error');
+                return;
+            }
+
+            userData.name = name;
+            userData.dailyRate = rate;
+            
+            updateStats();
+            generateCalendar();
+            showAlert(`Rate set successfully! Daily contribution: ₵${rate}`, 'success');
+        }
+
+        // Generate calendar for current month
+        function generateCalendar() {
+            const grid = document.getElementById('contribution-grid');
+            grid.innerHTML = '';
+
+            // Create 31 days for each month
+            for (let day = 1; day <= 31; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+                dayCell.textContent = day;
+                dayCell.onclick = () => contributeForDay(day);
+
+                // Check if this day has a contribution
+                if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
+                    dayCell.classList.add('contributed');
+                    dayCell.title = `Contributed: ₵${userData.contributions[currentMonth][day]}`;
+                }
+
+                grid.appendChild(dayCell);
+            }
+
+            // Update contribute button
+            document.getElementById('contribute-amount').textContent = userData.dailyRate || 0;
+        }
+
+        // Select month
+        function selectMonth(monthIndex) {
+            currentMonth = monthIndex;
+            
+            // Update active month button
+            document.querySelectorAll('.month-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index === monthIndex);
+            });
+
+            // Update month display
+            document.getElementById('current-month-display').querySelector('h3').textContent = 
+                `${months[monthIndex]} 2025`;
+
+            generateCalendar();
+            updateStats();
+        }
+
+        // Contribute for today
+        function contributeToday() {
+            const today = new Date().getDate();
+            contributeForDay(today);
+        }
+
+        // Contribute for specific day
+        function contributeForDay(day) {
+            if (!userData.dailyRate) {
+                showAlert('Please set your daily rate first!', 'error');
+                return;
+            }
+
+            // Check if already contributed for this day
+            if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
+                showAlert(`You already contributed ₵${userData.contributions[currentMonth][day]} on day ${day}!`, 'error');
+                return;
+            }
+
+            // Initialize month if not exists
+            if (!userData.contributions[currentMonth]) {
+                userData.contributions[currentMonth] = {};
+            }
+
+            // Record contribution
+            userData.contributions[currentMonth][day] = userData.dailyRate;
+            userData.balance += userData.dailyRate;
+
+            // Add transaction
+            userData.transactions.unshift({
+                type: 'contribution',
+                amount: userData.dailyRate,
+                date: `${months[currentMonth]} ${day}, 2025`,
+                description: `Daily contribution for day ${day}`
+            });
+
+            generateCalendar();
+            updateStats();
+            updateTransactionHistory();
+            showAlert(`Successfully contributed ₵${userData.dailyRate} for day ${day}!`, 'success');
+        }
+
+        // Process withdrawal
+        function processWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
+
+            if (!amount || amount <= 0) {
+                showAlert('Please enter a valid withdrawal amount!', 'error');
+                return;
+            }
+
+            if (!userData.dailyRate) {
+                showAlert('Please set your daily rate first!', 'error');
+                return;
+            }
+
+            if (amount > userData.balance) {
+                showAlert('Insufficient balance for this withdrawal!', 'error');
+                return;
+            }
+
+            // Calculate commission (same as daily rate)
+            const commission = userData.dailyRate;
+            const totalDeduction = amount + commission;
+
+            if (totalDeduction > userData.balance) {
+                showAlert(`Insufficient balance! You need ₵${totalDeduction} (₵${amount} + ₵${commission} commission)`, 'error');
+                return;
+            }
+
+            // Process withdrawal
+            userData.balance -= totalDeduction;
+
+            // Add transaction
+            userData.transactions.unshift({
+                type: 'withdrawal',
+                amount: amount,
+                commission: commission,
+                date: new Date().toLocaleDateString(),
+                description: `Withdrawal of ₵${amount} (Commission: ₵${commission})`
+            });
+
+            document.getElementById('withdrawal-amount').value = '';
+            updateStats();
+            updateTransactionHistory();
+            showAlert(`Withdrawal successful! ₵${amount} withdrawn (₵${commission} commission deducted)`, 'success');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-balance').textContent = `₵${userData.balance.toFixed(2)}`;
+            document.getElementById('daily-rate').textContent = `₵${userData.dailyRate}`;
+
+            // Calculate month progress
+            const monthContributions = userData.contributions[currentMonth] || {};
+            const contributedDays = Object.keys(monthContributions).length;
+            const progress = Math.round((contributedDays / 31) * 100);
+            
+            document.getElementById('month-progress').textContent = `${progress}%`;
+            document.getElementById('month-progress-bar').style.width = `${progress}%`;
+        }
+
+        // Update transaction history
+        function updateTransactionHistory() {
+            const container = document.getElementById('transactions-list');
+            
+            if (userData.transactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>';
+                return;
+            }
+
+            container.innerHTML = userData.transactions.map(transaction => `
+                <div class="transaction-item">
+                    <div>
+                        <span class="transaction-type ${transaction.type}">${transaction.type.toUpperCase()}</span>
+                        <p style="margin: 5px 0 0 0; color: #718096;">${transaction.description}</p>
+                        <small style="color: #a0aec0;">${transaction.date}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="color: ${transaction.type === 'contribution' ? '#22543d' : '#742a2a'};">
+                            ${transaction.type === 'contribution' ? '+' : '-'}₵${transaction.amount}
+                        </strong>
+                        ${transaction.commission ? `<br><small style="color: #742a2a;">Commission: -₵${transaction.commission}</small>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show alert messages
+        function showAlert(message, type) {
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Initialize the app when page loads
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
