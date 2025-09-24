@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusuPay - Login & Registration</title>
+    <title>SusuPay - Login</title>
     <style>
         * {
             margin: 0;
@@ -13,92 +13,45 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #ddbffaff 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            color: #333;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #333;
-            padding: 20px;
         }
 
         .auth-container {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(15px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
             width: 100%;
-            max-width: 450px;
-            transform: translateY(0);
-            transition: all 0.3s ease;
-        }
-
-        .auth-container:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            text-align: center;
         }
 
         .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 3rem;
             margin-bottom: 10px;
         }
 
-        .logo p {
-            color: #718096;
-            font-size: 1rem;
+        .auth-title {
+            color: #4a5568;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
-        .form-tabs {
-            display: flex;
+        .auth-subtitle {
+            color: #718096;
             margin-bottom: 30px;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #f7fafc;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            background: transparent;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #718096;
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .form-section {
-            display: none;
-        }
-
-        .form-section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .form-group {
             margin-bottom: 20px;
+            text-align: left;
         }
 
         .form-group label {
@@ -106,108 +59,104 @@
             margin-bottom: 8px;
             color: #4a5568;
             font-weight: 600;
-            font-size: 0.9rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 2px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: all 0.3s ease;
-            background: white;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .name-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
         }
 
         .btn {
-            width: 100%;
-            padding: 15px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            padding: 14px 25px;
+            border-radius: 8px;
             cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
             transition: all 0.3s ease;
-            margin-top: 10px;
+            width: 100%;
+            margin-bottom: 15px;
         }
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
         .btn:disabled {
-            background: #cbd5e0;
+            opacity: 0.6;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
+        }
+
+        .btn-google {
+            background: #db4437;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-google:hover {
+            box-shadow: 0 8px 25px rgba(219, 68, 55, 0.4);
+        }
+
+        .auth-toggle {
+            margin-top: 20px;
+            color: #718096;
+        }
+
+        .auth-toggle button {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: inherit;
         }
 
         .alert {
-            padding: 15px;
-            border-radius: 10px;
+            padding: 12px;
+            border-radius: 8px;
             margin-bottom: 20px;
             font-weight: 500;
-            text-align: center;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 2px solid #9ae6b4;
         }
 
         .alert-error {
             background: #fed7d7;
             color: #742a2a;
-            border: 2px solid #feb2b2;
+            border: 1px solid #feb2b2;
         }
 
-        .forgot-password {
-            text-align: center;
-            margin-top: 20px;
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
         }
 
-        .forgot-password a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            color: #764ba2;
-            text-decoration: underline;
-        }
-
-        .loading-spinner {
+        .loading {
             display: none;
-            border: 3px solid #f3f3f3;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 3px solid #e2e8f0;
             border-top: 3px solid #667eea;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
@@ -217,201 +166,406 @@
             100% { transform: rotate(360deg); }
         }
 
-        .form-help {
-            font-size: 0.8rem;
-            color: #718096;
-            margin-top: 5px;
-        }
-
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon::before {
-            content: '';
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-            color: #cbd5e0;
-            z-index: 1;
-        }
-
-        .input-icon input {
-            padding-left: 45px;
-        }
-
-        @media (max-width: 480px) {
-            .auth-container {
-                padding: 25px;
-                margin: 10px;
-            }
-            
-            .logo h1 {
-                font-size: 2rem;
-            }
-            
-            .name-row {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-        }
-
-        .success-redirect {
-            text-align: center;
+        /* Dashboard Styles (hidden initially) */
+        .dashboard-container {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        .success-redirect h3 {
-            color: #22543d;
-            margin-bottom: 15px;
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .redirect-timer {
-            font-size: 1.2rem;
+        .dashboard-header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: bold;
-            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .logout-btn {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c53030;
+        }
+
+        /* Include all the original dashboard styles here */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .user-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .user-panel h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+
+        .btn-withdraw {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-withdraw:hover {
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .contribution-area {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .month-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .month-btn {
+            padding: 10px 20px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .month-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .contribution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .day-cell.contributed {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .day-cell:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .transaction-history {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: 30px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .transaction-item:hover {
+            background: #f7fafc;
+            transform: translateX(5px);
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-type {
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .contribution {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .withdrawal {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .dashboard-header h1 {
+                font-size: 2rem;
+            }
+            
+            .contribution-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            
+            .month-selector {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="logo">
-            <h1>🏦 SusuPay</h1>
-            <p>Your Professional Savings Partner</p>
-        </div>
+    <!-- Authentication Container -->
+    <div class="auth-container" id="auth-container">
+        <div class="logo">🏦</div>
+        <h1 class="auth-title">SusuPay</h1>
+        <p class="auth-subtitle">Professional Daily Savings</p>
 
         <div id="alert-container"></div>
 
-        <div id="auth-forms">
-            <div class="form-tabs">
-                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
-                <button class="tab-btn" onclick="switchTab('register')">Register</button>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <form id="auth-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required>
             </div>
 
-            <!-- Login Form -->
-            <div id="login-section" class="form-section active">
-                <form id="login-form" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="login-identifier">👤 Username or Email</label>
-                        <input 
-                            type="text" 
-                            id="login-identifier" 
-                            placeholder="Enter username or email address"
-                            required
-                        >
-                        <div class="form-help">You can login with either your username or email address</div>
-                    </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
 
-                    <div class="form-group">
-                        <label for="login-password">🔒 Password</label>
-                        <input 
-                            type="password" 
-                            id="login-password" 
-                            placeholder="Enter your password"
-                            required
-                        >
-                    </div>
+            <button type="submit" class="btn" id="auth-submit-btn">
+                Sign In
+            </button>
+        </form>
 
-                    <button type="submit" class="btn" id="login-btn">
-                        Sign In
-                    </button>
-                </form>
+        <button class="btn btn-google" id="google-signin-btn">
+            <span>🔍</span>
+            Continue with Google
+        </button>
 
-                <div class="forgot-password">
-                    <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+        <div class="auth-toggle">
+            <span id="auth-toggle-text">Don't have an account?</span>
+            <button type="button" id="auth-toggle-btn">Sign Up</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Container (hidden initially) -->
+    <div class="dashboard-container" id="dashboard-container">
+        <div class="dashboard-header">
+            <div>
+                <h1>🏦 SusuPay</h1>
+                <p>Professional Daily Savings & Contribution Management</p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar" id="user-avatar">U</div>
+                <div>
+                    <div id="user-display-name">User</div>
+                    <div id="user-email" style="font-size: 0.9rem; color: #718096;"></div>
                 </div>
-            </div>
-
-            <!-- Register Form -->
-            <div id="register-section" class="form-section">
-                <form id="register-form" onsubmit="handleRegister(event)">
-                    <div class="form-group">
-                        <label>👤 Full Name</label>
-                        <div class="name-row">
-                            <input 
-                                type="text" 
-                                id="first-name" 
-                                placeholder="First Name"
-                                required
-                            >
-                            <input 
-                                type="text" 
-                                id="middle-name" 
-                                placeholder="Middle Name"
-                            >
-                            <input 
-                                type="text" 
-                                id="surname" 
-                                placeholder="Surname"
-                                required
-                            >
-                        </div>
-                        <div class="form-help">Middle name is optional</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">📧 Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            placeholder="your.email@example.com"
-                            required
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="phone">📱 Phone Number</label>
-                        <input 
-                            type="tel" 
-                            id="phone" 
-                            placeholder="+233 XX XXX XXXX"
-                            required
-                        >
-                        <div class="form-help">Include country code (e.g., +233 for Ghana)</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="register-password">🔒 Password</label>
-                        <input 
-                            type="password" 
-                            id="register-password" 
-                            placeholder="Create a secure password"
-                            required
-                        >
-                        <div class="form-help">Minimum 8 characters with letters and numbers</div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm-password">🔒 Confirm Password</label>
-                        <input 
-                            type="password" 
-                            id="confirm-password" 
-                            placeholder="Confirm your password"
-                            required
-                        >
-                    </div>
-
-                    <button type="submit" class="btn" id="register-btn">
-                        Create Account
-                    </button>
-                </form>
+                <button class="logout-btn" id="logout-btn">Logout</button>
             </div>
         </div>
 
-        <!-- Success Redirect Screen -->
-        <div id="success-screen" style="display: none;">
-            <div class="success-redirect">
-                <h3>✅ Welcome to SusuPay!</h3>
-                <p>Redirecting you to your dashboard...</p>
-                <div class="redirect-timer" id="redirect-timer">5</div>
-                <div class="loading-spinner" style="display: block; margin-top: 20px;"></div>
+        <div id="dashboard-alert-container"></div>
+
+        <div class="dashboard">
+            <div class="user-panel">
+                <h2>👤 User Dashboard</h2>
+                
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3 id="total-balance">₵0</h3>
+                        <p>Total Balance</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="daily-rate">₵0</h3>
+                        <p>Daily Rate</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="month-progress">0%</h3>
+                        <p>Month Progress</p>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="daily-rate-input">💰 Daily Contribution Rate (GH₵)</label>
+                    <input type="number" id="daily-rate-input" placeholder="e.g., 10" min="1">
+                </div>
+
+                <button class="btn" onclick="setUserRate()">Set Rate</button>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="withdrawal-amount">💸 Withdrawal Amount (GH₵)</label>
+                    <input type="number" id="withdrawal-amount" placeholder="Amount to withdraw" min="1">
+                </div>
+
+                <button class="btn btn-withdraw" onclick="processWithdrawal()">Process Withdrawal</button>
+            </div>
+
+            <div class="contribution-area">
+                <h2>📅 Monthly Contributions</h2>
+                
+                <div class="month-selector">
+                    <div class="month-btn active" onclick="selectMonth(0)">Jan</div>
+                    <div class="month-btn" onclick="selectMonth(1)">Feb</div>
+                    <div class="month-btn" onclick="selectMonth(2)">Mar</div>
+                    <div class="month-btn" onclick="selectMonth(3)">Apr</div>
+                    <div class="month-btn" onclick="selectMonth(4)">May</div>
+                    <div class="month-btn" onclick="selectMonth(5)">Jun</div>
+                    <div class="month-btn" onclick="selectMonth(6)">Jul</div>
+                    <div class="month-btn" onclick="selectMonth(7)">Aug</div>
+                    <div class="month-btn" onclick="selectMonth(8)">Sep</div>
+                    <div class="month-btn" onclick="selectMonth(9)">Oct</div>
+                    <div class="month-btn" onclick="selectMonth(10)">Nov</div>
+                    <div class="month-btn" onclick="selectMonth(11)">Dec</div>
+                </div>
+
+                <div id="current-month-display">
+                    <h3>January 2025</h3>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="month-progress-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="contribution-grid" id="contribution-grid">
+                    <!-- Days will be populated by JavaScript -->
+                </div>
+
+                <button class="btn" onclick="contributeToday()" id="contribute-btn">
+                    💰 Contribute Today (₵<span id="contribute-amount">0</span>)
+                </button>
+            </div>
+        </div>
+
+        <div class="transaction-history">
+            <h2>📊 Transaction History</h2>
+            <div id="transactions-list">
+                <p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>
             </div>
         </div>
     </div>
 
-  <script type="module">
+    <!-- Firebase SDK -->
+    <script type="module">
         // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
@@ -435,152 +589,442 @@
         const db = getFirestore(app);
         const analytics = getAnalytics(app);
 
-  // Switch tabs
-  function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
-      document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
-      document.getElementById(tabName + '-section').classList.add('active');
-      clearAlerts();
-  }
+        // Global variables
+        let isSignUp = false;
+        let userData = {
+            name: '',
+            dailyRate: 0,
+            balance: 0,
+            contributions: {},
+            transactions: []
+        };
+        let currentMonth = 0;
+        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                       'July', 'August', 'September', 'October', 'November', 'December'];
 
-  // Handle Registration
-  async function handleRegister(event) {
-      event.preventDefault();
+        // DOM elements
+        const authContainer = document.getElementById('auth-container');
+        const dashboardContainer = document.getElementById('dashboard-container');
+        const authForm = document.getElementById('auth-form');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const authSubmitBtn = document.getElementById('auth-submit-btn');
+        const googleSigninBtn = document.getElementById('google-signin-btn');
+        const authToggleBtn = document.getElementById('auth-toggle-btn');
+        const authToggleText = document.getElementById('auth-toggle-text');
+        const loadingDiv = document.getElementById('loading');
+        const logoutBtn = document.getElementById('logout-btn');
 
-      const firstName = document.getElementById('first-name').value.trim();
-      const middleName = document.getElementById('middle-name').value.trim();
-      const surname = document.getElementById('surname').value.trim();
-      const email = document.getElementById('email').value.trim().toLowerCase();
-      const phone = document.getElementById('phone').value.trim();
-      const password = document.getElementById('register-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
+        // Show/hide loading
+        function showLoading() {
+            loadingDiv.style.display = 'block';
+            authSubmitBtn.disabled = true;
+            googleSigninBtn.disabled = true;
+        }
 
-      if (password !== confirmPassword) {
-          showAlert('Passwords do not match!', 'error');
-          return;
-      }
+        function hideLoading() {
+            loadingDiv.style.display = 'none';
+            authSubmitBtn.disabled = false;
+            googleSigninBtn.disabled = false;
+        }
 
-      try {
-          // Create user in Firebase Auth
-          const userCred = await createUserWithEmailAndPassword(auth, email, password);
-          const uid = userCred.user.uid;
+        // Show alert messages
+        function showAlert(message, type, containerId = 'alert-container') {
+            const container = document.getElementById(containerId);
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
 
-          // Save user profile in Firestore
-          await setDoc(doc(db, "users", uid), {
-              firstName,
-              middleName,
-              surname,
-              email,
-              phone,
-              createdAt: new Date().toISOString()
-          });
+        // Toggle between sign in and sign up
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            if (isSignUp) {
+                authSubmitBtn.textContent = 'Sign Up';
+                authToggleText.textContent = 'Already have an account?';
+                authToggleBtn.textContent = 'Sign In';
+            } else {
+                authSubmitBtn.textContent = 'Sign In';
+                authToggleText.textContent = "Don't have an account?";
+                authToggleBtn.textContent = 'Sign Up';
+            }
+        }
 
-          showAlert('Account created successfully! Please login.', 'success');
-          document.getElementById('register-form').reset();
-          setTimeout(() => switchTab('login'), 2000);
+        // Handle authentication form submission
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            
+            const email = emailInput.value;
+            const password = passwordInput.value;
 
-      } catch (err) {
-          showAlert(err.message, 'error');
-      }
-  }
+            if (!email || !password) {
+                showAlert('Please fill in all fields!', 'error');
+                return;
+            }
 
-  // Handle Login
-  async function handleLogin(event) {
-      event.preventDefault();
+            showLoading();
 
-      const email = document.getElementById('login-identifier').value.trim().toLowerCase();
-      const password = document.getElementById('login-password').value;
+            try {
+                if (isSignUp) {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    await createUserProfile(userCredential.user);
+                    showAlert('Account created successfully!', 'success');
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    showAlert('Signed in successfully!', 'success');
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+                let errorMessage = 'Authentication failed. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        errorMessage = 'No account found with this email.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Incorrect password.';
+                        break;
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'An account with this email already exists.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password should be at least 6 characters.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Please enter a valid email address.';
+                        break;
+                }
+                
+                showAlert(errorMessage, 'error');
+            } finally {
+                hideLoading();
+            }
+        }
 
-      try {
-          // Sign in with Auth
-          const userCred = await signInWithEmailAndPassword(auth, email, password);
-          const uid = userCred.user.uid;
+        // Handle Google sign in
+        async function handleGoogleSignIn() {
+            const provider = new GoogleAuthProvider();
+            
+            showLoading();
+            
+            try {
+                const result = await signInWithPopup(auth, provider);
+                await createUserProfile(result.user);
+                showAlert('Signed in with Google successfully!', 'success');
+            } catch (error) {
+                console.error('Google sign in error:', error);
+                showAlert('Google sign in failed. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
 
-          // Get user profile once
-          const userDoc = await getDoc(doc(db, "users", uid));
-          const profile = userDoc.exists() ? userDoc.data() : {};
+        // Create user profile in Firestore
+        async function createUserProfile(user) {
+            const userRef = doc(db, 'users', user.uid);
+            const userSnap = await getDoc(userRef);
 
-          // Show success and start real-time updates
-          showSuccessAndRedirect({ ...profile, email });
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                    name: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    dailyRate: 0,
+                    balance: 0,
+                    contributions: {},
+                    transactions: [],
+                    createdAt: new Date()
+                });
+            }
+        }
 
-          // 🔥 Real-time listener for this user's profile
-          onSnapshot(doc(db, "users", uid), (docSnap) => {
-              if (docSnap.exists()) {
-                  const liveProfile = docSnap.data();
-                  console.log("Live profile update:", liveProfile);
+        // Load user data from Firestore
+        async function loadUserData(userId) {
+            try {
+                const userRef = doc(db, 'users', userId);
+                const userSnap = await getDoc(userRef);
 
-                  // Example: update UI if placeholders exist
-                  const nameEl = document.getElementById("user-name");
-                  const phoneEl = document.getElementById("user-phone");
-                  if (nameEl) nameEl.textContent = liveProfile.firstName + " " + liveProfile.surname;
-                  if (phoneEl) phoneEl.textContent = liveProfile.phone;
-              }
-          });
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    userData = {
+                        name: data.name || '',
+                        dailyRate: data.dailyRate || 0,
+                        balance: data.balance || 0,
+                        contributions: data.contributions || {},
+                        transactions: data.transactions || []
+                    };
+                }
+                
+                updateDashboardUI();
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showAlert('Failed to load user data.', 'error', 'dashboard-alert-container');
+            }
+        }
 
-      } catch (err) {
-          showAlert('Login failed: ' + err.message, 'error');
-      }
-  }
+        // Save user data to Firestore
+        async function saveUserData(userId) {
+            try {
+                const userRef = doc(db, 'users', userId);
+                await setDoc(userRef, {
+                    name: userData.name,
+                    email: auth.currentUser.email,
+                    dailyRate: userData.dailyRate,
+                    balance: userData.balance,
+                    contributions: userData.contributions,
+                    transactions: userData.transactions,
+                    updatedAt: new Date()
+                }, { merge: true });
+            } catch (error) {
+                console.error('Error saving user data:', error);
+                showAlert('Failed to save data.', 'error', 'dashboard-alert-container');
+            }
+        }
 
-  // Forgot password
-  async function showForgotPassword() {
-      const email = document.getElementById('login-identifier').value.trim();
-      if (!email) {
-          showAlert("Please enter your email in the login field first.", "error");
-          return;
-      }
-      try {
-          await sendPasswordResetEmail(auth, email);
-          showAlert("Password reset email sent!", "success");
-      } catch (err) {
-          showAlert(err.message, "error");
-      }
-  }
+        // Show dashboard
+        function showDashboard(user) {
+            authContainer.style.display = 'none';
+            dashboardContainer.style.display = 'block';
+            document.body.style.alignItems = 'flex-start';
+            document.body.style.justifyContent = 'flex-start';
+            
+            // Update user info
+            document.getElementById('user-display-name').textContent = user.displayName || user.email.split('@')[0];
+            document.getElementById('user-email').textContent = user.email;
+            document.getElementById('user-avatar').textContent = (user.displayName || user.email)[0].toUpperCase();
+            
+            loadUserData(user.uid);
+        }
 
-  // Success screen + redirect
-  function showSuccessAndRedirect(user) {
-      document.getElementById('auth-forms').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
+        // Show authentication
+        function showAuth() {
+            authContainer.style.display = 'block';
+            dashboardContainer.style.display = 'none';
+            document.body.style.alignItems = 'center';
+            document.body.style.justifyContent = 'center';
+        }
 
-      let countdown = 5;
-      const timer = document.getElementById('redirect-timer');
+        // Handle logout
+        async function handleLogout() {
+            try {
+                await signOut(auth);
+                showAlert('Signed out successfully!', 'success');
+                showAuth();
+            } catch (error) {
+                console.error('Logout error:', error);
+                showAlert('Logout failed. Please try again.', 'error', 'dashboard-alert-container');
+            }
+        }
 
-      const countdownInterval = setInterval(() => {
-          countdown--;
-          timer.textContent = countdown;
-          if (countdown === 0) {
-              clearInterval(countdownInterval);
-              redirectToMainApp();
-          }
-      }, 1000);
-  }
+        // Dashboard functions (from original code)
+        function updateDashboardUI() {
+            if (userData.dailyRate) {
+                document.getElementById('daily-rate-input').value = userData.dailyRate;
+            }
+            generateCalendar();
+            updateStats();
+            updateTransactionHistory();
+        }
 
-  function redirectToMainApp() {
-      window.location.href = "/SusuPay.html"; // point this to your real dashboard page
-  }
+        window.setUserRate = async function() {
+            const rate = parseFloat(document.getElementById('daily-rate-input').value);
 
-  // Alerts
-  function showAlert(message, type) {
-      clearAlerts();
-      const container = document.getElementById('alert-container');
-      const alert = document.createElement('div');
-      alert.className = `alert alert-${type}`;
-      alert.textContent = message;
-      container.appendChild(alert);
-      setTimeout(() => alert.remove(), type === 'success' ? 4000 : 6000);
-  }
+            if (!rate || rate <= 0) {
+                showAlert('Please enter a valid daily rate!', 'error', 'dashboard-alert-container');
+                return;
+            }
 
-  function clearAlerts() {
-      document.getElementById('alert-container').innerHTML = '';
-  }
+            userData.dailyRate = rate;
+            
+            updateStats();
+            generateCalendar();
+            await saveUserData(auth.currentUser.uid);
+            showAlert(`Rate set successfully! Daily contribution: ₵${rate}`, 'success', 'dashboard-alert-container');
+        }
 
-  // Expose functions globally
-  window.handleLogin = handleLogin;
-  window.handleRegister = handleRegister;
-  window.switchTab = switchTab;
-  window.showForgotPassword = showForgotPassword;
-</script>
+        window.contributeToday = function() {
+            const today = new Date().getDate();
+            contributeForDay(today);
+        }
 
+        window.contributeForDay = async function(day) {
+            if (!userData.dailyRate) {
+                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
+                return;
+            }
+
+            if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
+                showAlert(`You already contributed ₵${userData.contributions[currentMonth][day]} on day ${day}!`, 'error', 'dashboard-alert-container');
+                return;
+            }
+
+            if (!userData.contributions[currentMonth]) {
+                userData.contributions[currentMonth] = {};
+            }
+
+            userData.contributions[currentMonth][day] = userData.dailyRate;
+            userData.balance += userData.dailyRate;
+
+            userData.transactions.unshift({
+                type: 'contribution',
+                amount: userData.dailyRate,
+                date: `${months[currentMonth]} ${day}, 2025`,
+                description: `Daily contribution for day ${day}`
+            });
+
+            generateCalendar();
+            updateStats();
+            updateTransactionHistory();
+            await saveUserData(auth.currentUser.uid);
+            showAlert(`Successfully contributed ₵${userData.dailyRate} for day ${day}!`, 'success', 'dashboard-alert-container');
+        }
+
+        window.processWithdrawal = async function() {
+            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
+
+            if (!amount || amount <= 0) {
+                showAlert('Please enter a valid withdrawal amount!', 'error', 'dashboard-alert-container');
+                return;
+            }
+
+            if (!userData.dailyRate) {
+                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
+                return;
+            }
+
+            if (amount > userData.balance) {
+                showAlert('Insufficient balance for this withdrawal!', 'error', 'dashboard-alert-container');
+                return;
+            }
+
+            const commission = userData.dailyRate;
+            const totalDeduction = amount + commission;
+
+            if (totalDeduction > userData.balance) {
+                showAlert(`Insufficient balance! You need ₵${totalDeduction} (₵${amount} + ₵${commission} commission)`, 'error', 'dashboard-alert-container');
+                return;
+            }
+
+            userData.balance -= totalDeduction;
+
+            userData.transactions.unshift({
+                type: 'withdrawal',
+                amount: amount,
+                commission: commission,
+                date: new Date().toLocaleDateString(),
+                description: `Withdrawal of ₵${amount} (Commission: ₵${commission})`
+            });
+
+            document.getElementById('withdrawal-amount').value = '';
+            updateStats();
+            updateTransactionHistory();
+            await saveUserData(auth.currentUser.uid);
+            showAlert(`Withdrawal successful! ₵${amount} withdrawn (₵${commission} commission deducted)`, 'success', 'dashboard-alert-container');
+        }
+
+        window.selectMonth = function(monthIndex) {
+            currentMonth = monthIndex;
+            
+            document.querySelectorAll('.month-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index === monthIndex);
+            });
+
+            document.getElementById('current-month-display').querySelector('h3').textContent = 
+                `${months[monthIndex]} 2025`;
+
+            generateCalendar();
+            updateStats();
+        }
+
+        function generateCalendar() {
+            const grid = document.getElementById('contribution-grid');
+            grid.innerHTML = '';
+
+            for (let day = 1; day <= 31; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+                dayCell.textContent = day;
+                dayCell.onclick = () => contributeForDay(day);
+
+                if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
+                    dayCell.classList.add('contributed');
+                    dayCell.title = `Contributed: ₵${userData.contributions[currentMonth][day]}`;
+                }
+
+                grid.appendChild(dayCell);
+            }
+
+            document.getElementById('contribute-amount').textContent = userData.dailyRate || 0;
+        }
+
+        function updateStats() {
+            document.getElementById('total-balance').textContent = `₵${userData.balance.toFixed(2)}`;
+            document.getElementById('daily-rate').textContent = `₵${userData.dailyRate}`;
+
+            const monthContributions = userData.contributions[currentMonth] || {};
+            const contributedDays = Object.keys(monthContributions).length;
+            const progress = Math.round((contributedDays / 31) * 100);
+            
+            document.getElementById('month-progress').textContent = `${progress}%`;
+            document.getElementById('month-progress-bar').style.width = `${progress}%`;
+        }
+
+        function updateTransactionHistory() {
+            const container = document.getElementById('transactions-list');
+            
+            if (userData.transactions.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>';
+                return;
+            }
+
+            container.innerHTML = userData.transactions.map(transaction => `
+                <div class="transaction-item">
+                    <div>
+                        <span class="transaction-type ${transaction.type}">${transaction.type.toUpperCase()}</span>
+                        <p style="margin: 5px 0 0 0; color: #718096;">${transaction.description}</p>
+                        <small style="color: #a0aec0;">${transaction.date}</small>
+                    </div>
+                    <div style="text-align: right;">
+                        <strong style="color: ${transaction.type === 'contribution' ? '#22543d' : '#742a2a'};">
+                            ${transaction.type === 'contribution' ? '+' : '-'}₵${transaction.amount}
+                        </strong>
+                        ${transaction.commission ? `<br><small style="color: #742a2a;">Commission: -₵${transaction.commission}</small>` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Event listeners
+        authForm.addEventListener('submit', handleAuthSubmit);
+        googleSigninBtn.addEventListener('click', handleGoogleSignIn);
+        authToggleBtn.addEventListener('click', toggleAuthMode);
+        logoutBtn.addEventListener('click', handleLogout);
+
+        // Auth state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                showDashboard(user);
+            } else {
+                showAuth();
+            }
+        });
+
+        // Initialize the app
+        window.onload = function() {
+            // The auth state observer will handle showing the appropriate view
+        };
+
+        // Make functions globally available for onclick handlers
+        window.setUserRate = setUserRate;
+        window.contributeToday = contributeToday;
+        window.contributeForDay = contributeForDay;
+        window.processWithdrawal = processWithdrawal;
+        window.selectMonth = selectMonth;
+    </script>
 </body>
 </html>
