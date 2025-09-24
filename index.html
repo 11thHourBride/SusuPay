@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SusuPay - Login & Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(15px);
+            width: 100%;
+            max-width: 450px;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .auth-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .form-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f7fafc;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #718096;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .name-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-align: center;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 2px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 2px solid #feb2b2;
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .loading-spinner {
+            display: none;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .form-help {
+            font-size: 0.8rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .input-icon {
+            position: relative;
+        }
+
+        .input-icon::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: #cbd5e0;
+            z-index: 1;
+        }
+
+        .input-icon input {
+            padding-left: 45px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 25px;
+                margin: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .name-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        .success-redirect {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .success-redirect h3 {
+            color: #22543d;
+            margin-bottom: 15px;
+        }
+
+        .redirect-timer {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="logo">
+            <h1>🏦 SusuPay</h1>
+            <p>Your Professional Savings Partner</p>
+        </div>
+
+        <div id="alert-container"></div>
+
+        <div id="auth-forms">
+            <div class="form-tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+                <button class="tab-btn" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-section" class="form-section active">
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="login-identifier">👤 Username or Email</label>
+                        <input 
+                            type="text" 
+                            id="login-identifier" 
+                            placeholder="Enter username or email address"
+                            required
+                        >
+                        <div class="form-help">You can login with either your username or email address</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">🔒 Password</label>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn" id="login-btn">
+                        Sign In
+                    </button>
+                </form>
+
+                <div class="forgot-password">
+                    <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="register-section" class="form-section">
+                <form id="register-form" onsubmit="handleRegister(event)">
+                    <div class="form-group">
+                        <label>👤 Full Name</label>
+                        <div class="name-row">
+                            <input 
+                                type="text" 
+                                id="first-name" 
+                                placeholder="First Name"
+                                required
+                            >
+                            <input 
+                                type="text" 
+                                id="middle-name" 
+                                placeholder="Middle Name"
+                            >
+                            <input 
+                                type="text" 
+                                id="surname" 
+                                placeholder="Surname"
+                                required
+                            >
+                        </div>
+                        <div class="form-help">Middle name is optional</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">📧 Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            placeholder="your.email@example.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">📱 Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            placeholder="+233 XX XXX XXXX"
+                            required
+                        >
+                        <div class="form-help">Include country code (e.g., +233 for Ghana)</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">🔒 Password</label>
+                        <input 
+                            type="password" 
+                            id="register-password" 
+                            placeholder="Create a secure password"
+                            required
+                        >
+                        <div class="form-help">Minimum 8 characters with letters and numbers</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">🔒 Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="confirm-password" 
+                            placeholder="Confirm your password"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn" id="register-btn">
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Success Redirect Screen -->
+        <div id="success-screen" style="display: none;">
+            <div class="success-redirect">
+                <h3>✅ Welcome to SusuPay!</h3>
+                <p>Redirecting you to your dashboard...</p>
+                <div class="redirect-timer" id="redirect-timer">5</div>
+                <div class="loading-spinner" style="display: block; margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User database (in production, this would be a real database)
+        let userDatabase = {};
+        let currentUser = null;
+
+        // Initialize the app
+        function initializeApp() {
+            // Load existing users from memory
+            loadUserDatabase();
+        }
+
+        // Load user database
+        function loadUserDatabase() {
+            // In production, this would load from a server
+            // For now, we'll create a demo user
+            if (Object.keys(userDatabase).length === 0) {
+                userDatabase['demo@susupay.com'] = {
+                    firstName: 'Demo',
+                    middleName: '',
+                    surname: 'User',
+                    username: 'demo user',
+                    email: 'demo@susupay.com',
+                    phone: '+233123456789',
+                    password: 'demo123',
+                    createdAt: new Date().toISOString()
+                };
+            }
+        }
+
+        // Switch between login and register tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update form sections
+            document.querySelectorAll('.form-section').forEach(section => section.classList.remove('active'));
+            document.getElementById(tabName + '-section').classList.add('active');
+
+            // Clear any alerts
+            clearAlerts();
+        }
+
+        // Handle user registration
+        function handleRegister(event) {
+            event.preventDefault();
+
+            const firstName = document.getElementById('first-name').value.trim();
+            const middleName = document.getElementById('middle-name').value.trim();
+            const surname = document.getElementById('surname').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Validation
+            if (!firstName || !surname) {
+                showAlert('First name and surname are required!', 'error');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showAlert('Please enter a valid email address!', 'error');
+                return;
+            }
+
+            if (!isValidPhone(phone)) {
+                showAlert('Please enter a valid phone number with country code!', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showAlert('Password must be at least 8 characters long!', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('Passwords do not match!', 'error');
+                return;
+            }
+
+            // Check if user already exists
+            if (userDatabase[email]) {
+                showAlert('An account with this email already exists!', 'error');
+                return;
+            }
+
+            // Create username from name
+            const username = `${firstName}${middleName ? ' ' + middleName : ''} ${surname}`.toLowerCase();
+
+            // Check if username already exists
+            const existingUser = Object.values(userDatabase).find(user => user.username === username);
+            if (existingUser) {
+                showAlert('A user with this name combination already exists!', 'error');
+                return;
+            }
+
+            // Create new user
+            const newUser = {
+                firstName,
+                middleName,
+                surname,
+                username,
+                email,
+                phone,
+                password, // In production, this would be hashed
+                createdAt: new Date().toISOString()
+            };
+
+            userDatabase[email] = newUser;
+            
+            showAlert('Account created successfully! Please login.', 'success');
+            
+            // Clear form
+            document.getElementById('register-form').reset();
+            
+            // Switch to login tab after 2 seconds
+            setTimeout(() => {
+                switchTab('login');
+                document.getElementById('login-identifier').value = email;
+            }, 2000);
+        }
+
+        // Handle user login
+        function handleLogin(event) {
+            event.preventDefault();
+
+            const identifier = document.getElementById('login-identifier').value.trim().toLowerCase();
+            const password = document.getElementById('login-password').value;
+
+            if (!identifier || !password) {
+                showAlert('Please enter both username/email and password!', 'error');
+                return;
+            }
+
+            // Find user by email or username
+            let user = null;
+            for (const userEmail in userDatabase) {
+                const userData = userDatabase[userEmail];
+                if (userData.email === identifier || userData.username === identifier) {
+                    user = userData;
+                    break;
+                }
+            }
+
+            if (!user) {
+                showAlert('User not found! Please check your credentials.', 'error');
+                return;
+            }
+
+            if (user.password !== password) {
+                showAlert('Incorrect password! Please try again.', 'error');
+                return;
+            }
+
+            // Successful login
+            currentUser = user;
+            showSuccessAndRedirect(user);
+        }
+
+        // Show success screen and redirect
+        function showSuccessAndRedirect(user) {
+            document.getElementById('auth-forms').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+
+            // Store user data for the main app
+            const userData = {
+                name: `${user.firstName}${user.middleName ? ' ' + user.middleName : ''} ${user.surname}`,
+                email: user.email,
+                phone: user.phone,
+                isLoggedIn: true
+            };
+
+            // Store in memory for the session
+            window.susuUserData = userData;
+
+            // Countdown and redirect
+            let countdown = 5;
+            const timer = document.getElementById('redirect-timer');
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                timer.textContent = countdown;
+                
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    redirectToMainApp();
+                }
+            }, 1000);
+        }
+
+        // Redirect to main application
+        function redirectToMainApp() {
+            // In a real application, you would redirect to the main page
+            // For this demo, we'll show the main susu interface
+            document.body.innerHTML = `
+                <div style="text-align: center; padding: 50px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: white;">
+                    <h1>🎉 Login Successful!</h1>
+                    <h2>Welcome, ${window.susuUserData.name}!</h2>
+                    <p style="margin: 20px 0; font-size: 1.2rem;">You are now logged in to SusuPay</p>
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; max-width: 400px; margin: 20px auto;">
+                        <h3>Your Account Details:</h3>
+                        <p><strong>Name:</strong> ${window.susuUserData.name}</p>
+                        <p><strong>Email:</strong> ${window.susuUserData.email}</p>
+                        <p><strong>Phone:</strong> ${window.susuUserData.phone}</p>
+                    </div>
+                    <p style="margin-top: 30px; font-size: 0.9rem; opacity: 0.8;">
+                        In a real application, you would now be redirected to your SusuPay dashboard.
+                    </p>
+                    <button onclick="location.reload()" style="margin-top: 20px; padding: 12px 25px; background: white; color: #667eea; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        Back to Login
+                    </button>
+                </div>
+            `;
+        }
+
+        // Show forgot password
+        function showForgotPassword() {
+            showAlert('Password reset functionality would be implemented here. For demo, use: demo@susupay.com / demo123', 'success');
+        }
+
+        // Validation functions
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function isValidPhone(phone) {
+            return /^\+[1-9]\d{1,14}$/.test(phone.replace(/\s/g, ''));
+        }
+
+        // Show alert messages
+        function showAlert(message, type) {
+            clearAlerts();
+            
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            container.appendChild(alert);
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.remove();
+                }, 4000);
+            } else {
+                setTimeout(() => {
+                    alert.remove();
+                }, 6000);
+            }
+        }
+
+        // Clear all alerts
+        function clearAlerts() {
+            const container = document.getElementById('alert-container');
+            container.innerHTML = '';
+        }
+
+        // Initialize when page loads
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>
