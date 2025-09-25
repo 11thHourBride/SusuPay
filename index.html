@@ -4,428 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusuPay - Login</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .auth-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(10px);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 3rem;
-            margin-bottom: 10px;
-        }
-
-        .auth-title {
-            color: #4a5568;
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .auth-subtitle {
-            color: #718096;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 600;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-google {
-            background: #db4437;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-google:hover {
-            box-shadow: 0 8px 25px rgba(219, 68, 55, 0.4);
-        }
-
-        .auth-toggle {
-            margin-top: 20px;
-            color: #718096;
-        }
-
-        .auth-toggle button {
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            text-decoration: underline;
-            font-size: inherit;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 500;
-        }
-
-        .alert-error {
-            background: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #feb2b2;
-        }
-
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
-        }
-
-        .loading {
-            display: none;
-            margin: 20px 0;
-        }
-
-        .spinner {
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Dashboard Styles (hidden initially) */
-        .dashboard-container {
-            display: none;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .dashboard-header h1 {
-            color: #4a5568;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .logout-btn {
-            background: #e53e3e;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: #c53030;
-        }
-
-        /* Include all the original dashboard styles here */
-        .dashboard {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .user-panel {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .user-panel h2 {
-            color: #4a5568;
-            margin-bottom: 20px;
-            font-size: 1.4rem;
-        }
-
-        .btn-withdraw {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-        }
-
-        .btn-withdraw:hover {
-            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .contribution-area {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .month-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .month-btn {
-            padding: 10px 20px;
-            border: 2px solid #e2e8f0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-        }
-
-        .month-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-color: transparent;
-        }
-
-        .contribution-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .day-cell {
-            aspect-ratio: 1;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .day-cell.contributed {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            color: white;
-            border-color: transparent;
-        }
-
-        .day-cell:hover {
-            transform: scale(1.1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .transaction-history {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            margin-top: 30px;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
-        }
-
-        .transaction-item:hover {
-            background: #f7fafc;
-            transform: translateX(5px);
-        }
-
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
-        .transaction-type {
-            font-weight: 600;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-        }
-
-        .contribution {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .withdrawal {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        .progress-bar {
-            background: #e2e8f0;
-            border-radius: 10px;
-            overflow: hidden;
-            height: 8px;
-            margin: 10px 0;
-        }
-
-        .progress-fill {
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            height: 100%;
-            transition: width 0.5s ease;
-        }
-
-        @media (max-width: 768px) {
-            .dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            .dashboard-header {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .dashboard-header h1 {
-                font-size: 2rem;
-            }
-            
-            .contribution-grid {
-                grid-template-columns: repeat(7, 1fr);
-            }
-            
-            .month-selector {
-                justify-content: center;
-            }
-        }
-    </style>
+   <link rel="stylesheet" href="data.css">
 </head>
 <body>
     <!-- Authentication Container -->
@@ -441,19 +20,107 @@
             <p>Processing...</p>
         </div>
 
-        <form id="auth-form">
+        <!-- Sign In Form -->
+        <form id="signin-form">
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" required>
+                <label for="signin-email">Email Address</label>
+                <input type="email" id="signin-email" required>
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" required>
+                <label for="signin-password">Password</label>
+                <input type="password" id="signin-password" required>
             </div>
 
-            <button type="submit" class="btn" id="auth-submit-btn">
+            <button type="submit" class="btn" id="signin-submit-btn">
                 Sign In
+            </button>
+        </form>
+
+        <!-- Sign Up Form (initially hidden) -->
+        <form id="signup-form" style="display: none;">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="first-name">First Name *</label>
+                    <input type="text" id="first-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="surname">Surname *</label>
+                    <input type="text" id="surname" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="middle-name">Middle Name (Optional)</label>
+                <input type="text" id="middle-name">
+            </div>
+
+            <div class="form-group">
+                <label for="signup-email">Email Address *</label>
+                <input type="email" id="signup-email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="country">Country *</label>
+                <select id="country" required>
+                    <option value="">Select your country</option>
+                    <option value="US" data-code="+1">🇺🇸 United States (+1)</option>
+                    <option value="GB" data-code="+44">🇬🇧 United Kingdom (+44)</option>
+                    <option value="GH" data-code="+233">🇬🇭 Ghana (+233)</option>
+                    <option value="NG" data-code="+234">🇳🇬 Nigeria (+234)</option>
+                    <option value="KE" data-code="+254">🇰🇪 Kenya (+254)</option>
+                    <option value="ZA" data-code="+27">🇿🇦 South Africa (+27)</option>
+                    <option value="CA" data-code="+1">🇨🇦 Canada (+1)</option>
+                    <option value="AU" data-code="+61">🇦🇺 Australia (+61)</option>
+                    <option value="DE" data-code="+49">🇩🇪 Germany (+49)</option>
+                    <option value="FR" data-code="+33">🇫🇷 France (+33)</option>
+                    <option value="IT" data-code="+39">🇮🇹 Italy (+39)</option>
+                    <option value="ES" data-code="+34">🇪🇸 Spain (+34)</option>
+                    <option value="BR" data-code="+55">🇧🇷 Brazil (+55)</option>
+                    <option value="MX" data-code="+52">🇲🇽 Mexico (+52)</option>
+                    <option value="AR" data-code="+54">🇦🇷 Argentina (+54)</option>
+                    <option value="IN" data-code="+91">🇮🇳 India (+91)</option>
+                    <option value="CN" data-code="+86">🇨🇳 China (+86)</option>
+                    <option value="JP" data-code="+81">🇯🇵 Japan (+81)</option>
+                    <option value="KR" data-code="+82">🇰🇷 South Korea (+82)</option>
+                    <option value="SG" data-code="+65">🇸🇬 Singapore (+65)</option>
+                    <option value="MY" data-code="+60">🇲🇾 Malaysia (+60)</option>
+                    <option value="TH" data-code="+66">🇹🇭 Thailand (+66)</option>
+                    <option value="PH" data-code="+63">🇵🇭 Philippines (+63)</option>
+                    <option value="ID" data-code="+62">🇮🇩 Indonesia (+62)</option>
+                    <option value="VN" data-code="+84">🇻🇳 Vietnam (+84)</option>
+                    <option value="EG" data-code="+20">🇪🇬 Egypt (+20)</option>
+                    <option value="MA" data-code="+212">🇲🇦 Morocco (+212)</option>
+                    <option value="TN" data-code="+216">🇹🇳 Tunisia (+216)</option>
+                    <option value="ET" data-code="+251">🇪🇹 Ethiopia (+251)</option>
+                    <option value="UG" data-code="+256">🇺🇬 Uganda (+256)</option>
+                    <option value="TZ" data-code="+255">🇹🇿 Tanzania (+255)</option>
+                    <option value="RW" data-code="+250">🇷🇼 Rwanda (+250)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <div class="phone-input-group">
+                    <select id="phone-code" class="country-select" required>
+                        <option value="">Code</option>
+                    </select>
+                    <input type="tel" id="phone" class="phone-input" placeholder="123456789" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="signup-password">Password *</label>
+                <input type="password" id="signup-password" required minlength="6">
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password *</label>
+                <input type="password" id="confirm-password" required minlength="6">
+            </div>
+
+            <button type="submit" class="btn" id="signup-submit-btn">
+                Create Account
             </button>
         </form>
 
@@ -468,8 +135,29 @@
         </div>
     </div>
 
-    <!-- Dashboard Container (hidden initially) -->
+    <!-- Email Verification Container -->
+    <div class="auth-container verification-container" id="verification-container">
+        <div class="verification-icon">📧</div>
+        <h2 class="verification-title">Verify Your Email</h2>
+        <p class="verification-text">
+            We've sent a verification link to <strong id="verification-email"></strong>. 
+            Please check your email and click the link to verify your account.
+        </p>
+        <p class="verification-text">
+            Didn't receive the email? Check your spam folder or click below to resend.
+        </p>
+        <button class="resend-btn" id="resend-verification-btn">Resend Verification Email</button>
+        <div style="margin-top: 20px;">
+            <button type="button" id="back-to-login-btn" class="auth-toggle" style="background: none; border: none; color: #667eea; text-decoration: underline;">
+                Back to Login
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard Container -->
     <div class="dashboard-container" id="dashboard-container">
+        <button class="settings-btn" id="settings-btn" title="Settings">⚙️</button>
+        
         <div class="dashboard-header">
             <div>
                 <h1>🏦 SusuPay</h1>
@@ -480,9 +168,17 @@
                 <div>
                     <div id="user-display-name">User</div>
                     <div id="user-email" style="font-size: 0.9rem; color: #718096;"></div>
+                    <div id="kyc-status-indicator" style="font-size: 0.8rem; font-weight: 600;"></div>
                 </div>
                 <button class="logout-btn" id="logout-btn">Logout</button>
             </div>
+        </div>
+
+        <!-- KYC Banner -->
+        <div class="kyc-banner" id="kyc-banner">
+            <h3>🛡️ Complete Your KYC Verification</h3>
+            <p>Verify your identity to unlock full access to SusuPay features and higher transaction limits.</p>
+            <button class="kyc-btn" id="start-kyc-btn">Start KYC Process</button>
         </div>
 
         <div id="dashboard-alert-container"></div>
@@ -564,467 +260,345 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        // Import Firebase functions
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
-
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
-            authDomain: "susupay-5286e.firebaseapp.com",
-            projectId: "susupay-5286e",
-            storageBucket: "susupay-5286e.firebasestorage.app",
-            messagingSenderId: "83852132974",
-            appId: "1:83852132974:web:2d8be2d1adb7e7639f5c7f",
-            measurementId: "G-EQM64CTX83"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const analytics = getAnalytics(app);
-
-        // Global variables
-        let isSignUp = false;
-        let userData = {
-            name: '',
-            dailyRate: 0,
-            balance: 0,
-            contributions: {},
-            transactions: []
-        };
-        let currentMonth = 0;
-        const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                       'July', 'August', 'September', 'October', 'November', 'December'];
-
-        // DOM elements
-        const authContainer = document.getElementById('auth-container');
-        const dashboardContainer = document.getElementById('dashboard-container');
-        const authForm = document.getElementById('auth-form');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const authSubmitBtn = document.getElementById('auth-submit-btn');
-        const googleSigninBtn = document.getElementById('google-signin-btn');
-        const authToggleBtn = document.getElementById('auth-toggle-btn');
-        const authToggleText = document.getElementById('auth-toggle-text');
-        const loadingDiv = document.getElementById('loading');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        // Show/hide loading
-        function showLoading() {
-            loadingDiv.style.display = 'block';
-            authSubmitBtn.disabled = true;
-            googleSigninBtn.disabled = true;
-        }
-
-        function hideLoading() {
-            loadingDiv.style.display = 'none';
-            authSubmitBtn.disabled = false;
-            googleSigninBtn.disabled = false;
-        }
-
-        // Show alert messages
-        function showAlert(message, type, containerId = 'alert-container') {
-            const container = document.getElementById(containerId);
-            const alert = document.createElement('div');
-            alert.className = `alert alert-${type}`;
-            alert.textContent = message;
+    <!-- KYC Modal -->
+    <div class="kyc-modal" id="kyc-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-kyc-modal">&times;</button>
             
-            container.appendChild(alert);
-            
-            setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
+            <div class="modal-header">
+                <h2 class="modal-title">🛡️ KYC Verification</h2>
+                <p class="modal-subtitle">Complete your identity verification to secure your account</p>
+            </div>
 
-        // Toggle between sign in and sign up
-        function toggleAuthMode() {
-            isSignUp = !isSignUp;
-            if (isSignUp) {
-                authSubmitBtn.textContent = 'Sign Up';
-                authToggleText.textContent = 'Already have an account?';
-                authToggleBtn.textContent = 'Sign In';
-            } else {
-                authSubmitBtn.textContent = 'Sign In';
-                authToggleText.textContent = "Don't have an account?";
-                authToggleBtn.textContent = 'Sign Up';
-            }
-        }
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="id-verification">📄 ID Verification</button>
+                <button class="nav-tab" data-tab="selfie-verification">📸 Selfie Verification</button>
+                <button class="nav-tab" data-tab="review">✅ Review</button>
+            </div>
 
-        // Handle authentication form submission
-        async function handleAuthSubmit(e) {
-            e.preventDefault();
-            
-            const email = emailInput.value;
-            const password = passwordInput.value;
-
-            if (!email || !password) {
-                showAlert('Please fill in all fields!', 'error');
-                return;
-            }
-
-            showLoading();
-
-            try {
-                if (isSignUp) {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    await createUserProfile(userCredential.user);
-                    showAlert('Account created successfully!', 'success');
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    showAlert('Signed in successfully!', 'success');
-                }
-            } catch (error) {
-                console.error('Authentication error:', error);
-                let errorMessage = 'Authentication failed. Please try again.';
-                
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                        errorMessage = 'No account found with this email.';
-                        break;
-                    case 'auth/wrong-password':
-                        errorMessage = 'Incorrect password.';
-                        break;
-                    case 'auth/email-already-in-use':
-                        errorMessage = 'An account with this email already exists.';
-                        break;
-                    case 'auth/weak-password':
-                        errorMessage = 'Password should be at least 6 characters.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage = 'Please enter a valid email address.';
-                        break;
-                }
-                
-                showAlert(errorMessage, 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Handle Google sign in
-        async function handleGoogleSignIn() {
-            const provider = new GoogleAuthProvider();
-            
-            showLoading();
-            
-            try {
-                const result = await signInWithPopup(auth, provider);
-                await createUserProfile(result.user);
-                showAlert('Signed in with Google successfully!', 'success');
-            } catch (error) {
-                console.error('Google sign in error:', error);
-                showAlert('Google sign in failed. Please try again.', 'error');
-            } finally {
-                hideLoading();
-            }
-        }
-
-        // Create user profile in Firestore
-        async function createUserProfile(user) {
-            const userRef = doc(db, 'users', user.uid);
-            const userSnap = await getDoc(userRef);
-
-            if (!userSnap.exists()) {
-                await setDoc(userRef, {
-                    name: user.displayName || user.email.split('@')[0],
-                    email: user.email,
-                    dailyRate: 0,
-                    balance: 0,
-                    contributions: {},
-                    transactions: [],
-                    createdAt: new Date()
-                });
-            }
-        }
-
-        // Load user data from Firestore
-        async function loadUserData(userId) {
-            try {
-                const userRef = doc(db, 'users', userId);
-                const userSnap = await getDoc(userRef);
-
-                if (userSnap.exists()) {
-                    const data = userSnap.data();
-                    userData = {
-                        name: data.name || '',
-                        dailyRate: data.dailyRate || 0,
-                        balance: data.balance || 0,
-                        contributions: data.contributions || {},
-                        transactions: data.transactions || []
-                    };
-                }
-                
-                updateDashboardUI();
-            } catch (error) {
-                console.error('Error loading user data:', error);
-                showAlert('Failed to load user data.', 'error', 'dashboard-alert-container');
-            }
-        }
-
-        // Save user data to Firestore
-        async function saveUserData(userId) {
-            try {
-                const userRef = doc(db, 'users', userId);
-                await setDoc(userRef, {
-                    name: userData.name,
-                    email: auth.currentUser.email,
-                    dailyRate: userData.dailyRate,
-                    balance: userData.balance,
-                    contributions: userData.contributions,
-                    transactions: userData.transactions,
-                    updatedAt: new Date()
-                }, { merge: true });
-            } catch (error) {
-                console.error('Error saving user data:', error);
-                showAlert('Failed to save data.', 'error', 'dashboard-alert-container');
-            }
-        }
-
-        // Show dashboard
-        function showDashboard(user) {
-            authContainer.style.display = 'none';
-            dashboardContainer.style.display = 'block';
-            document.body.style.alignItems = 'flex-start';
-            document.body.style.justifyContent = 'flex-start';
-            
-            // Update user info
-            document.getElementById('user-display-name').textContent = user.displayName || user.email.split('@')[0];
-            document.getElementById('user-email').textContent = user.email;
-            document.getElementById('user-avatar').textContent = (user.displayName || user.email)[0].toUpperCase();
-            
-            loadUserData(user.uid);
-        }
-
-        // Show authentication
-        function showAuth() {
-            authContainer.style.display = 'block';
-            dashboardContainer.style.display = 'none';
-            document.body.style.alignItems = 'center';
-            document.body.style.justifyContent = 'center';
-        }
-
-        // Handle logout
-        async function handleLogout() {
-            try {
-                await signOut(auth);
-                showAlert('Signed out successfully!', 'success');
-                showAuth();
-            } catch (error) {
-                console.error('Logout error:', error);
-                showAlert('Logout failed. Please try again.', 'error', 'dashboard-alert-container');
-            }
-        }
-
-        // Dashboard functions (from original code)
-        function updateDashboardUI() {
-            if (userData.dailyRate) {
-                document.getElementById('daily-rate-input').value = userData.dailyRate;
-            }
-            generateCalendar();
-            updateStats();
-            updateTransactionHistory();
-        }
-
-        window.setUserRate = async function() {
-            const rate = parseFloat(document.getElementById('daily-rate-input').value);
-
-            if (!rate || rate <= 0) {
-                showAlert('Please enter a valid daily rate!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            userData.dailyRate = rate;
-            
-            updateStats();
-            generateCalendar();
-            await saveUserData(auth.currentUser.uid);
-            showAlert(`Rate set successfully! Daily contribution: ₵${rate}`, 'success', 'dashboard-alert-container');
-        }
-
-        window.contributeToday = function() {
-            const today = new Date().getDate();
-            contributeForDay(today);
-        }
-
-        window.contributeForDay = async function(day) {
-            if (!userData.dailyRate) {
-                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
-                showAlert(`You already contributed ₵${userData.contributions[currentMonth][day]} on day ${day}!`, 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (!userData.contributions[currentMonth]) {
-                userData.contributions[currentMonth] = {};
-            }
-
-            userData.contributions[currentMonth][day] = userData.dailyRate;
-            userData.balance += userData.dailyRate;
-
-            userData.transactions.unshift({
-                type: 'contribution',
-                amount: userData.dailyRate,
-                date: `${months[currentMonth]} ${day}, 2025`,
-                description: `Daily contribution for day ${day}`
-            });
-
-            generateCalendar();
-            updateStats();
-            updateTransactionHistory();
-            await saveUserData(auth.currentUser.uid);
-            showAlert(`Successfully contributed ₵${userData.dailyRate} for day ${day}!`, 'success', 'dashboard-alert-container');
-        }
-
-        window.processWithdrawal = async function() {
-            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
-
-            if (!amount || amount <= 0) {
-                showAlert('Please enter a valid withdrawal amount!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (!userData.dailyRate) {
-                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (amount > userData.balance) {
-                showAlert('Insufficient balance for this withdrawal!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            const commission = userData.dailyRate;
-            const totalDeduction = amount + commission;
-
-            if (totalDeduction > userData.balance) {
-                showAlert(`Insufficient balance! You need ₵${totalDeduction} (₵${amount} + ₵${commission} commission)`, 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            userData.balance -= totalDeduction;
-
-            userData.transactions.unshift({
-                type: 'withdrawal',
-                amount: amount,
-                commission: commission,
-                date: new Date().toLocaleDateString(),
-                description: `Withdrawal of ₵${amount} (Commission: ₵${commission})`
-            });
-
-            document.getElementById('withdrawal-amount').value = '';
-            updateStats();
-            updateTransactionHistory();
-            await saveUserData(auth.currentUser.uid);
-            showAlert(`Withdrawal successful! ₵${amount} withdrawn (₵${commission} commission deducted)`, 'success', 'dashboard-alert-container');
-        }
-
-        window.selectMonth = function(monthIndex) {
-            currentMonth = monthIndex;
-            
-            document.querySelectorAll('.month-btn').forEach((btn, index) => {
-                btn.classList.toggle('active', index === monthIndex);
-            });
-
-            document.getElementById('current-month-display').querySelector('h3').textContent = 
-                `${months[monthIndex]} 2025`;
-
-            generateCalendar();
-            updateStats();
-        }
-
-        function generateCalendar() {
-            const grid = document.getElementById('contribution-grid');
-            grid.innerHTML = '';
-
-            for (let day = 1; day <= 31; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'day-cell';
-                dayCell.textContent = day;
-                dayCell.onclick = () => contributeForDay(day);
-
-                if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
-                    dayCell.classList.add('contributed');
-                    dayCell.title = `Contributed: ₵${userData.contributions[currentMonth][day]}`;
-                }
-
-                grid.appendChild(dayCell);
-            }
-
-            document.getElementById('contribute-amount').textContent = userData.dailyRate || 0;
-        }
-
-        function updateStats() {
-            document.getElementById('total-balance').textContent = `₵${userData.balance.toFixed(2)}`;
-            document.getElementById('daily-rate').textContent = `₵${userData.dailyRate}`;
-
-            const monthContributions = userData.contributions[currentMonth] || {};
-            const contributedDays = Object.keys(monthContributions).length;
-            const progress = Math.round((contributedDays / 31) * 100);
-            
-            document.getElementById('month-progress').textContent = `${progress}%`;
-            document.getElementById('month-progress-bar').style.width = `${progress}%`;
-        }
-
-        function updateTransactionHistory() {
-            const container = document.getElementById('transactions-list');
-            
-            if (userData.transactions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>';
-                return;
-            }
-
-            container.innerHTML = userData.transactions.map(transaction => `
-                <div class="transaction-item">
-                    <div>
-                        <span class="transaction-type ${transaction.type}">${transaction.type.toUpperCase()}</span>
-                        <p style="margin: 5px 0 0 0; color: #718096;">${transaction.description}</p>
-                        <small style="color: #a0aec0;">${transaction.date}</small>
+            <!-- ID Verification Tab -->
+            <div class="tab-content active" id="id-verification">
+                <div class="kyc-step" id="front-id-step">
+                    <div class="kyc-step-header">
+                        <div class="step-number" id="front-step-number">1</div>
+                        <div class="step-title">Upload Front of ID</div>
                     </div>
-                    <div style="text-align: right;">
-                        <strong style="color: ${transaction.type === 'contribution' ? '#22543d' : '#742a2a'};">
-                            ${transaction.type === 'contribution' ? '+' : '-'}₵${transaction.amount}
-                        </strong>
-                        ${transaction.commission ? `<br><small style="color: #742a2a;">Commission: -₵${transaction.commission}</small>` : ''}
+                    <p style="color: #718096; margin-bottom: 15px;">
+                        Upload a clear photo of the front of your government-issued ID (Driver's License, Passport, or National ID)
+                    </p>
+                    
+                    <div class="file-upload-area" id="front-id-upload">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Click to upload or drag and drop</div>
+                        <div class="upload-subtext">PNG, JPG up to 10MB</div>
+                    </div>
+                    
+                    <div class="file-preview" id="front-id-preview">
+                        <img id="front-id-image" alt="Front ID Preview">
+                        <p><strong>Front ID uploaded successfully!</strong></p>
+                    </div>
+                    
+                    <input type="file" id="front-id-input" accept="image/*" style="display: none;">
+                </div>
+
+                <div class="kyc-step" id="back-id-step">
+                    <div class="kyc-step-header">
+                        <div class="step-number" id="back-step-number">2</div>
+                        <div class="step-title">Upload Back of ID</div>
+                    </div>
+                    <p style="color: #718096; margin-bottom: 15px;">
+                        Upload a clear photo of the back of your government-issued ID
+                    </p>
+                    
+                    <div class="file-upload-area" id="back-id-upload">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Click to upload or drag and drop</div>
+                        <div class="upload-subtext">PNG, JPG up to 10MB</div>
+                    </div>
+                    
+                    <div class="file-preview" id="back-id-preview">
+                        <img id="back-id-image" alt="Back ID Preview">
+                        <p><strong>Back ID uploaded successfully!</strong></p>
+                    </div>
+                    
+                    <input type="file" id="back-id-input" accept="image/*" style="display: none;">
+                </div>
+            </div>
+
+            <!-- Selfie Verification Tab -->
+            <div class="tab-content" id="selfie-verification" style="display: none;">
+                <div class="kyc-step" id="selfie-step">
+                    <div class="kyc-step-header">
+                        <div class="step-number" id="selfie-step-number">3</div>
+                        <div class="step-title">Live Selfie Verification</div>
+                    </div>
+                    <p style="color: #718096; margin-bottom: 15px;">
+                        Take a live selfie following the on-screen instructions to complete verification
+                    </p>
+
+                    <div class="live-action" id="live-action-prompt">
+                        <div class="action-text">Please look straight into the camera</div>
+                    </div>
+
+                    <div class="camera-container">
+                        <video class="camera-video" id="selfie-video" autoplay playsinline></video>
+                        <canvas id="selfie-canvas" style="display: none;"></canvas>
+                        
+                        <div class="camera-controls">
+                            <button class="camera-btn" id="start-camera-btn">Start Camera</button>
+                            <button class="camera-btn" id="capture-selfie-btn" style="display: none;">Take Photo</button>
+                            <button class="camera-btn" id="retake-selfie-btn" style="display: none;">Retake</button>
+                        </div>
+                    </div>
+
+                    <div class="file-preview" id="selfie-preview">
+                        <img id="selfie-image" alt="Selfie Preview">
+                        <p><strong>Selfie captured successfully!</strong></p>
                     </div>
                 </div>
-            `).join('');
-        }
+            </div>
 
-        // Event listeners
-        authForm.addEventListener('submit', handleAuthSubmit);
-        googleSigninBtn.addEventListener('click', handleGoogleSignIn);
-        authToggleBtn.addEventListener('click', toggleAuthMode);
-        logoutBtn.addEventListener('click', handleLogout);
+            <!-- Review Tab -->
+            <div class="tab-content" id="review" style="display: none;">
+                <div class="kyc-step">
+                    <div class="kyc-step-header">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Review & Submit</div>
+                    </div>
+                    
+                    <div id="kyc-review-content">
+                        <p style="color: #718096; margin-bottom: 20px;">
+                            Please review your uploaded documents before submitting for verification.
+                        </p>
+                        
+                        <div class="verification-status" id="kyc-submission-status">
+                            <div>📋 Ready for submission</div>
+                        </div>
 
-        // Auth state observer
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                showDashboard(user);
-            } else {
-                showAuth();
-            }
-        });
+                        <button class="btn" id="submit-kyc-btn" style="width: 100%;">
+                            Submit for Verification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // Initialize the app
-        window.onload = function() {
-            // The auth state observer will handle showing the appropriate view
-        };
+    <!-- Settings Modal -->
+    <div class="settings-modal" id="settings-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-settings-modal">&times;</button>
+            
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ Account Settings</h2>
+                <p class="modal-subtitle">Manage your account preferences and personal information</p>
+            </div>
 
-        // Make functions globally available for onclick handlers
-        window.setUserRate = setUserRate;
-        window.contributeToday = contributeToday;
-        window.contributeForDay = contributeForDay;
-        window.processWithdrawal = processWithdrawal;
-        window.selectMonth = selectMonth;
-    </script>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="profile-settings">👤 Profile</button>
+                <button class="nav-tab" data-tab="security-settings">🔒 Security</button>
+                <button class="nav-tab" data-tab="preferences-settings">⚙️ Preferences</button>
+            </div>
+
+            <!-- Profile Settings -->
+            <div class="tab-content active" id="profile-settings">
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <span>👤</span> Personal Information
+                    </div>
+                    
+                    <form id="profile-update-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="edit-first-name">First Name</label>
+                                <input type="text" id="edit-first-name">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-surname">Surname</label>
+                                <input type="text" id="edit-surname">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit-middle-name">Middle Name (Optional)</label>
+                            <input type="text" id="edit-middle-name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit-email-display">Email Address</label>
+                            <input type="email" id="edit-email-display" disabled>
+                            <small style="color: #718096;">Email cannot be changed after registration</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit-country-display">Country</label>
+                            <select id="edit-country-display">
+                                <option value="">Select your country</option>
+                                <option value="US" data-code="+1">🇺🇸 United States (+1)</option>
+                                <option value="GB" data-code="+44">🇬🇧 United Kingdom (+44)</option>
+                                <option value="GH" data-code="+233">🇬🇭 Ghana (+233)</option>
+                                <option value="NG" data-code="+234">🇳🇬 Nigeria (+234)</option>
+                                <option value="KE" data-code="+254">🇰🇪 Kenya (+254)</option>
+                                <option value="ZA" data-code="+27">🇿🇦 South Africa (+27)</option>
+                                <option value="CA" data-code="+1">🇨🇦 Canada (+1)</option>
+                                <option value="AU" data-code="+61">🇦🇺 Australia (+61)</option>
+                                <option value="DE" data-code="+49">🇩🇪 Germany (+49)</option>
+                                <option value="FR" data-code="+33">🇫🇷 France (+33)</option>
+                                <option value="IT" data-code="+39">🇮🇹 Italy (+39)</option>
+                                <option value="ES" data-code="+34">🇪🇸 Spain (+34)</option>
+                                <option value="BR" data-code="+55">🇧🇷 Brazil (+55)</option>
+                                <option value="MX" data-code="+52">🇲🇽 Mexico (+52)</option>
+                                <option value="AR" data-code="+54">🇦🇷 Argentina (+54)</option>
+                                <option value="IN" data-code="+91">🇮🇳 India (+91)</option>
+                                <option value="CN" data-code="+86">🇨🇳 China (+86)</option>
+                                <option value="JP" data-code="+81">🇯🇵 Japan (+81)</option>
+                                <option value="KR" data-code="+82">🇰🇷 South Korea (+82)</option>
+                                <option value="SG" data-code="+65">🇸🇬 Singapore (+65)</option>
+                                <option value="MY" data-code="+60">🇲🇾 Malaysia (+60)</option>
+                                <option value="TH" data-code="+66">🇹🇭 Thailand (+66)</option>
+                                <option value="PH" data-code="+63">🇵🇭 Philippines (+63)</option>
+                                <option value="ID" data-code="+62">🇮🇩 Indonesia (+62)</option>
+                                <option value="VN" data-code="+84">🇻🇳 Vietnam (+84)</option>
+                                <option value="EG" data-code="+20">🇪🇬 Egypt (+20)</option>
+                                <option value="MA" data-code="+212">🇲🇦 Morocco (+212)</option>
+                                <option value="TN" data-code="+216">🇹🇳 Tunisia (+216)</option>
+                                <option value="ET" data-code="+251">🇪🇹 Ethiopia (+251)</option>
+                                <option value="UG" data-code="+256">🇺🇬 Uganda (+256)</option>
+                                <option value="TZ" data-code="+255">🇹🇿 Tanzania (+255)</option>
+                                <option value="RW" data-code="+250">🇷🇼 Rwanda (+250)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="edit-phone">Phone Number</label>
+                            <input type="tel" id="edit-phone">
+                        </div>
+
+                        <button type="submit" class="btn">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="tab-content" id="security-settings" style="display: none;">
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <span>🔒</span> Change Password
+                    </div>
+                    
+                    <form id="password-update-form">
+                        <div class="form-group">
+                            <label for="current-password">Current Password</label>
+                            <input type="password" id="current-password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="new-password">New Password</label>
+                            <input type="password" id="new-password" required minlength="6">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-new-password">Confirm New Password</label>
+                            <input type="password" id="confirm-new-password" required minlength="6">
+                        </div>
+
+                        <button type="submit" class="btn">Update Password</button>
+                    </form>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <span>🛡️</span> Account Security
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
+                        <div>
+                            <div style="font-weight: 600; color: #4a5568;">KYC Verification Status</div>
+                            <div style="color: #718096; font-size: 0.9rem;" id="settings-kyc-status">Pending verification</div>
+                        </div>
+                        <button class="btn" id="open-kyc-from-settings" style="padding: 8px 15px; font-size: 0.9rem;">
+                            Verify Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferences Settings -->
+            <div class="tab-content" id="preferences-settings" style="display: none;">
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <span>📧</span> Notifications
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="email-notifications" checked>
+                            <span>Email notifications for transactions</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="daily-reminders" checked>
+                            <span>Daily contribution reminders</span>
+                        </label>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="security-alerts" checked>
+                            <span>Security and login alerts</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <span>🌍</span> Regional Settings
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="currency-preference">Preferred Currency Display</label>
+                        <select id="currency-preference">
+                            <option value="GHS">🇬🇭 Ghanaian Cedi (₵)</option>
+                            <option value="USD">🇺🇸 US Dollar ($)</option>
+                            <option value="EUR">🇪🇺 Euro (€)</option>
+                            <option value="GBP">🇬🇧 British Pound (£)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="language-preference">Language</label>
+                        <select id="language-preference">
+                            <option value="en">🇺🇸 English</option>
+                            <option value="tw">🇬🇭 Twi</option>
+                            <option value="fr">🇫🇷 French</option>
+                            <option value="es">🇪🇸 Spanish</option>
+                        </select>
+                    </div>
+                    
+                    <button class="btn" id="save-preferences-btn">Save Preferences</button>
+                </div>
+
+                <div class="settings-section">
+                    <div class="settings-title">
+                        <span>⚠️</span> Danger Zone
+                    </div>
+                    
+                    <div style="padding: 20px; background: #fed7d7; border: 1px solid #feb2b2; border-radius: 10px; color: #742a2a;">
+                        <div style="font-weight: 600; margin-bottom: 10px;">Delete Account</div>
+                        <div style="margin-bottom: 15px; font-size: 0.9rem;">
+                            Once you delete your account, there is no going back. Please be certain.
+                        </div>
+                        <button class="btn" id="delete-account-btn" style="background: #e53e3e; width: auto; padding: 10px 20px;">
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <script type="module" src="data.js">
+          </script>
 </body>
-</html>
