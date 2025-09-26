@@ -1,11 +1,11 @@
-        // Import Firebase functions
+ // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, sendEmailVerification, updateProfile as updateFirebaseProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, writeBatch, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-analytics.js";
 
-        // Firebase configuration
+        // Enable Firestore persistence for offline support
         const firebaseConfig = {
             apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
             authDomain: "susupay-5286e.firebaseapp.com",
@@ -401,40 +401,68 @@
         // Load user data from Firestore
         async function loadUserData(userId) {
             try {
+                console.log('Loading user data for:', userId);
+                
+                // First get the user document
                 const userRef = doc(db, 'users', userId);
                 const userSnap = await getDoc(userRef);
+                
+                // Initialize default user data
+                userData = {
+                    firstName: '',
+                    middleName: '',
+                    surname: '',
+                    email: '',
+                    phone: '',
+                    country: '',
+                    dailyRate: 0,
+                    balance: 0,
+                    contributions: {},
+                    transactions: [],
+                    kycStatus: 'not_started',
+                    kycDocuments: {
+                        frontId: null,
+                        backId: null,
+                        selfie: null
+                    },
+                    preferences: {
+                        emailNotifications: true,
+                        dailyReminders: true,
+                        securityAlerts: true,
+                        currency: 'GHS',
+                        language: 'en'
+                    }
+                };
 
+                // If user document exists, merge with defaults
                 if (userSnap.exists()) {
+                    console.log('User document found');
                     const data = userSnap.data();
                     userData = {
-                        firstName: data.firstName || '',
-                        middleName: data.middleName || '',
-                        surname: data.surname || '',
-                        email: data.email || '',
-                        phone: data.phone || '',
-                        country: data.country || '',
-                        dailyRate: data.dailyRate || 0,
-                        balance: data.balance || 0,
-                        contributions: data.contributions || {},
-                        transactions: data.transactions || [],
-                        kycStatus: data.kycStatus || 'not_started',
-                        kycDocuments: data.kycDocuments || {
-                            frontId: null,
-                            backId: null,
-                            selfie: null
-                        },
-                        preferences: data.preferences || {
-                            emailNotifications: true,
-                            dailyReminders: true,
-                            securityAlerts: true,
-                            currency: 'GHS',
-                            language: 'en'
-                        }
+                        ...userData,
+                        ...data,
+                        kycDocuments: { ...userData.kycDocuments, ...data.kycDocuments },
+                        preferences: { ...userData.preferences, ...data.preferences }
                     };
+
+                    // Get transactions from the user document
+                    console.log('Fetching transactions');
+                    userData.transactions = Array.isArray(data.transactions) ? data.transactions : [];
+                    console.log('Loaded transactions:', userData.transactions.length);
+                } else {
+                    console.log('Creating new user document');
+                    // Create user document if it doesn't exist
+                    try {
+                        await setDoc(userRef, userData);
+                    } catch (createError) {
+                        console.error('Error creating user document:', createError);
+                    }
                 }
                 
+                console.log('Updating UI');
                 updateDashboardUI();
                 updateKYCBanner();
+                
             } catch (error) {
                 console.error('Error loading user data:', error);
                 showAlert('Failed to load user data.', 'error', 'dashboard-alert-container');
@@ -444,8 +472,9 @@
         // Save user data to Firestore
         async function saveUserData(userId) {
             try {
+                // Save main user data including transactions
                 const userRef = doc(db, 'users', userId);
-                await setDoc(userRef, {
+                const userUpdate = {
                     firstName: userData.firstName,
                     middleName: userData.middleName,
                     surname: userData.surname,
@@ -455,12 +484,14 @@
                     dailyRate: userData.dailyRate,
                     balance: userData.balance,
                     contributions: userData.contributions,
-                    transactions: userData.transactions,
                     kycStatus: userData.kycStatus,
                     kycDocuments: userData.kycDocuments,
                     preferences: userData.preferences,
+                    transactions: userData.transactions, // Store transactions in main document
                     updatedAt: new Date()
-                }, { merge: true });
+                };
+
+                await setDoc(userRef, userUpdate, { merge: true });
             } catch (error) {
                 console.error('Error saving user data:', error);
                 showAlert('Failed to save data.', 'error', 'dashboard-alert-container');
