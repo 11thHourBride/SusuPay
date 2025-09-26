@@ -1,4 +1,4 @@
-     * {
+ * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -46,7 +46,7 @@
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             text-align: left;
         }
 
@@ -64,22 +64,38 @@
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95rem;
             font-weight: 600;
             font-size: 0.9rem;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 12px;
-            border: 2px solid #e2e8f0;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
             font-size: 1rem;
-            transition: all 0.3s ease;
+            color: #4a5568;
+            transition: all 0.2s ease;
+            background-color: #fff;
+            line-height: 1.5;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            max-height: 300px;
+            font-family: inherit;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) inset;
+            background-color: #f8fafc;
+            line-height: 1.6;
+            padding: 14px 16px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: #667eea;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
@@ -346,7 +362,7 @@
             border-color: rgba(255, 255, 255, 0.5);
         }
 
-        .kyc-modal, .settings-modal {
+        .modal, .kyc-modal, .settings-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -641,10 +657,17 @@
             background: #f7fafc;
         }
 
-        .settings-btn {
+        .dashboard-controls {
             position: fixed;
             top: 20px;
             right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .settings-btn, .report-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -655,13 +678,108 @@
             width: 50px;
             height: 50px;
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+        }
+
+        /* Base tooltip styles */
+        .tooltip {
+            position: relative;
+        }
+
+        /* Default tooltip position (for report button) */
+        .report-btn.tooltip::before,
+        .report-btn.tooltip::after {
+            content: "";
+            position: absolute;
+            right: calc(100% + 5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        .report-btn.tooltip::before {
+            content: attr(data-tooltip);
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            right: calc(100% + 15px);
+        }
+
+        /* Settings button tooltip position */
+        .settings-btn.tooltip::before,
+        .settings-btn.tooltip::after {
+            content: "";
+            position: absolute;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .settings-btn.tooltip::before {
+            content: attr(data-tooltip);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            top: calc(100% + 10px);
+        }
+
+        .settings-btn.tooltip::after {
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: rgba(0, 0, 0, 0.9);
+            right: calc(100% + 3px);
+        }
+
+        .tooltip:hover::before,
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
             transition: all 0.3s ease;
-            z-index: 100;
+        
+
+        .report-btn {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
         }
 
         .settings-btn:hover {
             transform: rotate(90deg);
+        }
+        
+        .report-btn:hover {
+            transform: scale(1.1);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Settings button specific tooltip */
+        .settings-btn.tooltip::before {
+            top: auto;
+            bottom: -40px;
+            right: 50%;
+            transform: translateX(50%);
+        }
+
+        .settings-btn.tooltip::after {
+            top: auto;
+            bottom: -12px;
+            right: 50%;
+            transform: translateX(50%) rotate(-90deg);
+            border-left-color: transparent;
+            border-bottom-color: rgba(0, 0, 0, 0.9);
         }
 
         .user-panel {
@@ -904,4 +1022,48 @@
                 padding: 30px 20px;
                 margin: 10px;
             }
+        }
+
+        /* Enhanced form styles for textarea */
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+            max-height: 300px;
+            font-family: inherit;
+            padding: 14px 16px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #4a5568;
+            line-height: 1.6;
+            width: 100%;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) inset;
+            transition: all 0.2s ease;
+        }
+
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background-color: #fff;
+        }
+
+        .form-group textarea::placeholder {
+            color: #a0aec0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Consistent form control styling */
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            margin-top: 4px;
+        }
+
+        .form-group label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4a5568;
         }
