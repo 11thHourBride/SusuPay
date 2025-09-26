@@ -1,4 +1,4 @@
-// Import Firebase functions
+ // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, sendEmailVerification, updateProfile as updateFirebaseProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, writeBatch, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -25,6 +25,7 @@
 
         // Global variables
         let isSignUp = false;
+        let screenshotFile = null;
         let userData = {
             firstName: '',
             middleName: '',
@@ -1049,6 +1050,143 @@
             updateKYCStatus();
         }
 
+        // Report Problem functionality
+        function initializeReportProblem() {
+            const reportModal = document.getElementById('report-modal');
+            const reportBtn = document.getElementById('report-btn');
+            const closeReportBtn = document.getElementById('close-report-modal');
+            const reportForm = document.getElementById('report-problem-form');
+            const screenshotUpload = document.getElementById('screenshot-upload');
+            const screenshotInput = document.getElementById('screenshot-input');
+            const removeScreenshotBtn = document.getElementById('remove-screenshot');
+
+            reportBtn.addEventListener('click', () => {
+                reportModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+
+            closeReportBtn.addEventListener('click', () => {
+                reportModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                reportForm.reset();
+                document.getElementById('screenshot-preview').style.display = 'none';
+                screenshotFile = null;
+            });
+
+            screenshotUpload.addEventListener('click', () => screenshotInput.click());
+            
+            screenshotInput.addEventListener('change', handleScreenshotUpload);
+            
+            removeScreenshotBtn.addEventListener('click', () => {
+                document.getElementById('screenshot-preview').style.display = 'none';
+                screenshotFile = null;
+                screenshotInput.value = '';
+            });
+
+            reportForm.addEventListener('submit', handleReportSubmission);
+            
+            setupScreenshotDragAndDrop(screenshotUpload);
+        }
+
+        // Handle screenshot upload
+        function handleScreenshotUpload(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('Screenshot must be less than 5MB', 'error');
+                    return;
+                }
+                displayScreenshotPreview(file);
+                screenshotFile = file;
+            }
+        }
+
+        // Display screenshot preview
+        function displayScreenshotPreview(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('screenshot-image').src = e.target.result;
+                document.getElementById('screenshot-preview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Setup drag and drop for screenshot
+        function setupScreenshotDragAndDrop(dropZone) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => {
+                    dropZone.classList.remove('dragover');
+                });
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    document.getElementById('screenshot-input').files = e.dataTransfer.files;
+                    handleScreenshotUpload({ target: { files: [file] } });
+                }
+            });
+        }
+
+        // Handle report submission
+        async function handleReportSubmission(e) {
+            e.preventDefault();
+            
+            const category = document.getElementById('problem-category').value;
+            const description = document.getElementById('problem-description').value;
+            
+            showLoading();
+            
+            try {
+                // Create report document
+                const reportRef = doc(collection(db, 'users', auth.currentUser.uid, 'reports'));
+                const report = {
+                    category,
+                    description,
+                    status: 'pending',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+
+                // If screenshot exists, upload it first
+                if (screenshotFile) {
+                    const storageRef = ref(storage, `reports/${auth.currentUser.uid}/${reportRef.id}_${Date.now()}`);
+                    await uploadBytes(storageRef, screenshotFile);
+                    report.screenshotURL = await getDownloadURL(storageRef);
+                }
+
+                // Save report
+                await setDoc(reportRef, report);
+
+                showAlert('Your report has been submitted successfully. We\'ll look into it as soon as possible.', 'success');
+                document.getElementById('report-modal').style.display = 'none';
+                document.getElementById('report-problem-form').reset();
+                document.getElementById('screenshot-preview').style.display = 'none';
+                screenshotFile = null;
+                
+            } catch (error) {
+                console.error('Error submitting report:', error);
+                showAlert('Failed to submit report. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
         // Settings functionality
         function initializeSettings() {
             document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
@@ -1271,6 +1409,7 @@
         updatePhoneCode();
         initializeKYC();
         initializeSettings();
+        initializeReportProblem();
 
         // Auth state observer
         onAuthStateChanged(auth, (user) => {
@@ -1287,3 +1426,4 @@
 
         // Initialize the current month
         selectMonth(currentMonth);
+    
