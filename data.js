@@ -1,4 +1,4 @@
- // Import Firebase functions
+// Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, sendEmailVerification, updateProfile as updateFirebaseProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, deleteDoc, collection, getDocs, writeBatch, query, where, orderBy } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -556,15 +556,33 @@
             document.getElementById('daily-rate').textContent = `₵${userData.dailyRate.toFixed(2)}`;
             document.getElementById('contribute-amount').textContent = userData.dailyRate.toFixed(2);
             
-            // Calculate month progress
+            // Calculate month progress based on approved transactions
             const today = new Date();
-            const currentMonthIndex = today.getMonth();
-            const daysInMonth = new Date(today.getFullYear(), currentMonthIndex + 1, 0).getDate();
-            const daysPassed = today.getDate();
-            const progressPercentage = Math.round((daysPassed / daysInMonth) * 100);
+            const currentMonthName = months[currentMonth];
+            const daysInMonth = new Date(2025, currentMonth + 1, 0).getDate();
             
+            // Count approved transactions for current month
+            const approvedTransactions = userData.transactions.filter(t => 
+                t.type === 'contribution' && 
+                t.status === 'approved' && 
+                t.date.includes(currentMonthName)
+            ).length;
+            
+            const progressPercentage = Math.round((approvedTransactions / daysInMonth) * 100);
+            
+            // Update progress display and bar color
+            const progressBar = document.getElementById('month-progress-bar');
             document.getElementById('month-progress').textContent = `${progressPercentage}%`;
-            document.getElementById('month-progress-bar').style.width = `${progressPercentage}%`;
+            progressBar.style.width = `${progressPercentage}%`;
+            
+            // Color coding based on progress
+            if (progressPercentage < 50) {
+                progressBar.style.backgroundColor = '#e53e3e'; // Red for low progress
+            } else if (progressPercentage < 80) {
+                progressBar.style.backgroundColor = '#d69e2e'; // Yellow for medium progress
+            } else {
+                progressBar.style.backgroundColor = '#38a169'; // Green for good progress
+            }
         }
 
         // Generate calendar
