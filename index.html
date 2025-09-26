@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusuPay - Login</title>
-    <link rel="stylesheet" href="data.css">
-   </head>
+
+  <link rel="stylesheet" href="data.css">
+</head>
 <body>
     <!-- Authentication Container -->
     <div class="auth-container" id="auth-container">
@@ -162,7 +163,10 @@
 
     <!-- Dashboard Container -->
     <div class="dashboard-container" id="dashboard-container">
-        <button class="settings-btn" id="settings-btn" title="Settings">⚙️</button>
+        <div class="dashboard-controls">
+            <button class="settings-btn tooltip" id="settings-btn" data-tooltip="Settings">⚙️</button>
+            <button class="report-btn tooltip" id="report-btn" data-tooltip="Report a Problem">❗</button>
+        </div>
         
         <div class="dashboard-header">
             <div>
@@ -605,7 +609,54 @@
         </div>
     </div>
 
-   <script type="module" src="data.js">
-    </script>
+    <!-- Report Problem Modal -->
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Report a Problem</h2>
+                <button class="close-btn" id="close-report-modal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="report-problem-form">
+                    <div class="form-group">
+                        <label for="problem-category">Problem Category *</label>
+                        <select id="problem-category" required>
+                            <option value="">Select a category</option>
+                            <option value="login">Login/Authentication Issues</option>
+                            <option value="transaction">Transaction Problems</option>
+                            <option value="kyc">KYC Verification Issues</option>
+                            <option value="technical">Technical Problems</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problem-description">Describe the Problem *</label>
+                        <textarea id="problem-description" rows="5" required 
+                            placeholder="Please provide as much detail as possible about the problem you're experiencing..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problem-screenshot">Screenshot (Optional)</label>
+                        <div class="file-upload-area" id="screenshot-upload">
+                            <input type="file" id="screenshot-input" accept="image/*" style="display: none;">
+                            <div class="upload-text">
+                                <span>📸 Click or drag to upload screenshot</span>
+                                <small>Max file size: 5MB</small>
+                            </div>
+                        </div>
+                        <div id="screenshot-preview" style="display: none;">
+                            <img id="screenshot-image" src="" alt="Screenshot preview">
+                            <button type="button" class="remove-btn" id="remove-screenshot">Remove</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn">Submit Report</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="data.js"> </script>
     </body>
-</html>
+ </html>       
