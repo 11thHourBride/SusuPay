@@ -1,4 +1,4 @@
-        * {
+     * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -769,9 +769,38 @@
             border-color: transparent;
         }
 
-        .day-cell:hover {
-            transform: scale(1.1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        .day-cell.contribution-pending {
+            background: linear-gradient(135deg, #f6cc33 0%, #e6b800 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .day-cell.contribution-rejected {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .transaction-status {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fef5e7;
+            color: #744210;
+        }
+
+        .status-approved {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-rejected {
+            background: #fed7d7;
+            color: #742a2a;
         }
 
         .transaction-history {
