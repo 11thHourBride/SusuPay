@@ -1,4 +1,4 @@
-  // Import Firebase functions
+        // Import Firebase functions
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, sendEmailVerification, updateProfile as updateFirebaseProfile, updatePassword, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
@@ -50,7 +50,7 @@
                 language: 'en'
             }
         };
-        let currentMonth = 0;
+        let currentMonth = new Date().getMonth();
         let currentKycTab = 'id-verification';
         let currentSettingsTab = 'profile-settings';
         let cameraStream = null;
@@ -105,15 +105,16 @@
             }, 5000);
         }
 
-        //
-        // Toggle between sign in and sign up
+        // Toggle between signin and signup
         function toggleAuthMode() {
             isSignUp = !isSignUp;
+            
             if (isSignUp) {
                 signinForm.style.display = 'none';
                 signupForm.style.display = 'block';
                 authToggleText.textContent = 'Already have an account?';
                 authToggleBtn.textContent = 'Sign In';
+                updatePhoneCode();
             } else {
                 signinForm.style.display = 'block';
                 signupForm.style.display = 'none';
@@ -122,27 +123,28 @@
             }
         }
 
-        // Initialize country codes and event listeners
-        function initializeCountryCodes() {
+        // Update phone code based on country selection
+        function updatePhoneCode() {
             const countrySelect = document.getElementById('country');
             const phoneCodeSelect = document.getElementById('phone-code');
             
             countrySelect.addEventListener('change', function() {
                 const selectedOption = this.options[this.selectedIndex];
-                const countryCode = selectedOption.dataset.code;
+                const phoneCode = selectedOption.getAttribute('data-code');
                 
+                // Clear and populate phone code
                 phoneCodeSelect.innerHTML = '<option value="">Code</option>';
-                if (countryCode) {
+                if (phoneCode) {
                     const option = document.createElement('option');
-                    option.value = countryCode;
-                    option.textContent = countryCode;
+                    option.value = phoneCode;
+                    option.textContent = phoneCode;
                     option.selected = true;
                     phoneCodeSelect.appendChild(option);
                 }
             });
         }
 
-        // Validate form data
+        // Form validation
         function validateSignupForm() {
             const firstName = document.getElementById('first-name').value.trim();
             const surname = document.getElementById('surname').value.trim();
@@ -154,36 +156,41 @@
             const confirmPassword = document.getElementById('confirm-password').value;
 
             if (!firstName || !surname) {
-                showAlert('Please enter your first name and surname!', 'error');
+                showAlert('Please enter your first name and surname.', 'error');
                 return false;
             }
 
-            if (!email) {
-                showAlert('Please enter your email address!', 'error');
+            if (!email || !isValidEmail(email)) {
+                showAlert('Please enter a valid email address.', 'error');
                 return false;
             }
 
             if (!country) {
-                showAlert('Please select your country!', 'error');
+                showAlert('Please select your country.', 'error');
                 return false;
             }
 
             if (!phoneCode || !phone) {
-                showAlert('Please enter your phone number!', 'error');
+                showAlert('Please enter your phone number.', 'error');
                 return false;
             }
 
             if (password.length < 6) {
-                showAlert('Password must be at least 6 characters long!', 'error');
+                showAlert('Password must be at least 6 characters long.', 'error');
                 return false;
             }
 
             if (password !== confirmPassword) {
-                showAlert('Passwords do not match!', 'error');
+                showAlert('Passwords do not match.', 'error');
                 return false;
             }
 
             return true;
+        }
+
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
         }
 
         // Handle sign in form submission
@@ -194,7 +201,7 @@
             const password = document.getElementById('signin-password').value;
 
             if (!email || !password) {
-                showAlert('Please fill in all fields!', 'error');
+                showAlert('Please enter both email and password.', 'error');
                 return;
             }
 
@@ -202,30 +209,20 @@
 
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                
-                if (!userCredential.user.emailVerified) {
-                    showAlert('Please verify your email before signing in. Check your inbox for the verification link.', 'error');
-                    await signOut(auth);
-                    return;
-                }
-                
                 showAlert('Signed in successfully!', 'success');
             } catch (error) {
                 console.error('Sign in error:', error);
-                let errorMessage = 'Sign in failed. Please try again.';
+                let errorMessage = 'Sign in failed. Please check your credentials.';
                 
                 switch (error.code) {
                     case 'auth/user-not-found':
-                        errorMessage = 'No account found with this email.';
+                        errorMessage = 'No account found with this email address.';
                         break;
                     case 'auth/wrong-password':
                         errorMessage = 'Incorrect password.';
                         break;
                     case 'auth/invalid-email':
                         errorMessage = 'Please enter a valid email address.';
-                        break;
-                    case 'auth/user-disabled':
-                        errorMessage = 'This account has been disabled.';
                         break;
                     case 'auth/too-many-requests':
                         errorMessage = 'Too many failed attempts. Please try again later.';
@@ -370,6 +367,19 @@
             authContainer.style.display = 'none';
             verificationContainer.style.display = 'block';
             document.getElementById('verification-email').textContent = email;
+            
+            // Attach event to check verification button
+            const checkBtn = document.getElementById('check-verification-btn');
+            checkBtn.onclick = async function() {
+                if (auth.currentUser) {
+                    await auth.currentUser.reload();
+                    if (auth.currentUser.emailVerified) {
+                        showDashboard(auth.currentUser);
+                    } else {
+                        showAlert('Email not verified yet. Please check your inbox and click the verification link.', 'error');
+                    }
+                }
+            };
         }
 
         // Resend verification email
@@ -501,7 +511,211 @@
             }
         }
 
-        // Initialize KYC functionality
+        // Update dashboard UI
+        function updateDashboardUI() {
+            updateStats();
+            generateCalendar();
+            updateTransactionHistory();
+            document.getElementById('daily-rate-input').value = userData.dailyRate || '';
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('total-balance').textContent = `₵${userData.balance.toFixed(2)}`;
+            document.getElementById('daily-rate').textContent = `₵${userData.dailyRate.toFixed(2)}`;
+            document.getElementById('contribute-amount').textContent = userData.dailyRate.toFixed(2);
+            
+            // Calculate month progress
+            const today = new Date();
+            const currentMonthIndex = today.getMonth();
+            const daysInMonth = new Date(today.getFullYear(), currentMonthIndex + 1, 0).getDate();
+            const daysPassed = today.getDate();
+            const progressPercentage = Math.round((daysPassed / daysInMonth) * 100);
+            
+            document.getElementById('month-progress').textContent = `${progressPercentage}%`;
+            document.getElementById('month-progress-bar').style.width = `${progressPercentage}%`;
+        }
+
+        // Generate calendar
+        function generateCalendar() {
+            const grid = document.getElementById('contribution-grid');
+            const today = new Date();
+            const year = today.getFullYear();
+            const daysInMonth = new Date(year, currentMonth + 1, 0).getDate();
+            
+            grid.innerHTML = '';
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('div');
+                dayCell.className = 'day-cell';
+                dayCell.textContent = day;
+                dayCell.onclick = () => contributeForDay(day);
+                
+                // Check if there's a contribution for this day
+                if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
+                    const contribution = userData.contributions[currentMonth][day];
+                    switch (contribution.status) {
+                        case 'approved':
+                            dayCell.classList.add('contributed');
+                            break;
+                        case 'pending':
+                            dayCell.classList.add('contribution-pending');
+                            break;
+                        case 'rejected':
+                            dayCell.classList.add('contribution-rejected');
+                            break;
+                    }
+                }
+                
+                grid.appendChild(dayCell);
+            }
+        }
+
+        // Update transaction history
+        function updateTransactionHistory() {
+            const transactionsList = document.getElementById('transactions-list');
+            
+            if (userData.transactions.length === 0) {
+                transactionsList.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>';
+                return;
+            }
+            
+            transactionsList.innerHTML = '';
+            
+            userData.transactions.forEach(transaction => {
+                const transactionItem = document.createElement('div');
+                transactionItem.className = 'transaction-item';
+                
+                transactionItem.innerHTML = `
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 5px;">${transaction.description}</div>
+                        <div style="color: #718096; font-size: 0.9rem;">${transaction.date}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600; color: ${transaction.type === 'contribution' ? '#38a169' : '#e53e3e'};">
+                            ${transaction.type === 'contribution' ? '+' : '-'}₵${transaction.amount.toFixed(2)}
+                        </div>
+                        <div class="transaction-status status-${transaction.status}">
+                            ${transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                        </div>
+                    </div>
+                `;
+                
+                transactionsList.appendChild(transactionItem);
+            });
+        }
+
+        // Dashboard functions (make them globally available)
+        window.setUserRate = async function() {
+            const rate = parseFloat(document.getElementById('daily-rate-input').value);
+            if (!rate || rate <= 0) {
+                showAlert('Please enter a valid daily rate!', 'error', 'dashboard-alert-container');
+                return;
+            }
+            userData.dailyRate = rate;
+            updateStats();
+            generateCalendar();
+            await saveUserData(auth.currentUser.uid);
+            showAlert(`Rate set successfully! Daily contribution: ₵${rate}`, 'success', 'dashboard-alert-container');
+        };
+
+        window.contributeToday = function() {
+            const today = new Date().getDate();
+            contributeForDay(today);
+        };
+
+        window.contributeForDay = async function(day) {
+            if (!userData.dailyRate) {
+                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
+                return;
+            }
+            if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
+                showAlert(`You already have a contribution request for day ${day}!`, 'error', 'dashboard-alert-container');
+                return;
+            }
+            if (!userData.contributions[currentMonth]) {
+                userData.contributions[currentMonth] = {};
+            }
+            
+            const contributionRequest = {
+                amount: userData.dailyRate,
+                status: 'pending',
+                requestedAt: new Date().toISOString(),
+                type: 'contribution'
+            };
+            
+            userData.contributions[currentMonth][day] = contributionRequest;
+            userData.transactions.unshift({
+                id: `contrib_${Date.now()}`,
+                type: 'contribution',
+                amount: userData.dailyRate,
+                date: `${months[currentMonth]} ${day}, 2025`,
+                description: `Daily contribution request for day ${day}`,
+                status: 'pending',
+                requestedAt: new Date().toISOString()
+            });
+            
+            generateCalendar();
+            updateStats();
+            updateTransactionHistory();
+            await saveUserData(auth.currentUser.uid);
+            showAlert(`Contribution request of ₵${userData.dailyRate} submitted for day ${day}. Awaiting admin approval.`, 'success', 'dashboard-alert-container');
+        };
+
+        window.processWithdrawal = async function() {
+            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
+            if (!amount || amount <= 0) {
+                showAlert('Please enter a valid withdrawal amount!', 'error', 'dashboard-alert-container');
+                return;
+            }
+            if (!userData.dailyRate) {
+                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
+                return;
+            }
+            if (amount > userData.balance) {
+                showAlert('Insufficient balance for this withdrawal!', 'error', 'dashboard-alert-container');
+                return;
+            }
+            
+            const commission = userData.dailyRate;
+            const totalDeduction = amount + commission;
+            
+            if (totalDeduction > userData.balance) {
+                showAlert(`Insufficient balance! You need ₵${totalDeduction} (₵${amount} + ₵${commission} commission)`, 'error', 'dashboard-alert-container');
+                return;
+            }
+            
+            const withdrawalRequest = {
+                id: `withdraw_${Date.now()}`,
+                type: 'withdrawal',
+                amount: amount,
+                commission: commission,
+                totalDeduction: totalDeduction,
+                date: new Date().toLocaleDateString(),
+                description: `Withdrawal request of ₵${amount} (Commission: ₵${commission})`,
+                status: 'pending',
+                requestedAt: new Date().toISOString()
+            };
+            
+            userData.transactions.unshift(withdrawalRequest);
+            document.getElementById('withdrawal-amount').value = '';
+            updateStats();
+            updateTransactionHistory();
+            await saveUserData(auth.currentUser.uid);
+            showAlert(`Withdrawal request of ₵${amount} submitted. Awaiting admin approval.`, 'success', 'dashboard-alert-container');
+        };
+
+        window.selectMonth = function(monthIndex) {
+            currentMonth = monthIndex;
+            document.querySelectorAll('.month-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index === monthIndex);
+            });
+            document.getElementById('current-month-display').querySelector('h3').textContent = `${months[monthIndex]} 2025`;
+            generateCalendar();
+            updateStats();
+        };
+
+        // KYC functions
         function initializeKYC() {
             // File upload handlers
             setupFileUpload('front-id-upload', 'front-id-input', 'front-id-preview', 'front-id-image', 'frontId');
@@ -521,27 +735,6 @@
             document.querySelectorAll('#kyc-modal .nav-tab').forEach(tab => {
                 tab.addEventListener('click', () => switchKYCTab(tab.dataset.tab));
             });
-        }
-
-        // Initialize Settings functionality
-        function initializeSettings() {
-            document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
-            document.getElementById('close-settings-modal').addEventListener('click', closeSettingsModal);
-            document.getElementById('open-kyc-from-settings').addEventListener('click', () => {
-                closeSettingsModal();
-                openKYCModal();
-            });
-            
-            // Tab navigation
-            document.querySelectorAll('#settings-modal .nav-tab').forEach(tab => {
-                tab.addEventListener('click', () => switchSettingsTab(tab.dataset.tab));
-            });
-            
-            // Form handlers
-            document.getElementById('profile-update-form').addEventListener('submit', updateUserProfile);
-            document.getElementById('password-update-form').addEventListener('submit', updateUserPassword);
-            document.getElementById('save-preferences-btn').addEventListener('click', savePreferences);
-            document.getElementById('delete-account-btn').addEventListener('click', deleteAccount);
         }
 
         // File upload setup
@@ -807,6 +1000,27 @@
             updateKYCStatus();
         }
 
+        // Settings functionality
+        function initializeSettings() {
+            document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
+            document.getElementById('close-settings-modal').addEventListener('click', closeSettingsModal);
+            document.getElementById('open-kyc-from-settings').addEventListener('click', () => {
+                closeSettingsModal();
+                openKYCModal();
+            });
+            
+            // Tab navigation
+            document.querySelectorAll('#settings-modal .nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => switchSettingsTab(tab.dataset.tab));
+            });
+            
+            // Form handlers
+            document.getElementById('profile-update-form').addEventListener('submit', updateUserProfile);
+            document.getElementById('password-update-form').addEventListener('submit', updateUserPassword);
+            document.getElementById('save-preferences-btn').addEventListener('click', savePreferences);
+            document.getElementById('delete-account-btn').addEventListener('click', deleteAccount);
+        }
+
         // Settings Modal functions
         function openSettingsModal() {
             settingsModal.style.display = 'block';
@@ -918,27 +1132,17 @@
             }
             
             try {
-                // Reauthenticate user
-      
                 const credential = EmailAuthProvider.credential(auth.currentUser.email, currentPassword);
                 await reauthenticateWithCredential(auth.currentUser, credential);
-                
-                // Update password
                 await updatePassword(auth.currentUser, newPassword);
-                
-                // Clear form
                 document.getElementById('password-update-form').reset();
-                
                 showAlert('Password updated successfully!', 'success', 'alert-container');
-                
             } catch (error) {
                 console.error('Password update error:', error);
                 let errorMessage = 'Password update failed. Please try again.';
-                
                 if (error.code === 'auth/wrong-password') {
                     errorMessage = 'Current password is incorrect.';
                 }
-                
                 showAlert(errorMessage, 'error', 'alert-container');
             }
         }
@@ -952,10 +1156,8 @@
                     currency: document.getElementById('currency-preference').value,
                     language: document.getElementById('language-preference').value
                 };
-                
                 await saveUserData(auth.currentUser.uid);
                 showAlert('Preferences saved successfully!', 'success', 'alert-container');
-                
             } catch (error) {
                 console.error('Preferences save error:', error);
                 showAlert('Failed to save preferences. Please try again.', 'error', 'alert-container');
@@ -963,206 +1165,42 @@
         }
 
         async function deleteAccount() {
-            const confirmation = prompt('Type "DELETE" to confirm account deletion:');
-            if (confirmation !== 'DELETE') {
-                showAlert('Account deletion cancelled.', 'info', 'alert-container');
+            if (!confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                return;
+            }
+            
+            const password = prompt('Please enter your password to confirm account deletion:');
+            if (!password) {
                 return;
             }
             
             try {
-                const userId = auth.currentUser.uid;
+                // Re-authenticate user
+                const credential = EmailAuthProvider.credential(auth.currentUser.email, password);
+                await reauthenticateWithCredential(auth.currentUser, credential);
                 
                 // Delete user data from Firestore
-                await deleteDoc(doc(db, 'users', userId));
+                await deleteDoc(doc(db, 'users', auth.currentUser.uid));
                 
                 // Delete user account
                 await deleteUser(auth.currentUser);
                 
                 showAlert('Account deleted successfully.', 'success');
+                showAuth();
                 
             } catch (error) {
                 console.error('Account deletion error:', error);
-                showAlert('Account deletion failed. Please try again or contact support.', 'error', 'alert-container');
-            }
-        }
-
-        // Dashboard functions
-        function updateDashboardUI() {
-            if (userData.dailyRate) {
-                document.getElementById('daily-rate-input').value = userData.dailyRate;
-            }
-            generateCalendar();
-            updateStats();
-            updateTransactionHistory();
-        }
-
-        window.setUserRate = async function() {
-            const rate = parseFloat(document.getElementById('daily-rate-input').value);
-
-            if (!rate || rate <= 0) {
-                showAlert('Please enter a valid daily rate!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            userData.dailyRate = rate;
-            
-            updateStats();
-            generateCalendar();
-            await saveUserData(auth.currentUser.uid);
-            showAlert(`Rate set successfully! Daily contribution: ₵${rate}`, 'success', 'dashboard-alert-container');
-        }
-
-        window.contributeToday = function() {
-            const today = new Date().getDate();
-            contributeForDay(today);
-        }
-
-        window.contributeForDay = async function(day) {
-            if (!userData.dailyRate) {
-                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
-                showAlert(`You already contributed ₵${userData.contributions[currentMonth][day]} on day ${day}!`, 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (!userData.contributions[currentMonth]) {
-                userData.contributions[currentMonth] = {};
-            }
-
-            userData.contributions[currentMonth][day] = userData.dailyRate;
-            userData.balance += userData.dailyRate;
-
-            userData.transactions.unshift({
-                type: 'contribution',
-                amount: userData.dailyRate,
-                date: `${months[currentMonth]} ${day}, 2025`,
-                description: `Daily contribution for day ${day}`
-            });
-
-            generateCalendar();
-            updateStats();
-            updateTransactionHistory();
-            await saveUserData(auth.currentUser.uid);
-            showAlert(`Successfully contributed ₵${userData.dailyRate} for day ${day}!`, 'success', 'dashboard-alert-container');
-        }
-
-        window.processWithdrawal = async function() {
-            const amount = parseFloat(document.getElementById('withdrawal-amount').value);
-
-            if (!amount || amount <= 0) {
-                showAlert('Please enter a valid withdrawal amount!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (!userData.dailyRate) {
-                showAlert('Please set your daily rate first!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            if (amount > userData.balance) {
-                showAlert('Insufficient balance for this withdrawal!', 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            const commission = userData.dailyRate;
-            const totalDeduction = amount + commission;
-
-            if (totalDeduction > userData.balance) {
-                showAlert(`Insufficient balance! You need ₵${totalDeduction} (₵${amount} + ₵${commission} commission)`, 'error', 'dashboard-alert-container');
-                return;
-            }
-
-            userData.balance -= totalDeduction;
-
-            userData.transactions.unshift({
-                type: 'withdrawal',
-                amount: amount,
-                commission: commission,
-                date: new Date().toLocaleDateString(),
-                description: `Withdrawal of ₵${amount} (Commission: ₵${commission})`
-            });
-
-            document.getElementById('withdrawal-amount').value = '';
-            updateStats();
-            updateTransactionHistory();
-            await saveUserData(auth.currentUser.uid);
-            showAlert(`Withdrawal successful! ₵${amount} withdrawn (₵${commission} commission deducted)`, 'success', 'dashboard-alert-container');
-        }
-
-        window.selectMonth = function(monthIndex) {
-            currentMonth = monthIndex;
-            
-            document.querySelectorAll('.month-btn').forEach((btn, index) => {
-                btn.classList.toggle('active', index === monthIndex);
-            });
-
-            document.getElementById('current-month-display').querySelector('h3').textContent = 
-                `${months[monthIndex]} 2025`;
-
-            generateCalendar();
-            updateStats();
-        }
-
-        function generateCalendar() {
-            const grid = document.getElementById('contribution-grid');
-            grid.innerHTML = '';
-
-            for (let day = 1; day <= 31; day++) {
-                const dayCell = document.createElement('div');
-                dayCell.className = 'day-cell';
-                dayCell.textContent = day;
-                dayCell.onclick = () => contributeForDay(day);
-
-                if (userData.contributions[currentMonth] && userData.contributions[currentMonth][day]) {
-                    dayCell.classList.add('contributed');
-                    dayCell.title = `Contributed: ₵${userData.contributions[currentMonth][day]}`;
+                let errorMessage = 'Account deletion failed. Please try again.';
+                if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password.';
                 }
-
-                grid.appendChild(dayCell);
+                showAlert(errorMessage, 'error', 'alert-container');
             }
-
-            document.getElementById('contribute-amount').textContent = userData.dailyRate || 0;
         }
 
-        function updateStats() {
-            document.getElementById('total-balance').textContent = `₵${userData.balance.toFixed(2)}`;
-            document.getElementById('daily-rate').textContent = `₵${userData.dailyRate}`;
-
-            const monthContributions = userData.contributions[currentMonth] || {};
-            const contributedDays = Object.keys(monthContributions).length;
-            const progress = Math.round((contributedDays / 31) * 100);
-            
-            document.getElementById('month-progress').textContent = `${progress}%`;
-            document.getElementById('month-progress-bar').style.width = `${progress}%`;
-        }
-
-        function updateTransactionHistory() {
-            const container = document.getElementById('transactions-list');
-            
-            if (userData.transactions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>';
-                return;
-            }
-
-            container.innerHTML = userData.transactions.map(transaction => `
-                <div class="transaction-item">
-                    <div>
-                        <span class="transaction-type ${transaction.type}">${transaction.type.toUpperCase()}</span>
-                        <p style="margin: 5px 0 0 0; color: #718096;">${transaction.description}</p>
-                        <small style="color: #a0aec0;">${transaction.date}</small>
-                    </div>
-                    <div style="text-align: right;">
-                        <strong style="color: ${transaction.type === 'contribution' ? '#22543d' : '#742a2a'};">
-                            ${transaction.type === 'contribution' ? '+' : '-'}₵${transaction.amount}
-                        </strong>
-                        ${transaction.commission ? `<br><small style="color: #742a2a;">Commission: -₵${transaction.commission}</small>` : ''}
-                    </div>
-                </div>
-            `).join('');
-        }
+        // Make KYC functions globally available
+        window.openKYCModal = openKYCModal;
+        window.closeKYCModal = closeKYCModal;
 
         // Event listeners
         signinForm.addEventListener('submit', handleSignIn);
@@ -1170,7 +1208,7 @@
         googleSigninBtn.addEventListener('click', handleGoogleSignIn);
         authToggleBtn.addEventListener('click', toggleAuthMode);
         logoutBtn.addEventListener('click', handleLogout);
-        
+
         // Verification screen event listeners
         document.getElementById('resend-verification-btn').addEventListener('click', resendVerificationEmail);
         document.getElementById('back-to-login-btn').addEventListener('click', () => {
@@ -1179,6 +1217,11 @@
                 signOut(auth);
             }
         });
+
+        // Initialize functionality
+        updatePhoneCode();
+        initializeKYC();
+        initializeSettings();
 
         // Auth state observer
         onAuthStateChanged(auth, (user) => {
@@ -1193,13 +1236,5 @@
             }
         });
 
-        // Initialize the app
-        window.onload = function() {
-            initializeCountryCodes();
-            initializeKYC();
-            initializeSettings();
-        };
-
-        // Make functions globally available for onclick handlers
-        window.openKYCModal = openKYCModal;
-        window.closeKYCModal = closeKYCModal;
+        // Initialize the current month
+        selectMonth(currentMonth);
