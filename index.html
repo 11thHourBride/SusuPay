@@ -1,11 +1,10 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusuPay - Login</title>
-
-  <link rel="stylesheet" href="data.css">
+    <link rel="stylesheet" href="data.css">
 </head>
 <body>
     <!-- Authentication Container -->
@@ -158,7 +157,6 @@
                 I've verified my email
             </button>
         </div>
-        </div>
     </div>
 
     <!-- Dashboard Container -->
@@ -213,11 +211,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="daily-rate-input">💰 Daily Contribution Rate (GH₵)</label>
+                    <label for="daily-rate-input">💰 Set Monthly Rate (GH₵)</label>
                     <input type="number" id="daily-rate-input" placeholder="e.g., 10" min="1">
                 </div>
-
-                <button class="btn" onclick="setUserRate()">Set Rate</button>
+                <button class="btn" onclick="setUserRate()" id="set-rate-btn">Set Rate for <span id="current-month-name">This Month</span></button>
+            
+                
+                <div id="rate-lock-notice" class="rate-lock-notice" style="display: none;">
+                    <div>🔒 Rate is locked for <span id="locked-month-name"></span></div>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">You can change your rate next month</div>
+                </div>
 
                 <div class="form-group" style="margin-top: 20px;">
                     <label for="withdrawal-amount">💸 Withdrawal Amount (GH₵)</label>
@@ -259,6 +262,23 @@
                 <button class="btn" onclick="contributeToday()" id="contribute-btn">
                     💰 Contribute Today (₵<span id="contribute-amount">0</span>)
                 </button>
+                 <button class="btn" onclick="contributeToday()" id="contribute-btn">
+                    💰 Contribute Previous Days (₵<span id="contribute-amount">0</span>)
+                </button>
+
+                <div class="custom-contribution-section">
+                    <h4>📊 Custom Contribution Amount</h4>
+                    <p style="color: #718096; margin-bottom: 15px;">Contribute a custom amount that can cover multiple days</p>
+                    
+                    <div class="custom-amount-input">
+                        <input type="number" id="custom-amount-input" placeholder="Enter amount" min="1" oninput="calculateDaysCoverage()">
+                        <button onclick="contributeCustomAmount()" id="custom-contribute-btn">Contribute</button>
+                    </div>
+
+                    <div id="days-coverage" class="days-coverage-display" style="display: none;">
+                        This amount will cover <strong id="coverage-days">0</strong> days of contribution
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -448,34 +468,6 @@
                                 <option value="GB" data-code="+44">🇬🇧 United Kingdom (+44)</option>
                                 <option value="GH" data-code="+233">🇬🇭 Ghana (+233)</option>
                                 <option value="NG" data-code="+234">🇳🇬 Nigeria (+234)</option>
-                                <option value="KE" data-code="+254">🇰🇪 Kenya (+254)</option>
-                                <option value="ZA" data-code="+27">🇿🇦 South Africa (+27)</option>
-                                <option value="CA" data-code="+1">🇨🇦 Canada (+1)</option>
-                                <option value="AU" data-code="+61">🇦🇺 Australia (+61)</option>
-                                <option value="DE" data-code="+49">🇩🇪 Germany (+49)</option>
-                                <option value="FR" data-code="+33">🇫🇷 France (+33)</option>
-                                <option value="IT" data-code="+39">🇮🇹 Italy (+39)</option>
-                                <option value="ES" data-code="+34">🇪🇸 Spain (+34)</option>
-                                <option value="BR" data-code="+55">🇧🇷 Brazil (+55)</option>
-                                <option value="MX" data-code="+52">🇲🇽 Mexico (+52)</option>
-                                <option value="AR" data-code="+54">🇦🇷 Argentina (+54)</option>
-                                <option value="IN" data-code="+91">🇮🇳 India (+91)</option>
-                                <option value="CN" data-code="+86">🇨🇳 China (+86)</option>
-                                <option value="JP" data-code="+81">🇯🇵 Japan (+81)</option>
-                                <option value="KR" data-code="+82">🇰🇷 South Korea (+82)</option>
-                                <option value="SG" data-code="+65">🇸🇬 Singapore (+65)</option>
-                                <option value="MY" data-code="+60">🇲🇾 Malaysia (+60)</option>
-                                <option value="TH" data-code="+66">🇹🇭 Thailand (+66)</option>
-                                <option value="PH" data-code="+63">🇵🇭 Philippines (+63)</option>
-                                <option value="ID" data-code="+62">🇮🇩 Indonesia (+62)</option>
-                                <option value="VN" data-code="+84">🇻🇳 Vietnam (+84)</option>
-                                <option value="EG" data-code="+20">🇪🇬 Egypt (+20)</option>
-                                <option value="MA" data-code="+212">🇲🇦 Morocco (+212)</option>
-                                <option value="TN" data-code="+216">🇹🇳 Tunisia (+216)</option>
-                                <option value="ET" data-code="+251">🇪🇹 Ethiopia (+251)</option>
-                                <option value="UG" data-code="+256">🇺🇬 Uganda (+256)</option>
-                                <option value="TZ" data-code="+255">🇹🇿 Tanzania (+255)</option>
-                                <option value="RW" data-code="+250">🇷🇼 Rwanda (+250)</option>
                             </select>
                         </div>
 
@@ -657,6 +649,6 @@
             </div>
         </div>
     </div>
-    <script type="module" src="data.js"> </script>
-    </body>
- </html>       
+    <script type="module" src="data.js"></script>
+</body>
+</html>   
