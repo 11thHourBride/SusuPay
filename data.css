@@ -1,4 +1,4 @@
- * {
+     * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -119,6 +119,21 @@
             align-items: center;
             gap: 8px;
         }
+        input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .custom-amount-input input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+    
 
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -748,9 +763,7 @@
             opacity: 1;
             visibility: visible;
         }
-            transition: all 0.3s ease;
-        
-
+            
         .report-btn {
             background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
             box-shadow: 0 5px 15px rgba(229, 62, 62, 0.3);
@@ -860,9 +873,16 @@
             border-color: transparent;
         }
 
+        .month-btn:disabled {
+            background: #f1f5f9;
+            color: #94a3b8;
+            cursor: not-allowed;
+            border-color: #e2e8f0;
+        }
+
         .contribution-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
             gap: 8px;
             margin-bottom: 20px;
         }
@@ -904,6 +924,8 @@
             border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 600;
+            text-align: center;
+           
         }
 
         .status-pending {
@@ -923,6 +945,7 @@
 
         .transaction-history {
             background: rgba(255, 255, 255, 0.95);
+            justify-content: space-between;
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -933,7 +956,7 @@
         .transaction-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             padding: 15px;
             border-bottom: 1px solid #e2e8f0;
             transition: all 0.3s ease;
@@ -979,6 +1002,85 @@
             transition: width 0.5s ease;
         }
 
+        /* Rate lock notification */
+        .rate-lock-notice {
+            background: #ebf8ff;
+            border: 2px solid #90cdf4;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #2b6cb0;
+        }
+
+        .rate-lock-notice .lock-icon {
+            color: #2b6cb0;
+            margin-right: 8px;
+        }
+
+        .multiple-days-notice {
+            background: #f0fff4;
+            border: 2px solid #9ae6b4;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #22543d;
+        }
+
+        .custom-contribution-section {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .custom-amount-input button {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .custom-amount-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .days-coverage-display {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .transaction-detail {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .rejection-reason {
+            background: #fed7d7;
+            border: 1px solid #feb2b2;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            color: #742a2a;
+            font-size: 0.9rem;
+        }
+
+        .rejection-reason .reason-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -1021,6 +1123,10 @@
             .auth-container {
                 padding: 30px 20px;
                 margin: 10px;
+            }
+
+            .custom-amount-input {
+                flex-direction: column;
             }
         }
 
