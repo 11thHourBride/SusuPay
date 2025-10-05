@@ -1,654 +1,721 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SusuPay - Login</title>
-    <link rel="stylesheet" href="data.css">
+    <title>SusuPay - Professional Daily Savings</title>
+  <link rel="stylesheet" href="data.css">
 </head>
 <body>
-    <!-- Authentication Container -->
-    <div class="auth-container" id="auth-container">
-        <div class="logo">🏦</div>
-        <h1 class="auth-title">SusuPay</h1>
-        <p class="auth-subtitle">Professional Daily Savings</p>
+    <!-- Auth Wrapper -->
+    <div class="auth-wrapper" id="auth-wrapper">
+        <div class="auth-container">
+            <div class="logo">🏦</div>
+            <h1 class="auth-title">SusuPay</h1>
+            <p class="auth-subtitle">Professional Daily Savings Platform</p>
 
-        <div id="alert-container"></div>
+            <div id="auth-alert"></div>
 
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Processing...</p>
-        </div>
-
-        <!-- Sign In Form -->
-        <form id="signin-form">
-            <div class="form-group">
-                <label for="signin-email">Email Address</label>
-                <input type="email" id="signin-email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="signin-password">Password</label>
-                <input type="password" id="signin-password" required>
-            </div>
-
-            <button type="submit" class="btn" id="signin-submit-btn">
-                Sign In
-            </button>
-        </form>
-
-        <!-- Sign Up Form (initially hidden) -->
-        <form id="signup-form" style="display: none;">
-            <div class="form-row">
+            <!-- Sign In Form -->
+            <form id="signin-form">
                 <div class="form-group">
-                    <label for="first-name">First Name *</label>
-                    <input type="text" id="first-name" required>
+                    <label for="signin-email">Email Address</label>
+                    <input type="email" id="signin-email" required>
                 </div>
                 <div class="form-group">
-                    <label for="surname">Surname *</label>
-                    <input type="text" id="surname" required>
+                    <label for="signin-password">Password</label>
+                    <input type="password" id="signin-password" required>
                 </div>
-            </div>
+                <button type="submit" class="btn">Sign In</button>
+            </form>
 
-            <div class="form-group">
-                <label for="middle-name">Middle Name (Optional)</label>
-                <input type="text" id="middle-name">
-            </div>
-
-            <div class="form-group">
-                <label for="signup-email">Email Address *</label>
-                <input type="email" id="signup-email" required>
-            </div>
-
-            <div class="form-group">
-                <label for="country">Country *</label>
-                <select id="country" required>
-                    <option value="">Select your country</option>
-                    <option value="US" data-code="+1">🇺🇸 United States (+1)</option>
-                    <option value="GB" data-code="+44">🇬🇧 United Kingdom (+44)</option>
-                    <option value="GH" data-code="+233">🇬🇭 Ghana (+233)</option>
-                    <option value="NG" data-code="+234">🇳🇬 Nigeria (+234)</option>
-                    <option value="KE" data-code="+254">🇰🇪 Kenya (+254)</option>
-                    <option value="ZA" data-code="+27">🇿🇦 South Africa (+27)</option>
-                    <option value="CA" data-code="+1">🇨🇦 Canada (+1)</option>
-                    <option value="AU" data-code="+61">🇦🇺 Australia (+61)</option>
-                    <option value="DE" data-code="+49">🇩🇪 Germany (+49)</option>
-                    <option value="FR" data-code="+33">🇫🇷 France (+33)</option>
-                    <option value="IT" data-code="+39">🇮🇹 Italy (+39)</option>
-                    <option value="ES" data-code="+34">🇪🇸 Spain (+34)</option>
-                    <option value="BR" data-code="+55">🇧🇷 Brazil (+55)</option>
-                    <option value="MX" data-code="+52">🇲🇽 Mexico (+52)</option>
-                    <option value="AR" data-code="+54">🇦🇷 Argentina (+54)</option>
-                    <option value="IN" data-code="+91">🇮🇳 India (+91)</option>
-                    <option value="CN" data-code="+86">🇨🇳 China (+86)</option>
-                    <option value="JP" data-code="+81">🇯🇵 Japan (+81)</option>
-                    <option value="KR" data-code="+82">🇰🇷 South Korea (+82)</option>
-                    <option value="SG" data-code="+65">🇸🇬 Singapore (+65)</option>
-                    <option value="MY" data-code="+60">🇲🇾 Malaysia (+60)</option>
-                    <option value="TH" data-code="+66">🇹🇭 Thailand (+66)</option>
-                    <option value="PH" data-code="+63">🇵🇭 Philippines (+63)</option>
-                    <option value="ID" data-code="+62">🇮🇩 Indonesia (+62)</option>
-                    <option value="VN" data-code="+84">🇻🇳 Vietnam (+84)</option>
-                    <option value="EG" data-code="+20">🇪🇬 Egypt (+20)</option>
-                    <option value="MA" data-code="+212">🇲🇦 Morocco (+212)</option>
-                    <option value="TN" data-code="+216">🇹🇳 Tunisia (+216)</option>
-                    <option value="ET" data-code="+251">🇪🇹 Ethiopia (+251)</option>
-                    <option value="UG" data-code="+256">🇺🇬 Uganda (+256)</option>
-                    <option value="TZ" data-code="+255">🇹🇿 Tanzania (+255)</option>
-                    <option value="RW" data-code="+250">🇷🇼 Rwanda (+250)</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="phone">Phone Number *</label>
-                <div class="phone-input-group">
-                    <select id="phone-code" class="country-select" required>
-                        <option value="">Code</option>
-                    </select>
-                    <input type="tel" id="phone" class="phone-input" placeholder="123456789" required>
+            <!-- Sign Up Form -->
+            <form id="signup-form" class="hidden">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name">First Name *</label>
+                        <input type="text" id="first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Surname *</label>
+                        <input type="text" id="surname" required>
+                    </div>
                 </div>
+                <div class="form-group">
+                    <label for="signup-email">Email Address *</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password *</label>
+                    <input type="password" id="signup-password" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password *</label>
+                    <input type="password" id="confirm-password" required minlength="6">
+                </div>
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 20px; color: #718096;">
+                <span id="auth-toggle-text">Don't have an account?</span>
+                <button type="button" id="auth-toggle-btn" style="background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline; font-size: inherit;">Sign Up</button>
             </div>
 
-            <div class="form-group">
-                <label for="signup-password">Password *</label>
-                <input type="password" id="signup-password" required minlength="6">
+            <div style="text-align: center; margin-top: 10px;">
+                <button type="button" id="forgot-password-btn" style="background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline; font-size: 0.9rem;">
+                    Forgot Password?
+                </button>
             </div>
-
-            <div class="form-group">
-                <label for="confirm-password">Confirm Password *</label>
-                <input type="password" id="confirm-password" required minlength="6">
-            </div>
-
-            <button type="submit" class="btn" id="signup-submit-btn">
-                Create Account
-            </button>
-        </form>
-
-        <button class="btn btn-google" id="google-signin-btn">
-            <span>🔍</span>
-            Continue with Google
-        </button>
-
-        <div class="auth-toggle">
-            <span id="auth-toggle-text">Don't have an account?</span>
-            <button type="button" id="auth-toggle-btn">Sign Up</button>
         </div>
     </div>
 
-    <!-- Email Verification Container -->
-    <div class="auth-container verification-container" id="verification-container">
-        <div class="verification-icon">📧</div>
-        <h2 class="verification-title">Verify Your Email</h2>
-        <p class="verification-text">
-            We've sent a verification link to <strong id="verification-email"></strong>. 
-            Please check your email and click the link to verify your account.
-        </p>
-        <p class="verification-text">
-            Didn't receive the email? Check your spam folder or click below to resend.
-        </p>
-        <button class="resend-btn" id="resend-verification-btn">Resend Verification Email</button>
-        <div style="margin-top: 20px;">
-            <button type="button" id="back-to-login-btn" class="auth-toggle" style="background: none; border: none; color: #667eea; text-decoration: underline;">
-                Back to Login
-            </button>
-        </div>
-        <div style="margin-top: 20px;">
-            <button type="button" id="check-verification-btn" class="btn" style="background: #38a169; color: #fff; padding: 10px 20px;">
-                I've verified my email
-            </button>
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgot-password-modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <button class="close-btn" id="close-forgot-password">&times;</button>
+            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">Reset Password</h2>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🔑</div>
+                <p style="color: #718096;">Enter your email address and we'll send you a link to reset your password.</p>
+            </div>
+            
+            <form id="forgot-password-form">
+                <div class="form-group">
+                    <label for="reset-email">Email Address</label>
+                    <input type="email" id="reset-email" required placeholder="your@email.com">
+                </div>
+                <button type="submit" class="btn">Send Reset Link</button>
+            </form>
+            
+            <div id="reset-success" class="hidden" style="text-align: center; padding: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">✉️</div>
+                <p style="color: #48bb78; font-weight: 600; margin-bottom: 10px;">Reset link sent!</p>
+                <p style="color: #718096;">Check your email for the password reset link.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Dashboard Container -->
-    <div class="dashboard-container" id="dashboard-container">
-        <div class="dashboard-controls">
-            <button class="settings-btn tooltip" id="settings-btn" data-tooltip="Settings">⚙️</button>
-            <button class="report-btn tooltip" id="report-btn" data-tooltip="Report a Problem">❗</button>
+    <!-- App Header -->
+    <header class="app-header hidden" id="app-header">
+        <div class="app-logo">
+            <span>🏦</span>
+            <span>SusuPay</span>
         </div>
-        
-        <div class="dashboard-header">
+        <div class="header-user">
             <div>
-                <h1>🏦 SusuPay</h1>
-                <p>Professional Daily Savings & Contribution Management</p>
+                <div id="user-name" style="font-weight: 600; color: #4a5568;"></div>
+                <div id="user-email" style="font-size: 0.8rem; color: #718096;"></div>
             </div>
-            <div class="user-info">
-                <div class="user-avatar" id="user-avatar">U</div>
-                <div>
-                    <div id="user-display-name">User</div>
-                    <div id="user-email" style="font-size: 0.9rem; color: #718096;"></div>
-                    <div id="kyc-status-indicator" style="font-size: 0.8rem; font-weight: 600;"></div>
+            <div class="user-avatar" id="user-avatar">U</div>
+            <button class="logout-btn" id="logout-btn">Logout</button>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar hidden" id="sidebar">
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-page="dashboard">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-page="contributions">
+                <span class="nav-icon">💰</span>
+                <span>Contributions</span>
+            </div>
+            <div class="nav-item" data-page="withdrawals">
+                <span class="nav-icon">💸</span>
+                <span>Withdrawals</span>
+            </div>
+            <div class="nav-item" data-page="transactions">
+                <span class="nav-icon">📜</span>
+                <span>Transactions</span>
+            </div>
+            <div class="nav-item" data-page="kyc">
+                <span class="nav-icon">🛡️</span>
+                <span>KYC Verification</span>
+            </div>
+            <div class="nav-item" data-page="settings">
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content hidden" id="main-content">
+        <div id="dashboard-alert"></div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboard-page" class="page-content">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Dashboard Overview</h2>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3 id="total-balance">₵0.00</h3>
+                    <p>Total Balance</p>
                 </div>
-                <button class="logout-btn" id="logout-btn">Logout</button>
+                <div class="stat-card">
+                    <h3 id="daily-rate">₵0.00</h3>
+                    <p>Current Monthly Rate</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="contributions-count">0</h3>
+                    <p>Total Contributions</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="current-month-progress">0%</h3>
+                    <p>Month Progress</p>
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">Set Monthly Rate</h3>
+                <div class="form-group">
+                    <label for="rate-input">Monthly Rate (GH₵)</label>
+                    <input type="number" id="rate-input" placeholder="Enter your monthly contribution rate" min="1">
+                </div>
+                <button class="btn" id="set-rate-btn">Set Rate</button>
+                <div id="rate-info" style="margin-top: 15px; padding: 15px; background: #ebf8ff; border-radius: 8px; color: #2b6cb0; display: none;">
+                    <strong>Note:</strong> Once set, the rate is locked for the current month.
+                </div>
             </div>
         </div>
 
-        <!-- KYC Banner -->
-        <div class="kyc-banner" id="kyc-banner">
-            <h3>🛡️ Complete Your KYC Verification</h3>
-            <p>Verify your identity to unlock full access to SusuPay features and higher transaction limits.</p>
-            <button class="kyc-btn" id="start-kyc-btn">Start KYC Process</button>
+        <!-- Contributions Page -->
+        <div id="contributions-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Monthly Contributions</h2>
+            
+            <div class="calendar-container">
+                <div class="month-selector" id="month-selector">
+                    <!-- Months will be populated by JS -->
+                </div>
+                
+                <h3 id="selected-month-display" style="margin-bottom: 15px; color: #4a5568;"></h3>
+                
+                <div class="contribution-grid" id="contribution-grid">
+                    <!-- Days will be populated by JS -->
+                </div>
+
+                <div class="day-selector">
+                    <span style="font-weight: 600; color: #4a5568;">Select Days to Contribute:</span>
+                    <button type="button" class="day-selector-btn" id="decrease-days">-</button>
+                    <input type="number" id="days-input" value="1" min="1" max="31" readonly>
+                    <button type="button" class="day-selector-btn" id="increase-days">+</button>
+                    <span style="font-weight: 600; color: #667eea;">Total: ₵<span id="total-amount">0.00</span></span>
+                </div>
+
+                <button class="btn" id="contribute-btn">Proceed to Payment</button>
+            </div>
         </div>
 
-        <div id="dashboard-alert-container"></div>
-
-        <div class="dashboard">
-            <div class="user-panel">
-                <h2>👤 User Dashboard</h2>
-                
-                <div class="stats">
-                    <div class="stat-card">
-                        <h3 id="total-balance">₵0</h3>
-                        <p>Total Balance</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 id="daily-rate">₵0</h3>
-                        <p>Daily Rate</p>
-                    </div>
-                    <div class="stat-card">
-                        <h3 id="month-progress">0%</h3>
-                        <p>Month Progress</p>
-                    </div>
+        <!-- Withdrawals Page -->
+        <div id="withdrawals-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Process Withdrawal</h2>
+            
+            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                <div class="form-group">
+                    <label for="withdrawal-month">Select Month</label>
+                    <select id="withdrawal-month">
+                        <option value="">Choose month...</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="daily-rate-input">💰 Set Monthly Rate (GH₵)</label>
-                    <input type="number" id="daily-rate-input" placeholder="e.g., 10" min="1">
-                </div>
-                <button class="btn" onclick="setUserRate()" id="set-rate-btn">Set Rate for <span id="current-month-name">This Month</span></button>
-            
-                
-                <div id="rate-lock-notice" class="rate-lock-notice" style="display: none;">
-                    <div>🔒 Rate is locked for <span id="locked-month-name"></span></div>
-                    <div style="font-size: 0.9rem; margin-top: 5px;">You can change your rate next month</div>
+                    <label for="withdrawal-amount">Withdrawal Amount (GH₵)</label>
+                    <input type="number" id="withdrawal-amount" placeholder="Enter amount" min="1">
                 </div>
 
-                <div class="form-group" style="margin-top: 20px;">
-                    <label for="withdrawal-amount">💸 Withdrawal Amount (GH₵)</label>
-                    <input type="number" id="withdrawal-amount" placeholder="Amount to withdraw" min="1">
+                <div class="form-group">
+                    <label for="withdrawal-method">Payment Method</label>
+                    <select id="withdrawal-method" required>
+                        <option value="">Select method...</option>
+                        <option value="mobile-money">Mobile Money</option>
+                        <option value="bank">Bank Transfer</option>
+                        <option value="crypto">Cryptocurrency</option>
+                    </select>
                 </div>
 
-                <button class="btn btn-withdraw" onclick="processWithdrawal()">Process Withdrawal</button>
-            </div>
-
-            <div class="contribution-area">
-                <h2>📅 Monthly Contributions</h2>
-                
-                <div class="month-selector">
-                    <div class="month-btn active" onclick="selectMonth(0)">Jan</div>
-                    <div class="month-btn" onclick="selectMonth(1)">Feb</div>
-                    <div class="month-btn" onclick="selectMonth(2)">Mar</div>
-                    <div class="month-btn" onclick="selectMonth(3)">Apr</div>
-                    <div class="month-btn" onclick="selectMonth(4)">May</div>
-                    <div class="month-btn" onclick="selectMonth(5)">Jun</div>
-                    <div class="month-btn" onclick="selectMonth(6)">Jul</div>
-                    <div class="month-btn" onclick="selectMonth(7)">Aug</div>
-                    <div class="month-btn" onclick="selectMonth(8)">Sep</div>
-                    <div class="month-btn" onclick="selectMonth(9)">Oct</div>
-                    <div class="month-btn" onclick="selectMonth(10)">Nov</div>
-                    <div class="month-btn" onclick="selectMonth(11)">Dec</div>
+                <div class="form-group">
+                    <label for="withdrawal-address">Payment Address/Account</label>
+                    <input type="text" id="withdrawal-address" placeholder="Enter your payment details">
                 </div>
 
-                <div id="current-month-display">
-                    <h3>January 2025</h3>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="month-progress-bar" style="width: 0%"></div>
-                    </div>
+                <div class="form-group">
+                    <label for="withdrawal-password">Withdrawal Password</label>
+                    <input type="password" id="withdrawal-password" placeholder="Enter your password to confirm">
                 </div>
 
-                <div class="contribution-grid" id="contribution-grid">
-                    <!-- Days will be populated by JavaScript -->
-                </div>
+                <button class="btn" id="process-withdrawal-btn">Process Withdrawal</button>
 
-                <button class="btn" onclick="contributeToday()" id="contribute-btn">
-                    💰 Contribute Today (₵<span id="contribute-amount">0</span>)
-                </button>
-                 <button class="btn" onclick="contributeToday()" id="contribute-btn">
-                    💰 Contribute Previous Days (₵<span id="contribute-amount">0</span>)
-                </button>
-
-                <div class="custom-contribution-section">
-                    <h4>📊 Custom Contribution Amount</h4>
-                    <p style="color: #718096; margin-bottom: 15px;">Contribute a custom amount that can cover multiple days</p>
-                    
-                    <div class="custom-amount-input">
-                        <input type="number" id="custom-amount-input" placeholder="Enter amount" min="1" oninput="calculateDaysCoverage()">
-                        <button onclick="contributeCustomAmount()" id="custom-contribute-btn">Contribute</button>
-                    </div>
-
-                    <div id="days-coverage" class="days-coverage-display" style="display: none;">
-                        This amount will cover <strong id="coverage-days">0</strong> days of contribution
-                    </div>
+                <div id="withdrawal-attempts" style="display: none; margin-top: 15px; padding: 15px; background: #fed7d7; border-radius: 8px; color: #742a2a;">
+                    <strong>Warning:</strong> <span id="attempts-remaining">3</span> attempts remaining. Account will be locked for 30 minutes after 3 failed attempts.
                 </div>
             </div>
         </div>
 
-        <div class="transaction-history">
-            <h2>📊 Transaction History</h2>
+        <!-- Transactions Page -->
+        <div id="transactions-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Transaction History</h2>
             <div id="transactions-list">
-                <p style="text-align: center; color: #718096; padding: 20px;">No transactions yet. Start contributing to see your history here!</p>
+                <p style="text-align: center; color: #718096; padding: 40px;">No transactions yet.</p>
             </div>
         </div>
-    </div>
 
-    <!-- KYC Modal -->
-    <div class="kyc-modal" id="kyc-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-kyc-modal">&times;</button>
+        <!-- KYC Page -->
+        <div id="kyc-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">KYC Verification</h2>
             
-            <div class="modal-header">
-                <h2 class="modal-title">🛡️ KYC Verification</h2>
-                <p class="modal-subtitle">Complete your identity verification to secure your account</p>
-            </div>
-
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-tab="id-verification">📄 ID Verification</button>
-                <button class="nav-tab" data-tab="selfie-verification">📸 Selfie Verification</button>
-                <button class="nav-tab" data-tab="review">✅ Review</button>
-            </div>
-
-            <!-- ID Verification Tab -->
-            <div class="tab-content active" id="id-verification">
-                <div class="kyc-step" id="front-id-step">
-                    <div class="kyc-step-header">
-                        <div class="step-number" id="front-step-number">1</div>
-                        <div class="step-title">Upload Front of ID</div>
-                    </div>
-                    <p style="color: #718096; margin-bottom: 15px;">
-                        Upload a clear photo of the front of your government-issued ID (Driver's License, Passport, or National ID)
+            <!-- KYC Status Display -->
+            <div id="kyc-status-display" class="hidden">
+                <div style="background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); text-align: center;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
+                    <h3 style="color: #4a5568; margin-bottom: 15px;">Verification Under Review</h3>
+                    <p style="color: #718096; margin-bottom: 20px;">
+                        Your KYC documents have been submitted and are currently being reviewed by our team. 
+                        This process typically takes 24-48 hours.
                     </p>
-                    
-                    <div class="file-upload-area" id="front-id-upload">
-                        <div class="upload-icon">📷</div>
-                        <div class="upload-text">Click to upload or drag and drop</div>
-                        <div class="upload-subtext">PNG, JPG up to 10MB</div>
+                    <div style="padding: 15px; background: #fef5e7; border-radius: 8px; color: #744210; font-weight: 600;">
+                        Status: <span id="kyc-verification-status">Under Review</span>
                     </div>
-                    
-                    <div class="file-preview" id="front-id-preview">
-                        <img id="front-id-image" alt="Front ID Preview">
-                        <p><strong>Front ID uploaded successfully!</strong></p>
-                    </div>
-                    
-                    <input type="file" id="front-id-input" accept="image/*" style="display: none;">
-                </div>
-
-                <div class="kyc-step" id="back-id-step">
-                    <div class="kyc-step-header">
-                        <div class="step-number" id="back-step-number">2</div>
-                        <div class="step-title">Upload Back of ID</div>
-                    </div>
-                    <p style="color: #718096; margin-bottom: 15px;">
-                        Upload a clear photo of the back of your government-issued ID
+                    <p style="color: #718096; margin-top: 20px; font-size: 0.9rem;">
+                        You will receive an email notification once your verification is complete.
                     </p>
-                    
-                    <div class="file-upload-area" id="back-id-upload">
-                        <div class="upload-icon">📷</div>
-                        <div class="upload-text">Click to upload or drag and drop</div>
-                        <div class="upload-subtext">PNG, JPG up to 10MB</div>
-                    </div>
-                    
-                    <div class="file-preview" id="back-id-preview">
-                        <img id="back-id-image" alt="Back ID Preview">
-                        <p><strong>Back ID uploaded successfully!</strong></p>
-                    </div>
-                    
-                    <input type="file" id="back-id-input" accept="image/*" style="display: none;">
                 </div>
             </div>
 
-            <!-- Selfie Verification Tab -->
-            <div class="tab-content" id="selfie-verification" style="display: none;">
-                <div class="kyc-step" id="selfie-step">
-                    <div class="kyc-step-header">
-                        <div class="step-number" id="selfie-step-number">3</div>
-                        <div class="step-title">Live Selfie Verification</div>
-                    </div>
-                    <p style="color: #718096; margin-bottom: 15px;">
-                        Take a live selfie following the on-screen instructions to complete verification
-                    </p>
-
-                    <div class="live-action" id="live-action-prompt">
-                        <div class="action-text">Please look straight into the camera</div>
-                    </div>
-
-                    <div class="camera-container">
-                        <video class="camera-video" id="selfie-video" autoplay playsinline></video>
-                        <canvas id="selfie-canvas" style="display: none;"></canvas>
-                        
-                        <div class="camera-controls">
-                            <button class="camera-btn" id="start-camera-btn">Start Camera</button>
-                            <button class="camera-btn" id="capture-selfie-btn" style="display: none;">Take Photo</button>
-                            <button class="camera-btn" id="retake-selfie-btn" style="display: none;">Retake</button>
-                        </div>
-                    </div>
-
-                    <div class="file-preview" id="selfie-preview">
-                        <img id="selfie-image" alt="Selfie Preview">
-                        <p><strong>Selfie captured successfully!</strong></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Review Tab -->
-            <div class="tab-content" id="review" style="display: none;">
-                <div class="kyc-step">
-                    <div class="kyc-step-header">
-                        <div class="step-number">4</div>
-                        <div class="step-title">Review & Submit</div>
-                    </div>
-                    
-                    <div id="kyc-review-content">
-                        <p style="color: #718096; margin-bottom: 20px;">
-                            Please review your uploaded documents before submitting for verification.
+            <!-- KYC Form -->
+            <div id="kyc-form-container">
+                <!-- Terms of Service -->
+                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+                    <h3 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span>📜</span> Terms of Service
+                    </h3>
+                    <div style="max-height: 300px; overflow-y: auto; padding: 20px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                        <h4 style="color: #4a5568; margin-bottom: 15px;">Privacy & Data Protection</h4>
+                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
+                            <strong>No Third-Party Access:</strong> We guarantee that your personal information, identification documents, 
+                            and biometric data will NEVER be shared with, sold to, or accessed by any third parties under any circumstances.
                         </p>
-                        
-                        <div class="verification-status" id="kyc-submission-status">
-                            <div>📋 Ready for submission</div>
-                        </div>
+                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
+                            <strong>Data Security:</strong> All documents are encrypted end-to-end and stored in secure, isolated servers. 
+                            Your data is protected with bank-level encryption (AES-256).
+                        </p>
+                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
+                            <strong>Purpose:</strong> Your KYC information is used solely for identity verification to comply with 
+                            financial regulations and to protect your account from fraud.
+                        </p>
+                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
+                            <strong>Data Retention:</strong> Your documents will be retained only for as long as legally required 
+                            and will be permanently deleted upon account closure or upon your request.
+                        </p>
+                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
+                            <strong>Your Rights:</strong> You have the right to access, modify, or delete your data at any time. 
+                            Contact our support team for any data-related requests.
+                        </p>
+                        <p style="color: #4a5568; line-height: 1.8;">
+                            <strong>Internal Use Only:</strong> Only authorized SusuPay verification team members will review your 
+                            documents, and all reviewers are bound by strict confidentiality agreements.
+                        </p>
+                    </div>
+                    
+                    <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 15px; background: #ebf8ff; border-radius: 8px; border: 2px solid #90cdf4;">
+                        <input type="checkbox" id="terms-checkbox" style="margin-top: 4px; width: 20px; height: 20px; cursor: pointer;">
+                        <span style="color: #2b6cb0; line-height: 1.6;">
+                            I have read and agree to the terms of service. I understand that my information will be kept private 
+                            and will not be shared with any third parties.
+                        </span>
+                    </label>
+                </div>
 
-                        <button class="btn" id="submit-kyc-btn" style="width: 100%;">
-                            Submit for Verification
+                <!-- Document Type Selection -->
+                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+                    <h3 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <span>🪪</span> Select ID Type
+                    </h3>
+                    <div class="form-group">
+                        <label for="id-type">Choose your identification document</label>
+                        <select id="id-type" required>
+                            <option value="">Select ID type...</option>
+                            <option value="passport">Passport</option>
+                            <option value="drivers-license">Driver's License</option>
+                            <option value="national-id">National ID Card</option>
+                            <option value="residence-permit">Residence Permit</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ID Upload Section -->
+                <div id="id-upload-section" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: none;">
+                    <h3 style="color: #4a5568; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span>📄</span> Upload ID Documents
+                    </h3>
+                    
+                    <!-- Front of ID -->
+                    <div style="margin-bottom: 30px;">
+                        <h4 style="color: #4a5568; margin-bottom: 15px;">Front of ID</h4>
+                        <div class="file-upload-area" id="front-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
+                            <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">Click to upload or drag and drop</div>
+                            <div style="color: #718096; font-size: 0.9rem;">PNG, JPG up to 10MB</div>
+                        </div>
+                        <input type="file" id="front-id-input" accept="image/*" style="display: none;">
+                        <div id="front-preview" style="display: none; margin-top: 15px; text-align: center;">
+                            <img id="front-preview-img" style="max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                            <div style="margin-top: 10px; color: #48bb78; font-weight: 600;">✓ Front uploaded successfully</div>
+                        </div>
+                    </div>
+
+                    <!-- Back of ID -->
+                    <div style="margin-bottom: 30px;">
+                        <h4 style="color: #4a5568; margin-bottom: 15px;">Back of ID</h4>
+                        <div class="file-upload-area" id="back-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                            <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
+                            <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">Click to upload or drag and drop</div>
+                            <div style="color: #718096; font-size: 0.9rem;">PNG, JPG up to 10MB</div>
+                        </div>
+                        <input type="file" id="back-id-input" accept="image/*" style="display: none;">
+                        <div id="back-preview" style="display: none; margin-top: 15px; text-align: center;">
+                            <img id="back-preview-img" style="max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                            <div style="margin-top: 10px; color: #48bb78; font-weight: 600;">✓ Back uploaded successfully</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Selfie Verification -->
+                <div id="selfie-section" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: none;">
+                    <h3 style="color: #4a5568; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span>🤳</span> Live Selfie Verification
+                    </h3>
+                    
+                    <p style="color: #718096; margin-bottom: 20px;">
+                        Take a live selfie to verify that the ID belongs to you. Make sure your face is clearly visible and well-lit.
+                    </p>
+
+                    <div style="background: #fff5b7; border: 2px solid #f6e05e; border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
+                        <div style="font-weight: 600; color: #744210; font-size: 1.1rem;">
+                            📸 Please look straight at the camera
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <video id="selfie-video" autoplay playsinline style="width: 100%; max-width: 400px; height: 300px; border-radius: 10px; background: #2d3748; display: none;"></video>
+                        <canvas id="selfie-canvas" style="display: none;"></canvas>
+                        <div id="selfie-placeholder" style="width: 100%; max-width: 400px; height: 300px; margin: 0 auto; background: #f7fafc; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e0;">
+                            <div style="text-align: center; color: #718096;">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">📸</div>
+                                <div>Camera not started</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn" id="start-camera-btn" style="width: auto; padding: 12px 25px;">
+                            Start Camera
+                        </button>
+                        <button class="btn" id="capture-selfie-btn" style="width: auto; padding: 12px 25px; display: none; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                            Capture Photo
+                        </button>
+                        <button class="btn" id="retake-selfie-btn" style="width: auto; padding: 12px 25px; display: none; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);">
+                            Retake
                         </button>
                     </div>
+
+                    <div id="selfie-captured" style="display: none; margin-top: 20px; text-align: center;">
+                        <img id="selfie-preview-img" style="max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+                        <div style="margin-top: 10px; color: #48bb78; font-weight: 600;">✓ Selfie captured successfully</div>
+                    </div>
                 </div>
+
+                <!-- Submit Button -->
+                <button class="btn" id="submit-kyc-btn" style="display: none;">
+                    Submit KYC Documents
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Settings Modal -->
-    <div class="settings-modal" id="settings-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-settings-modal">&times;</button>
+        <!-- Settings Page -->
+        <div id="settings-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Account Settings</h2>
             
-            <div class="modal-header">
-                <h2 class="modal-title">⚙️ Account Settings</h2>
-                <p class="modal-subtitle">Manage your account preferences and personal information</p>
-            </div>
-
-            <div class="nav-tabs">
-                <button class="nav-tab active" data-tab="profile-settings">👤 Profile</button>
-                <button class="nav-tab" data-tab="security-settings">🔒 Security</button>
-                <button class="nav-tab" data-tab="preferences-settings">⚙️ Preferences</button>
-            </div>
-
             <!-- Profile Settings -->
-            <div class="tab-content active" id="profile-settings">
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <span>👤</span> Personal Information
+            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+                    <span>👤</span> Profile Information
+                </h3>
+                <form id="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-first-name">First Name</label>
+                            <input type="text" id="edit-first-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-surname">Surname</label>
+                            <input type="edit-surname">
+                        </div>
                     </div>
-                    
-                    <form id="profile-update-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="edit-first-name">First Name</label>
-                                <input type="text" id="edit-first-name">
-                            </div>
-                            <div class="form-group">
-                                <label for="edit-surname">Surname</label>
-                                <input type="text" id="edit-surname">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-middle-name">Middle Name (Optional)</label>
-                            <input type="text" id="edit-middle-name">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-email-display">Email Address</label>
-                            <input type="email" id="edit-email-display" disabled>
-                            <small style="color: #718096;">Email cannot be changed after registration</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-country-display">Country</label>
-                            <select id="edit-country-display">
-                                <option value="">Select your country</option>
-                                <option value="US" data-code="+1">🇺🇸 United States (+1)</option>
-                                <option value="GB" data-code="+44">🇬🇧 United Kingdom (+44)</option>
-                                <option value="GH" data-code="+233">🇬🇭 Ghana (+233)</option>
-                                <option value="NG" data-code="+234">🇳🇬 Nigeria (+234)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="edit-phone">Phone Number</label>
-                            <input type="tel" id="edit-phone">
-                        </div>
-
-                        <button type="submit" class="btn">Update Profile</button>
-                    </form>
-                </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email Address</label>
+                        <input type="email" id="edit-email" disabled style="background: #f7fafc;">
+                        <small style="color: #718096;">Email cannot be changed after registration</small>
+                    </div>
+                    <button type="submit" class="btn">Update Profile</button>
+                </form>
             </div>
 
             <!-- Security Settings -->
-            <div class="tab-content" id="security-settings" style="display: none;">
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <span>🔒</span> Change Password
-                    </div>
-                    
-                    <form id="password-update-form">
+            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+                    <span>🔐</span> Security & Authentication
+                </h3>
+                
+                <!-- Withdrawal Password -->
+                <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #4a5568;">Withdrawal Password</h4>
+                    <form id="withdrawal-password-form">
+                        <div class="form-group">
+                            <label for="new-withdrawal-password">New Withdrawal Password</label>
+                            <input type="password" id="new-withdrawal-password" required minlength="6" placeholder="Enter new withdrawal password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-withdrawal-password">Confirm Withdrawal Password</label>
+                            <input type="password" id="confirm-withdrawal-password" required minlength="6" placeholder="Confirm withdrawal password">
+                        </div>
+                        <div class="form-group">
+                            <label for="current-auth-password">Current Account Password (for verification)</label>
+                            <input type="password" id="current-auth-password" required placeholder="Enter your account password">
+                        </div>
+                        <button type="submit" class="btn">Set Withdrawal Password</button>
+                    </form>
+                </div>
+
+                <!-- Account Password Change -->
+                <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: #4a5568;">Change Account Password</h4>
+                    <form id="account-password-form">
                         <div class="form-group">
                             <label for="current-password">Current Password</label>
                             <input type="password" id="current-password" required>
                         </div>
-
                         <div class="form-group">
-                            <label for="new-password">New Password</label>
-                            <input type="password" id="new-password" required minlength="6">
+                            <label for="new-account-password">New Password</label>
+                            <input type="password" id="new-account-password" required minlength="6">
                         </div>
-
                         <div class="form-group">
-                            <label for="confirm-new-password">Confirm New Password</label>
-                            <input type="password" id="confirm-new-password" required minlength="6">
+                            <label for="confirm-account-password">Confirm New Password</label>
+                            <input type="password" id="confirm-account-password" required minlength="6">
                         </div>
-
-                        <button type="submit" class="btn">Update Password</button>
+                        <button type="submit" class="btn">Update Account Password</button>
                     </form>
                 </div>
 
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <span>🛡️</span> Account Security
-                    </div>
+                <!-- 2FA / Biometric -->
+                <div style="padding: 20px; background: #f7fafc; border-radius: 10px;">
+                    <h4 style="margin-bottom: 15px; color: #4a5568;">Two-Factor Authentication</h4>
                     
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
-                        <div>
-                            <div style="font-weight: 600; color: #4a5568;">KYC Verification Status</div>
-                            <div style="color: #718096; font-size: 0.9rem;" id="settings-kyc-status">Pending verification</div>
-                        </div>
-                        <button class="btn" id="open-kyc-from-settings" style="padding: 8px 15px; font-size: 0.9rem;">
-                            Verify Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Preferences Settings -->
-            <div class="tab-content" id="preferences-settings" style="display: none;">
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <span>📧</span> Notifications
-                    </div>
-                    
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" id="email-notifications" checked>
-                            <span>Email notifications for transactions</span>
-                        </label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" id="daily-reminders" checked>
-                            <span>Daily contribution reminders</span>
-                        </label>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                            <input type="checkbox" id="security-alerts" checked>
-                            <span>Security and login alerts</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <span>🌍</span> Regional Settings
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="currency-preference">Preferred Currency Display</label>
-                        <select id="currency-preference">
-                            <option value="GHS">🇬🇭 Ghanaian Cedi (₵)</option>
-                            <option value="USD">🇺🇸 US Dollar ($)</option>
-                            <option value="EUR">🇪🇺 Euro (€)</option>
-                            <option value="GBP">🇬🇧 British Pound (£)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="language-preference">Language</label>
-                        <select id="language-preference">
-                            <option value="en">🇺🇸 English</option>
-                            <option value="tw">🇬🇭 Twi</option>
-                            <option value="fr">🇫🇷 French</option>
-                            <option value="es">🇪🇸 Spanish</option>
-                        </select>
-                    </div>
-                    
-                    <button class="btn" id="save-preferences-btn">Save Preferences</button>
-                </div>
-
-                <div class="settings-section">
-                    <div class="settings-title">
-                        <span>⚠️</span> Danger Zone
-                    </div>
-                    
-                    <div style="padding: 20px; background: #fed7d7; border: 1px solid #feb2b2; border-radius: 10px; color: #742a2a;">
-                        <div style="font-weight: 600; margin-bottom: 10px;">Delete Account</div>
-                        <div style="margin-bottom: 15px; font-size: 0.9rem;">
-                            Once you delete your account, there is no going back. Please be certain.
-                        </div>
-                        <button class="btn" id="delete-account-btn" style="background: #e53e3e; width: auto; padding: 10px 20px;">
-                            Delete Account
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Report Problem Modal -->
-    <div class="modal" id="report-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Report a Problem</h2>
-                <button class="close-btn" id="close-report-modal">&times;</button>
-            </div>
-            
-            <div class="modal-body">
-                <form id="report-problem-form">
-                    <div class="form-group">
-                        <label for="problem-category">Problem Category *</label>
-                        <select id="problem-category" required>
-                            <option value="">Select a category</option>
-                            <option value="login">Login/Authentication Issues</option>
-                            <option value="transaction">Transaction Problems</option>
-                            <option value="kyc">KYC Verification Issues</option>
-                            <option value="technical">Technical Problems</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="problem-description">Describe the Problem *</label>
-                        <textarea id="problem-description" rows="5" required 
-                            placeholder="Please provide as much detail as possible about the problem you're experiencing..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="problem-screenshot">Screenshot (Optional)</label>
-                        <div class="file-upload-area" id="screenshot-upload">
-                            <input type="file" id="screenshot-input" accept="image/*" style="display: none;">
-                            <div class="upload-text">
-                                <span>📸 Click or drag to upload screenshot</span>
-                                <small>Max file size: 5MB</small>
+                    <!-- Biometric Authentication -->
+                    <div style="padding: 15px; background: white; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">🔒 Biometric Authentication</div>
+                                <div style="font-size: 0.9rem; color: #718096;">Use fingerprint or face recognition for withdrawals</div>
+                                <div id="biometric-status" style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
+                                    Status: <span id="biometric-status-text">Not configured</span>
+                                </div>
                             </div>
-                        </div>
-                        <div id="screenshot-preview" style="display: none;">
-                            <img id="screenshot-image" src="" alt="Screenshot preview">
-                            <button type="button" class="remove-btn" id="remove-screenshot">Remove</button>
+                            <button class="btn" id="setup-biometric-btn" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">
+                                Setup
+                            </button>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn">Submit Report</button>
-                </form>
+                    <!-- Authenticator App -->
+                    <div style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">📱 Authenticator App</div>
+                                <div style="font-size: 0.9rem; color: #718096;">Use Google Authenticator or similar apps</div>
+                                <div id="authenticator-status" style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
+                                    Status: <span id="authenticator-status-text">Not configured</span>
+                                </div>
+                            </div>
+                            <button class="btn" id="setup-authenticator-btn" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">
+                                Setup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
+                <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+                    <span>🔔</span> Notifications
+                </h3>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="email-notifications" checked>
+                        <span>Email notifications for transactions</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="sms-notifications" checked>
+                        <span>SMS notifications for withdrawals</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="security-alerts" checked>
+                        <span>Security and login alerts</span>
+                    </label>
+                </div>
+                <button class="btn" id="save-notifications-btn">Save Preferences</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="payment-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-payment-modal">&times;</button>
+            <h2 style="margin-bottom: 20px; color: #4a5568;">Complete Payment</h2>
+            
+            <div class="payment-method-selector">
+                <div class="payment-option" data-method="mobile-money">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">📱</div>
+                    <div style="font-weight: 600;">Mobile Money</div>
+                </div>
+                <div class="payment-option" data-method="crypto">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">₿</div>
+                    <div style="font-weight: 600;">Cryptocurrency</div>
+                </div>
+            </div>
+
+            <div id="payment-details" class="hidden">
+                <!-- Crypto selection -->
+                <div id="crypto-selection" class="hidden" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #4a5568;">Select Cryptocurrency</label>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div class="crypto-option" data-crypto="usdt" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">💵</div>
+                            <div style="font-weight: 600; color: #4a5568;">USDT</div>
+                            <div style="font-size: 0.8rem; color: #718096;">Tether</div>
+                        </div>
+                        <div class="crypto-option" data-crypto="btc" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">₿</div>
+                            <div style="font-weight: 600; color: #4a5568;">BTC</div>
+                            <div style="font-size: 0.8rem; color: #718096;">Bitcoin</div>
+                        </div>
+                        <div class="crypto-option" data-crypto="eth" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">Ξ</div>
+                            <div style="font-weight: 600; color: #4a5568;">ETH</div>
+                            <div style="font-size: 0.8rem; color: #718096;">Ethereum</div>
+                        </div>
+                        <div class="crypto-option" data-crypto="usdc" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">💲</div>
+                            <div style="font-weight: 600; color: #4a5568;">USDC</div>
+                            <div style="font-size: 0.8rem; color: #718096;">USD Coin</div>
+                        </div>
+                        <div class="crypto-option" data-crypto="bnb" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">🔸</div>
+                            <div style="font-weight: 600; color: #4a5568;">BNB</div>
+                            <div style="font-size: 0.8rem; color: #718096;">Binance Coin</div>
+                        </div>
+                        <div class="crypto-option" data-crypto="trx" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">⚡</div>
+                            <div style="font-weight: 600; color: #4a5568;">TRX</div>
+                            <div style="font-size: 0.8rem; color: #718096;">Tron</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Amount to Pay</label>
+                    <input type="text" id="payment-amount-display" readonly style="background: #f7fafc; font-weight: 600; font-size: 1.2rem;">
+                </div>
+
+                <div class="form-group">
+                    <label>Payment Instructions</label>
+                    <div id="payment-instructions" style="padding: 15px; background: #f7fafc; border-radius: 8px; color: #4a5568;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transaction-id">Transaction ID/Reference *</label>
+                    <input type="text" id="transaction-id" placeholder="Paste your transaction ID here" required>
+                </div>
+
+                <button class="btn" id="confirm-payment-btn">I have successfully made the payment</button>
             </div>
         </div>
     </div>
-    <script type="module" src="data.js"></script>
-</body>
-</html>   
+
+    <!-- Biometric Setup Modal -->
+    <div class="modal" id="biometric-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-biometric-modal">&times;</button>
+            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🔒 Setup Biometric Authentication</h2>
+            
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">👆</div>
+                <p style="color: #718096; margin-bottom: 20px;">
+                    Enable biometric authentication to secure your withdrawals with your fingerprint or face recognition.
+                </p>
+                
+                <div id="biometric-support-message" style="padding: 15px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px;">
+                    Checking device compatibility...
+                </div>
+                
+                <button class="btn" id="enable-biometric-btn">Enable Biometric Auth</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Authenticator Setup Modal -->
+    <div class="modal" id="authenticator-modal">
+        <div class="modal-content">
+            <button class="close-btn" id="close-authenticator-modal">&times;</button>
+            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">📱 Setup Authenticator App</h2>
+            
+            <div style="padding: 20px;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">🔐</div>
+                    <p style="color: #718096; margin-bottom: 20px;">
+                        Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                    </p>
+                    
+                    <div id="qr-code" style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin-bottom: 20px;">
+                        <div style="width: 200px; height: 200px; background: #f7fafc; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0;">
+                            QR Code
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <div style="font-size: 0.9rem; color: #718096; margin-bottom: 8px;">Or enter this code manually:</div>
+                        <div id="secret-key" style="font-family: monospace; font-size: 1.1rem; font-weight: 600; color: #4a5568; letter-spacing: 2px;">
+                            XXXX XXXX XXXX XXXX
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="verify-code">Enter 6-digit code from your app</label>
+                    <input type="text" id="verify-code" maxlength="6" placeholder="000000" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+                </div>
+                
+                <button class="btn" id="verify-authenticator-btn">Verify & Enable</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdrawal Verification Modal -->
+    <div class="modal" id="verification-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">Verify Withdrawal</h2>
+            
+            <div id="verification-method" style="padding: 20px;">
+                <!-- Will be populated based on enabled auth methods -->
+            </div>
+        </div>
+    </div>
+<script type="module" src="data.js"></script>
