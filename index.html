@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusuPay - Professional Daily Savings</title>
     <style>
+        /* ============================================
+           BASE STYLES
+        ============================================ */
         * {
             margin: 0;
             padding: 0;
@@ -18,7 +21,47 @@
             color: #333;
         }
 
-        /* Auth Container */
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================
+           ANIMATIONS
+        ============================================ */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .page-content {
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        /* ============================================
+           AUTH STYLES
+        ============================================ */
         .auth-wrapper {
             display: flex;
             align-items: center;
@@ -59,7 +102,9 @@
             text-align: center;
         }
 
-        /* Fixed Header */
+        /* ============================================
+           HEADER STYLES
+        ============================================ */
         .app-header {
             position: fixed;
             top: 0;
@@ -121,7 +166,83 @@
             transform: translateY(-2px);
         }
 
-        /* Sidebar */
+        /* ============================================
+           NOTIFICATION STYLES
+        ============================================ */
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .notification-badge .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .notification-tooltip {
+            position: absolute;
+            top: 60px;
+            right: 80px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1100;
+            display: none;
+        }
+
+        .notification-tooltip.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .notification-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f7fafc;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: #f7fafc;
+        }
+
+        .notification-item.unread {
+            background: #ebf8ff;
+            border-left: 3px solid #667eea;
+        }
+
+        .notification-item .time {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* ============================================
+           SIDEBAR STYLES
+        ============================================ */
         .sidebar {
             position: fixed;
             left: 0;
@@ -166,7 +287,9 @@
             font-size: 1.3rem;
         }
 
-        /* Main Content */
+        /* ============================================
+           MAIN CONTENT STYLES
+        ============================================ */
         .main-content {
             margin-left: 260px;
             margin-top: 70px;
@@ -174,7 +297,9 @@
             min-height: calc(100vh - 70px);
         }
 
-        /* Dashboard Cards */
+        /* ============================================
+           CARD STYLES
+        ============================================ */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -200,7 +325,17 @@
             font-size: 0.9rem;
         }
 
-        /* Forms */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        /* ============================================
+           FORM STYLES
+        ============================================ */
         .form-group {
             margin-bottom: 20px;
         }
@@ -234,6 +369,12 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -258,7 +399,38 @@
             transform: none;
         }
 
-        /* Modal */
+        /* ============================================
+           ALERT STYLES
+        ============================================ */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            color: #2a4365;
+            border: 1px solid #90cdf4;
+        }
+
+        /* ============================================
+           MODAL STYLES
+        ============================================ */
         .modal {
             display: none;
             position: fixed;
@@ -307,15 +479,9 @@
             background: #f7fafc;
         }
 
-        /* Contribution Calendar */
-        .calendar-container {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
+        /* ============================================
+           CONTRIBUTION CALENDAR STYLES
+        ============================================ */
         .month-selector {
             display: flex;
             gap: 10px;
@@ -372,68 +538,92 @@
             border-color: transparent;
         }
 
-        /* PAID Stamp */
-        .paid-stamp {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 20px auto;
+        .day-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
         }
 
-        .stamp-outer {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border: 3px solid #e53e3e;
+        .day-selector input {
+            width: 80px;
+            text-align: center;
+        }
+
+        .day-selector-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
         }
 
-        .stamp-inner {
-            width: 90px;
-            height: 90px;
-            border: 2px solid #e53e3e;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(229, 62, 62, 0.1);
+        .day-selector-btn:hover {
+            background: #5568d3;
+            transform: scale(1.1);
         }
 
-        .stamp-text-top,
-        .stamp-text-bottom {
-            position: absolute;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #e53e3e;
-            letter-spacing: 1px;
+        /* ============================================
+           PAYMENT STYLES
+        ============================================ */
+        .payment-method-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
         }
 
-        .stamp-text-top {
-            top: 15px;
+        .payment-option {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .stamp-text-bottom {
-            bottom: 15px;
+        .payment-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
         }
 
-        .stamp-paid {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #e53e3e;
-            transform: rotate(-15deg);
+        .payment-option.selected {
+            border-color: #667eea;
+            background: #ebf8ff;
         }
 
-        .stamp-date {
-            font-size: 0.7rem;
-            color: #e53e3e;
-            margin-top: 5px;
+        .crypto-option {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
         }
 
-        /* Transaction History */
+        .crypto-option:hover {
+            border-color: #667eea;
+            background: #f7fafc;
+        }
+
+        .crypto-option.selected {
+            border-color: #667eea;
+            background: #ebf8ff;
+        }
+
+        /* ============================================
+           TRANSACTION STYLES
+        ============================================ */
         .transaction-card {
             background: white;
             border-radius: 10px;
@@ -507,32 +697,90 @@
             color: #742a2a;
         }
 
-        .alert {
-            padding: 12px 16px;
+        /* ============================================
+           PAID STAMP
+        ============================================ */
+        .paid-stamp {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+        }
+
+        .stamp-outer {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 3px solid #e53e3e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stamp-inner {
+            width: 90px;
+            height: 90px;
+            border: 2px solid #e53e3e;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(229, 62, 62, 0.1);
+        }
+
+        .stamp-text-top,
+        .stamp-text-bottom {
+            position: absolute;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #e53e3e;
+            letter-spacing: 1px;
+        }
+
+        .stamp-text-top {
+            top: 15px;
+        }
+
+        .stamp-text-bottom {
+            bottom: 15px;
+        }
+
+        .stamp-paid {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e53e3e;
+            transform: rotate(-15deg);
+        }
+
+        .stamp-date {
+            font-size: 0.7rem;
+            color: #e53e3e;
+            margin-top: 5px;
+        }
+
+        /* ============================================
+           PAYMENT METHOD CARD
+        ============================================ */
+        .payment-method-card {
+            padding: 15px;
+            background: #f7fafc;
             border-radius: 8px;
-            margin-bottom: 20px;
-            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
         }
 
-        .alert-error {
-            background: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #feb2b2;
+        .payment-method-card:hover {
+            background: #edf2f7;
         }
 
-        .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
-        }
-
-        .alert-info {
-            background: #bee3f8;
-            color: #2a4365;
-            border: 1px solid #90cdf4;
-        }
-
-        /* VIP Badge */
+        /* ============================================
+           VIP BADGE
+        ============================================ */
         .vip-badge {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -543,7 +791,9 @@
             margin-left: 10px;
         }
 
-        /* Loading Spinner */
+        /* ============================================
+           LOADING SPINNER
+        ============================================ */
         .spinner {
             border: 3px solid #e2e8f0;
             border-top: 3px solid #667eea;
@@ -554,12 +804,9 @@
             margin: 20px auto;
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
+        /* ============================================
+           RESPONSIVE STYLES
+        ============================================ */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -581,77 +828,22 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-        }
 
-        .hidden {
-            display: none !important;
-        }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
 
-        /* Day Selection */
-        .day-selector {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #f7fafc;
-            border-radius: 10px;
-        }
-
-        .day-selector input {
-            width: 80px;
-            text-align: center;
-        }
-
-        .day-selector-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .payment-method-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .payment-option {
-            padding: 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .payment-option:hover {
-            border-color: #667eea;
-            background: #f7fafc;
-        }
-
-        .payment-option.selected {
-            border-color: #667eea;
-            background: #ebf8ff;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            .notification-tooltip {
+                right: 10px;
+                width: calc(100vw - 20px);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Auth Wrapper -->
+    <!-- ============================================
+         AUTH SECTION
+    ============================================ -->
     <div class="auth-wrapper" id="auth-wrapper">
         <div class="auth-container">
             <div class="logo">🏦</div>
@@ -740,13 +932,19 @@
         </div>
     </div>
 
-    <!-- App Header -->
+    <!-- ============================================
+         APP HEADER
+    ============================================ -->
     <header class="app-header hidden" id="app-header">
         <div class="app-logo">
             <span>🏦</span>
             <span>SusuPay</span>
         </div>
         <div class="header-user">
+            <div class="notification-badge" id="notification-bell">
+                <span style="font-size: 1.5rem;">🔔</span>
+                <span class="badge-count hidden" id="notification-count">0</span>
+            </div>
             <div>
                 <div id="user-name" style="font-weight: 600; color: #4a5568;"></div>
                 <div id="user-email" style="font-size: 0.8rem; color: #718096;"></div>
@@ -754,9 +952,24 @@
             <div class="user-avatar" id="user-avatar">U</div>
             <button class="logout-btn" id="logout-btn">Logout</button>
         </div>
+        
+        <!-- Notification Tooltip -->
+        <div class="notification-tooltip" id="notification-tooltip">
+            <div class="notification-header">
+                <h3 style="color: #4a5568; font-size: 1rem; margin: 0;">Notifications</h3>
+                <button id="mark-all-read" style="background: none; border: none; color: #667eea; cursor: pointer; font-size: 0.85rem;">Mark all read</button>
+            </div>
+            <div id="notification-list">
+                <div style="padding: 40px 20px; text-align: center; color: #718096;">
+                    No notifications yet
+                </div>
+            </div>
+        </div>
     </header>
 
-    <!-- Sidebar -->
+    <!-- ============================================
+         SIDEBAR
+    ============================================ -->
     <aside class="sidebar hidden" id="sidebar">
         <nav class="sidebar-nav">
             <div class="nav-item active" data-page="dashboard">
@@ -779,18 +992,28 @@
                 <span class="nav-icon">🛡️</span>
                 <span>KYC Verification</span>
             </div>
+            <div class="nav-item" data-page="payment-methods">
+                <span class="nav-icon">💳</span>
+                <span>Payment Methods</span>
+            </div>
             <div class="nav-item" data-page="settings">
                 <span class="nav-icon">⚙️</span>
                 <span>Settings</span>
             </div>
+            <div class="nav-item" data-page="report">
+                <span class="nav-icon">🚨</span>
+                <span>Report a Problem</span>
+            </div>
         </nav>
     </aside>
 
-    <!-- Main Content -->
+    <!-- ============================================
+         MAIN CONTENT
+    ============================================ -->
     <main class="main-content hidden" id="main-content">
         <div id="dashboard-alert"></div>
 
-        <!-- Dashboard Page -->
+        <!-- DASHBOARD PAGE -->
         <div id="dashboard-page" class="page-content">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Dashboard Overview</h2>
             
@@ -813,7 +1036,7 @@
                 </div>
             </div>
 
-            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+            <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">Set Monthly Rate</h3>
                 <div class="form-group">
                     <label for="rate-input">Monthly Rate (GH₵)</label>
@@ -826,11 +1049,11 @@
             </div>
         </div>
 
-        <!-- Contributions Page -->
+        <!-- CONTRIBUTIONS PAGE -->
         <div id="contributions-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Monthly Contributions</h2>
             
-            <div class="calendar-container">
+            <div class="card">
                 <div class="month-selector" id="month-selector">
                     <!-- Months will be populated by JS -->
                 </div>
@@ -842,9 +1065,9 @@
                 </div>
 
                 <div class="day-selector">
-                    <span style="font-weight: 600; color: #4a5568;">Select Days to Contribute:</span>
+                    <span style="font-weight: 600; color: #4a5568;">Select Days:</span>
                     <button type="button" class="day-selector-btn" id="decrease-days">-</button>
-                    <input type="number" id="days-input" value="1" min="1" max="31" readonly>
+                    <input type="number" id="days-input" value="1" min="1" max="31">
                     <button type="button" class="day-selector-btn" id="increase-days">+</button>
                     <span style="font-weight: 600; color: #667eea;">Total: ₵<span id="total-amount">0.00</span></span>
                 </div>
@@ -853,11 +1076,11 @@
             </div>
         </div>
 
-        <!-- Withdrawals Page -->
+        <!-- WITHDRAWALS PAGE -->
         <div id="withdrawals-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Process Withdrawal</h2>
             
-            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
+            <div class="card">
                 <div class="form-group">
                     <label for="withdrawal-month">Select Month</label>
                     <select id="withdrawal-month">
@@ -871,23 +1094,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="withdrawal-method">Payment Method</label>
-                    <select id="withdrawal-method" required>
-                        <option value="">Select method...</option>
-                        <option value="mobile-money">Mobile Money</option>
-                        <option value="bank">Bank Transfer</option>
-                        <option value="crypto">Cryptocurrency</option>
+                    <label for="withdrawal-payment-method">Select Payment Method</label>
+                    <select id="withdrawal-payment-method" required>
+                        <option value="">Select saved payment method...</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="withdrawal-address">Payment Address/Account</label>
-                    <input type="text" id="withdrawal-address" placeholder="Enter your payment details">
-                </div>
-
-                <div class="form-group">
                     <label for="withdrawal-password">Withdrawal Password</label>
-                    <input type="password" id="withdrawal-password" placeholder="Enter your password to confirm">
+                    <input type="password" id="withdrawal-password" placeholder="Enter your withdrawal password">
                 </div>
 
                 <button class="btn" id="process-withdrawal-btn">Process Withdrawal</button>
@@ -898,7 +1113,7 @@
             </div>
         </div>
 
-        <!-- Transactions Page -->
+        <!-- TRANSACTIONS PAGE -->
         <div id="transactions-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Transaction History</h2>
             <div id="transactions-list">
@@ -906,13 +1121,13 @@
             </div>
         </div>
 
-        <!-- KYC Page -->
+        <!-- KYC PAGE -->
         <div id="kyc-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">KYC Verification</h2>
             
             <!-- KYC Status Display -->
             <div id="kyc-status-display" class="hidden">
-                <div style="background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); text-align: center;">
+                <div class="card" style="text-align: center;">
                     <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
                     <h3 style="color: #4a5568; margin-bottom: 15px;">Verification Under Review</h3>
                     <p style="color: #718096; margin-bottom: 20px;">
@@ -922,61 +1137,38 @@
                     <div style="padding: 15px; background: #fef5e7; border-radius: 8px; color: #744210; font-weight: 600;">
                         Status: <span id="kyc-verification-status">Under Review</span>
                     </div>
-                    <p style="color: #718096; margin-top: 20px; font-size: 0.9rem;">
-                        You will receive an email notification once your verification is complete.
-                    </p>
                 </div>
             </div>
 
             <!-- KYC Form -->
             <div id="kyc-form-container">
                 <!-- Terms of Service -->
-                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                    <h3 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        <span>📜</span> Terms of Service
-                    </h3>
-                    <div style="max-height: 300px; overflow-y: auto; padding: 20px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+                <div class="card">
+                    <h3 style="color: #4a5568; margin-bottom: 15px;">📜 Terms of Service</h3>
+                    <div style="max-height: 300px; overflow-y: auto; padding: 20px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px;">
                         <h4 style="color: #4a5568; margin-bottom: 15px;">Privacy & Data Protection</h4>
                         <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
-                            <strong>No Third-Party Access:</strong> We guarantee that your personal information, identification documents, 
-                            and biometric data will NEVER be shared with, sold to, or accessed by any third parties under any circumstances.
+                            <strong>No Third-Party Access:</strong> We guarantee that your personal information will NEVER be shared with any third parties.
                         </p>
                         <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
-                            <strong>Data Security:</strong> All documents are encrypted end-to-end and stored in secure, isolated servers. 
-                            Your data is protected with bank-level encryption (AES-256).
-                        </p>
-                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
-                            <strong>Purpose:</strong> Your KYC information is used solely for identity verification to comply with 
-                            financial regulations and to protect your account from fraud.
-                        </p>
-                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
-                            <strong>Data Retention:</strong> Your documents will be retained only for as long as legally required 
-                            and will be permanently deleted upon account closure or upon your request.
-                        </p>
-                        <p style="color: #4a5568; line-height: 1.8; margin-bottom: 15px;">
-                            <strong>Your Rights:</strong> You have the right to access, modify, or delete your data at any time. 
-                            Contact our support team for any data-related requests.
+                            <strong>Data Security:</strong> All documents are encrypted with bank-level encryption (AES-256).
                         </p>
                         <p style="color: #4a5568; line-height: 1.8;">
-                            <strong>Internal Use Only:</strong> Only authorized SusuPay verification team members will review your 
-                            documents, and all reviewers are bound by strict confidentiality agreements.
+                            <strong>Your Rights:</strong> You have the right to access, modify, or delete your data at any time.
                         </p>
                     </div>
                     
                     <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; padding: 15px; background: #ebf8ff; border-radius: 8px; border: 2px solid #90cdf4;">
                         <input type="checkbox" id="terms-checkbox" style="margin-top: 4px; width: 20px; height: 20px; cursor: pointer;">
                         <span style="color: #2b6cb0; line-height: 1.6;">
-                            I have read and agree to the terms of service. I understand that my information will be kept private 
-                            and will not be shared with any third parties.
+                            I have read and agree to the terms of service. I understand that my information will be kept private.
                         </span>
                     </label>
                 </div>
 
-                <!-- Document Type Selection -->
-                <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                    <h3 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
-                        <span>🪪</span> Select ID Type
-                    </h3>
+                <!-- ID Type Selection -->
+                <div id="id-type-section" class="card hidden">
+                    <h3 style="color: #4a5568; margin-bottom: 15px;">🪪 Select ID Type</h3>
                     <div class="form-group">
                         <label for="id-type">Choose your identification document</label>
                         <select id="id-type" required>
@@ -990,60 +1182,50 @@
                 </div>
 
                 <!-- ID Upload Section -->
-                <div id="id-upload-section" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: none;">
-                    <h3 style="color: #4a5568; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <span>📄</span> Upload ID Documents
-                    </h3>
+                <div id="id-upload-section" class="card hidden">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">📄 Upload ID Documents</h3>
                     
                     <!-- Front of ID -->
                     <div style="margin-bottom: 30px;">
                         <h4 style="color: #4a5568; margin-bottom: 15px;">Front of ID</h4>
-                        <div class="file-upload-area" id="front-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div id="front-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer;">
                             <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
-                            <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">Click to upload or drag and drop</div>
+                            <div style="font-weight: 600; color: #4a5568;">Click to upload</div>
                             <div style="color: #718096; font-size: 0.9rem;">PNG, JPG up to 10MB</div>
                         </div>
                         <input type="file" id="front-id-input" accept="image/*" style="display: none;">
                         <div id="front-preview" style="display: none; margin-top: 15px; text-align: center;">
-                            <img id="front-preview-img" style="max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                            <div style="margin-top: 10px; color: #48bb78; font-weight: 600;">✓ Front uploaded successfully</div>
+                            <img id="front-preview-img" style="max-width: 300px; border-radius: 10px;">
+                            <div style="margin-top: 10px; color: #48bb78;">✓ Front uploaded</div>
                         </div>
                     </div>
 
                     <!-- Back of ID -->
-                    <div style="margin-bottom: 30px;">
+                    <div>
                         <h4 style="color: #4a5568; margin-bottom: 15px;">Back of ID</h4>
-                        <div class="file-upload-area" id="back-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease;">
+                        <div id="back-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer;">
                             <div style="font-size: 3rem; margin-bottom: 10px;">📷</div>
-                            <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">Click to upload or drag and drop</div>
+                            <div style="font-weight: 600; color: #4a5568;">Click to upload</div>
                             <div style="color: #718096; font-size: 0.9rem;">PNG, JPG up to 10MB</div>
                         </div>
                         <input type="file" id="back-id-input" accept="image/*" style="display: none;">
                         <div id="back-preview" style="display: none; margin-top: 15px; text-align: center;">
-                            <img id="back-preview-img" style="max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                            <div style="margin-top: 10px; color: #48bb78; font-weight: 600;">✓ Back uploaded successfully</div>
+                            <img id="back-preview-img" style="max-width: 300px; border-radius: 10px;">
+                            <div style="margin-top: 10px; color: #48bb78;">✓ Back uploaded</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Live Selfie Verification -->
-                <div id="selfie-section" style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px; display: none;">
-                    <h3 style="color: #4a5568; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                        <span>🤳</span> Live Selfie Verification
-                    </h3>
+                <!-- Selfie Section -->
+                <div id="selfie-section" class="card hidden">
+                    <h3 style="color: #4a5568; margin-bottom: 20px;">🤳 Live Selfie Verification</h3>
                     
                     <p style="color: #718096; margin-bottom: 20px;">
-                        Take a live selfie to verify that the ID belongs to you. Make sure your face is clearly visible and well-lit.
+                        Take a live selfie to verify your identity. Make sure your face is clearly visible.
                     </p>
 
-                    <div style="background: #fff5b7; border: 2px solid #f6e05e; border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center;">
-                        <div style="font-weight: 600; color: #744210; font-size: 1.1rem;">
-                            📸 Please look straight at the camera
-                        </div>
-                    </div>
-
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <video id="selfie-video" autoplay playsinline style="width: 100%; max-width: 400px; height: 300px; border-radius: 10px; background: #2d3748; display: none;"></video>
+                        <video id="selfie-video" autoplay playsinline style="width: 100%; max-width: 400px; height: 300px; border-radius: 10px; display: none;"></video>
                         <canvas id="selfie-canvas" style="display: none;"></canvas>
                         <div id="selfie-placeholder" style="width: 100%; max-width: 400px; height: 300px; margin: 0 auto; background: #f7fafc; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e0;">
                             <div style="text-align: center; color: #718096;">
@@ -1066,8 +1248,8 @@
                     </div>
 
                     <div id="selfie-captured" style="display: none; margin-top: 20px; text-align: center;">
-                        <img id="selfie-preview-img" style="max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);">
-                        <div style="margin-top: 10px; color: #48bb78; font-weight: 600;">✓ Selfie captured successfully</div>
+                        <img id="selfie-preview-img" style="max-width: 300px; border-radius: 10px;">
+                        <div style="margin-top: 10px; color: #48bb78;">✓ Selfie captured</div>
                     </div>
                 </div>
 
@@ -1078,15 +1260,105 @@
             </div>
         </div>
 
-        <!-- Settings Page -->
+        <!-- PAYMENT METHODS PAGE -->
+        <div id="payment-methods-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Payment Methods</h2>
+            
+            <!-- Mobile Money -->
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">📱 Mobile Money Accounts</h3>
+                <div id="mobile-money-list" style="margin-bottom: 20px;">
+                    <!-- Saved accounts -->
+                </div>
+                <form id="add-mobile-money-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="momo-provider">Provider</label>
+                            <select id="momo-provider" required>
+                                <option value="">Select provider...</option>
+                                <option value="mtn">MTN Mobile Money</option>
+                                <option value="vodafone">Vodafone Cash</option>
+                                <option value="airteltigo">AirtelTigo Money</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="momo-number">Phone Number</label>
+                            <input type="tel" id="momo-number" placeholder="0244123456" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="momo-name">Account Name</label>
+                        <input type="text" id="momo-name" placeholder="Name on account" required>
+                    </div>
+                    <button type="submit" class="btn">Add Mobile Money Account</button>
+                </form>
+            </div>
+
+            <!-- Cryptocurrency Wallets -->
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">₿ Cryptocurrency Wallets</h3>
+                <div id="crypto-wallet-list" style="margin-bottom: 20px;">
+                    <!-- Saved wallets -->
+                </div>
+                <form id="add-crypto-wallet-form">
+                    <div class="form-group">
+                        <label for="crypto-type">Cryptocurrency</label>
+                        <select id="crypto-type" required>
+                            <option value="">Select crypto...</option>
+                            <option value="usdt-erc20">USDT (ERC-20)</option>
+                            <option value="usdt-trc20">USDT (TRC-20)</option>
+                            <option value="btc">Bitcoin (BTC)</option>
+                            <option value="eth">Ethereum (ETH)</option>
+                            <option value="usdc">USD Coin (USDC)</option>
+                            <option value="bnb">Binance Coin (BNB)</option>
+                            <option value="trx">Tron (TRX)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="crypto-address">Wallet Address</label>
+                        <input type="text" id="crypto-address" placeholder="Enter your wallet address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="crypto-label">Label (optional)</label>
+                        <input type="text" id="crypto-label" placeholder="e.g., My BTC Wallet">
+                    </div>
+                    <button type="submit" class="btn">Add Crypto Wallet</button>
+                </form>
+            </div>
+
+            <!-- Bank Transfer -->
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🏦 Bank Accounts</h3>
+                <div id="bank-account-list" style="margin-bottom: 20px;">
+                    <!-- Saved accounts -->
+                </div>
+                <form id="add-bank-account-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bank-name">Bank Name</label>
+                            <input type="text" id="bank-name" placeholder="e.g., GCB Bank" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="account-number">Account Number</label>
+                            <input type="text" id="account-number" placeholder="Account number" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-name">Account Name</label>
+                        <input type="text" id="account-name" placeholder="Name on account" required>
+                    </div>
+                    <button type="submit" class="btn">Add Bank Account</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SETTINGS PAGE -->
         <div id="settings-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Account Settings</h2>
             
             <!-- Profile Settings -->
-            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
-                    <span>👤</span> Profile Information
-                </h3>
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">👤 Profile Information</h3>
                 <form id="profile-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -1095,23 +1367,21 @@
                         </div>
                         <div class="form-group">
                             <label for="edit-surname">Surname</label>
-                            <input type="edit-surname">
+                            <input type="text" id="edit-surname">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="edit-email">Email Address</label>
                         <input type="email" id="edit-email" disabled style="background: #f7fafc;">
-                        <small style="color: #718096;">Email cannot be changed after registration</small>
+                        <small style="color: #718096;">Email cannot be changed</small>
                     </div>
                     <button type="submit" class="btn">Update Profile</button>
                 </form>
             </div>
 
             <!-- Security Settings -->
-            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
-                    <span>🔐</span> Security & Authentication
-                </h3>
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🔐 Security</h3>
                 
                 <!-- Withdrawal Password -->
                 <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
@@ -1119,21 +1389,21 @@
                     <form id="withdrawal-password-form">
                         <div class="form-group">
                             <label for="new-withdrawal-password">New Withdrawal Password</label>
-                            <input type="password" id="new-withdrawal-password" required minlength="6" placeholder="Enter new withdrawal password">
+                            <input type="password" id="new-withdrawal-password" required minlength="6">
                         </div>
                         <div class="form-group">
                             <label for="confirm-withdrawal-password">Confirm Withdrawal Password</label>
-                            <input type="password" id="confirm-withdrawal-password" required minlength="6" placeholder="Confirm withdrawal password">
+                            <input type="password" id="confirm-withdrawal-password" required minlength="6">
                         </div>
                         <div class="form-group">
-                            <label for="current-auth-password">Current Account Password (for verification)</label>
-                            <input type="password" id="current-auth-password" required placeholder="Enter your account password">
+                            <label for="current-auth-password">Current Account Password</label>
+                            <input type="password" id="current-auth-password" required>
                         </div>
                         <button type="submit" class="btn">Set Withdrawal Password</button>
                     </form>
                 </div>
 
-                <!-- Account Password Change -->
+                <!-- Account Password -->
                 <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px; color: #4a5568;">Change Account Password</h4>
                     <form id="account-password-form">
@@ -1149,21 +1419,20 @@
                             <label for="confirm-account-password">Confirm New Password</label>
                             <input type="password" id="confirm-account-password" required minlength="6">
                         </div>
-                        <button type="submit" class="btn">Update Account Password</button>
+                        <button type="submit" class="btn">Update Password</button>
                     </form>
                 </div>
 
-                <!-- 2FA / Biometric -->
+                <!-- 2FA -->
                 <div style="padding: 20px; background: #f7fafc; border-radius: 10px;">
                     <h4 style="margin-bottom: 15px; color: #4a5568;">Two-Factor Authentication</h4>
                     
-                    <!-- Biometric Authentication -->
-                    <div style="padding: 15px; background: white; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0;">
+                    <div style="padding: 15px; background: white; border-radius: 8px; margin-bottom: 15px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">🔒 Biometric Authentication</div>
-                                <div style="font-size: 0.9rem; color: #718096;">Use fingerprint or face recognition for withdrawals</div>
-                                <div id="biometric-status" style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
+                                <div style="font-weight: 600; color: #4a5568;">🔒 Biometric Authentication</div>
+                                <div style="font-size: 0.9rem; color: #718096;">Use fingerprint for withdrawals</div>
+                                <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
                                     Status: <span id="biometric-status-text">Not configured</span>
                                 </div>
                             </div>
@@ -1173,13 +1442,12 @@
                         </div>
                     </div>
 
-                    <!-- Authenticator App -->
-                    <div style="padding: 15px; background: white; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <div style="padding: 15px; background: white; border-radius: 8px;">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">📱 Authenticator App</div>
-                                <div style="font-size: 0.9rem; color: #718096;">Use Google Authenticator or similar apps</div>
-                                <div id="authenticator-status" style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
+                                <div style="font-weight: 600; color: #4a5568;">📱 Authenticator App</div>
+                                <div style="font-size: 0.9rem; color: #718096;">Use Google Authenticator</div>
+                                <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
                                     Status: <span id="authenticator-status-text">Not configured</span>
                                 </div>
                             </div>
@@ -1191,11 +1459,9 @@
                 </div>
             </div>
 
-            <!-- Notification Settings -->
-            <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); margin-bottom: 20px;">
-                <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
-                    <span>🔔</span> Notifications
-                </h3>
+            <!-- Notifications -->
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🔔 Notifications</h3>
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                         <input type="checkbox" id="email-notifications" checked>
@@ -1217,8 +1483,72 @@
                 <button class="btn" id="save-notifications-btn">Save Preferences</button>
             </div>
         </div>
+
+        <!-- REPORT A PROBLEM PAGE -->
+        <div id="report-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Report a Problem</h2>
+            
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 4rem; margin-bottom: 15px;">🚨</div>
+                    <h3 style="color: #4a5568; margin-bottom: 10px;">We're Here to Help</h3>
+                    <p style="color: #718096;">Let us know about any issues you're experiencing.</p>
+                </div>
+
+                <form id="report-problem-form">
+                    <div class="form-group">
+                        <label for="problem-category">Problem Category</label>
+                        <select id="problem-category" required>
+                            <option value="">Select category...</option>
+                            <option value="contribution">Contribution Issues</option>
+                            <option value="withdrawal">Withdrawal Problems</option>
+                            <option value="kyc">KYC Verification</option>
+                            <option value="payment">Payment Method Issues</option>
+                            <option value="account">Account Access</option>
+                            <option value="security">Security Concerns</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problem-subject">Subject</label>
+                        <input type="text" id="problem-subject" placeholder="Brief description" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problem-description">Detailed Description</label>
+                        <textarea id="problem-description" rows="6" placeholder="Please provide details..." required style="resize: vertical;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problem-priority">Priority</label>
+                        <select id="problem-priority" required>
+                            <option value="low">Low - General inquiry</option>
+                            <option value="medium">Medium - Needs attention</option>
+                            <option value="high">High - Urgent issue</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn">Submit Report</button>
+                </form>
+
+                <div style="margin-top: 30px; padding: 20px; background: #f7fafc; border-radius: 10px;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">Contact Us</h4>
+                    <div style="color: #718096; line-height: 2;">
+                        <div>📧 Email: support@susupay.com</div>
+                        <div>📱 WhatsApp: +233 24 412 3456</div>
+                        <div>📞 Phone: +233 30 271 5678</div>
+                        <div>🕒 Hours: Mon-Fri, 8AM-6PM GMT</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
+    <!-- ============================================
+         MODALS
+    ============================================ -->
+    
     <!-- Payment Modal -->
     <div class="modal" id="payment-modal">
         <div class="modal-content">
@@ -1241,38 +1571,25 @@
                 <div id="crypto-selection" class="hidden" style="margin-bottom: 20px;">
                     <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #4a5568;">Select Cryptocurrency</label>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                        <div class="crypto-option" data-crypto="usdt" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                        <div class="crypto-option" data-crypto="usdt">
                             <div style="font-size: 1.5rem; margin-bottom: 5px;">💵</div>
-                            <div style="font-weight: 600; color: #4a5568;">USDT</div>
-                            <div style="font-size: 0.8rem; color: #718096;">Tether</div>
+                            <div style="font-weight: 600;">USDT</div>
                         </div>
-                        <div class="crypto-option" data-crypto="btc" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                        <div class="crypto-option" data-crypto="btc">
                             <div style="font-size: 1.5rem; margin-bottom: 5px;">₿</div>
-                            <div style="font-weight: 600; color: #4a5568;">BTC</div>
-                            <div style="font-size: 0.8rem; color: #718096;">Bitcoin</div>
+                            <div style="font-weight: 600;">BTC</div>
                         </div>
-                        <div class="crypto-option" data-crypto="eth" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                        <div class="crypto-option" data-crypto="eth">
                             <div style="font-size: 1.5rem; margin-bottom: 5px;">Ξ</div>
-                            <div style="font-weight: 600; color: #4a5568;">ETH</div>
-                            <div style="font-size: 0.8rem; color: #718096;">Ethereum</div>
+                            <div style="font-weight: 600;">ETH</div>
                         </div>
-                        <div class="crypto-option" data-crypto="usdc" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
+                        <div class="crypto-option" data-crypto="usdc">
                             <div style="font-size: 1.5rem; margin-bottom: 5px;">💲</div>
-                            <div style="font-weight: 600; color: #4a5568;">USDC</div>
-                            <div style="font-size: 0.8rem; color: #718096;">USD Coin</div>
-                        </div>
-                        <div class="crypto-option" data-crypto="bnb" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">🔸</div>
-                            <div style="font-weight: 600; color: #4a5568;">BNB</div>
-                            <div style="font-size: 0.8rem; color: #718096;">Binance Coin</div>
-                        </div>
-                        <div class="crypto-option" data-crypto="trx" style="padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; text-align: center; transition: all 0.3s ease;">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">⚡</div>
-                            <div style="font-weight: 600; color: #4a5568;">TRX</div>
-                            <div style="font-size: 0.8rem; color: #718096;">Tron</div>
+                            <div style="font-weight: 600;">USDC</div>
                         </div>
                     </div>
                 </div>
+                
                 <div class="form-group">
                     <label>Amount to Pay</label>
                     <input type="text" id="payment-amount-display" readonly style="background: #f7fafc; font-weight: 600; font-size: 1.2rem;">
@@ -1286,10 +1603,10 @@
 
                 <div class="form-group">
                     <label for="transaction-id">Transaction ID/Reference *</label>
-                    <input type="text" id="transaction-id" placeholder="Paste your transaction ID here" required>
+                    <input type="text" id="transaction-id" placeholder="Paste your transaction ID" required>
                 </div>
 
-                <button class="btn" id="confirm-payment-btn">I have successfully made the payment</button>
+                <button class="btn" id="confirm-payment-btn">Confirm Payment</button>
             </div>
         </div>
     </div>
@@ -1298,19 +1615,19 @@
     <div class="modal" id="biometric-modal">
         <div class="modal-content">
             <button class="close-btn" id="close-biometric-modal">&times;</button>
-            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🔒 Setup Biometric Authentication</h2>
+            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🔒 Setup Biometric</h2>
             
             <div style="text-align: center; padding: 20px;">
                 <div style="font-size: 4rem; margin-bottom: 20px;">👆</div>
                 <p style="color: #718096; margin-bottom: 20px;">
-                    Enable biometric authentication to secure your withdrawals with your fingerprint or face recognition.
+                    Enable biometric authentication for secure withdrawals.
                 </p>
                 
                 <div id="biometric-support-message" style="padding: 15px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px;">
                     Checking device compatibility...
                 </div>
                 
-                <button class="btn" id="enable-biometric-btn">Enable Biometric Auth</button>
+                <button class="btn" id="enable-biometric-btn">Enable Biometric</button>
             </div>
         </div>
     </div>
@@ -1319,13 +1636,12 @@
     <div class="modal" id="authenticator-modal">
         <div class="modal-content">
             <button class="close-btn" id="close-authenticator-modal">&times;</button>
-            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">📱 Setup Authenticator App</h2>
+            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">📱 Setup Authenticator</h2>
             
             <div style="padding: 20px;">
                 <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 3rem; margin-bottom: 15px;">🔐</div>
                     <p style="color: #718096; margin-bottom: 20px;">
-                        Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                        Scan this QR code with your authenticator app
                     </p>
                     
                     <div id="qr-code" style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin-bottom: 20px;">
@@ -1335,7 +1651,7 @@
                     </div>
                     
                     <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <div style="font-size: 0.9rem; color: #718096; margin-bottom: 8px;">Or enter this code manually:</div>
+                        <div style="font-size: 0.9rem; color: #718096; margin-bottom: 8px;">Or enter this code:</div>
                         <div id="secret-key" style="font-family: monospace; font-size: 1.1rem; font-weight: 600; color: #4a5568; letter-spacing: 2px;">
                             XXXX XXXX XXXX XXXX
                         </div>
@@ -1343,7 +1659,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="verify-code">Enter 6-digit code from your app</label>
+                    <label for="verify-code">Enter 6-digit code</label>
                     <input type="text" id="verify-code" maxlength="6" placeholder="000000" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
                 </div>
                 
@@ -1352,39 +1668,65 @@
         </div>
     </div>
 
-    <!-- Withdrawal Verification Modal -->
+    <!-- 2FA Verification Modal -->
     <div class="modal" id="verification-modal">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">Verify Withdrawal</h2>
-            
             <div id="verification-method" style="padding: 20px;">
-                <!-- Will be populated based on enabled auth methods -->
+                <!-- Will be populated based on enabled auth -->
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, orderBy, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+        // ============================================
+        // FIREBASE INITIALIZATION
+        // ============================================
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            createUserWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut, 
+            sendEmailVerification, 
+            updatePassword, 
+            reauthenticateWithCredential, 
+            EmailAuthProvider, 
+            sendPasswordResetEmail 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            updateDoc, 
+            collection, 
+            addDoc, 
+            query, 
+            where, 
+            orderBy, 
+            getDocs, 
+            serverTimestamp,
+            deleteDoc
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
             authDomain: "susupay-5286e.firebaseapp.com",
             projectId: "susupay-5286e",
             storageBucket: "susupay-5286e.firebasestorage.app",
             messagingSenderId: "83852132974",
-            appId: "1:83852132974:web:2d8be2d1adb7e7639f5c7f",
-            measurementId: "G-EQM64CTX83"
+            appId: "1:83852132974:web:2d8be2d1adb7e7639f5c7f"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Global variables
+        // ============================================
+        // GLOBAL VARIABLES
+        // ============================================
         let currentUser = null;
         let userData = null;
         let selectedMonth = new Date().getMonth();
@@ -1393,13 +1735,14 @@
         let selectedCrypto = null;
         let contributionDays = 1;
         let withdrawalAttempts = 0;
-        let lockoutTimer = null;
         let mediaStream = null;
         let frontIdFile = null;
         let backIdFile = null;
         let selfieBlob = null;
+        let notifications = [];
+        let webAuthnCredential = null;
 
-        // Crypto wallet addresses (in production, generate unique addresses per user)
+        // Crypto addresses for deposits
         const cryptoAddresses = {
             usdt: {
                 erc20: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
@@ -1407,23 +1750,159 @@
             },
             btc: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
             eth: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-            usdc: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-            bnb: 'bnb1grpf0955h0ykzq3ar5nmum7y6gdfl6lxfn46h2',
-            trx: 'TYASr5UV6HEcXatwdFQfmLVUqQQQMUxHLS'
+            usdc: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'
         };
 
-        // Show alert function
+        // ============================================
+        // UTILITY FUNCTIONS
+        // ============================================
         function showAlert(message, type = 'info', container = 'dashboard-alert') {
             const alertDiv = document.getElementById(container);
             alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
             setTimeout(() => alertDiv.innerHTML = '', 5000);
         }
 
-        // Format currency
         function formatCurrency(amount) {
             return `₵${parseFloat(amount || 0).toFixed(2)}`;
         }
 
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        // ============================================
+        // NOTIFICATION FUNCTIONS
+        // ============================================
+        async function createNotification(title, message, type = 'info') {
+            try {
+                const notification = {
+                    userId: currentUser.uid,
+                    title,
+                    message,
+                    type,
+                    timestamp: serverTimestamp(),
+                    read: false
+                };
+                
+                await addDoc(collection(db, 'notifications'), notification);
+                
+                // Reload notifications
+                await loadNotifications();
+                
+                // Send email if enabled
+                if (userData.notifications?.email && type === 'transaction') {
+                    console.log(`Email sent to ${userData.email}: ${title}`);
+                }
+                
+                // Send SMS if enabled
+                if (userData.notifications?.sms && type === 'withdrawal') {
+                    console.log(`SMS sent for withdrawal: ${title}`);
+                }
+            } catch (error) {
+                console.error('Error creating notification:', error);
+            }
+        }
+
+        async function loadNotifications() {
+            try {
+                const q = query(
+                    collection(db, 'notifications'),
+                    where('userId', '==', currentUser.uid),
+                    orderBy('timestamp', 'desc')
+                );
+                
+                const snapshot = await getDocs(q);
+                notifications = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data(),
+                    timestamp: doc.data().timestamp?.toDate() || new Date()
+                }));
+                
+                updateNotificationBadge();
+                renderNotifications();
+            } catch (error) {
+                console.error('Error loading notifications:', error);
+            }
+        }
+
+        function updateNotificationBadge() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('notification-count');
+            
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notification-list');
+            
+            if (notifications.length === 0) {
+                container.innerHTML = '<div style="padding: 40px 20px; text-align: center; color: #718096;">No notifications yet</div>';
+                return;
+            }
+            
+            container.innerHTML = notifications.slice(0, 20).map(notif => `
+                <div class="notification-item ${notif.read ? '' : 'unread'}" data-id="${notif.id}">
+                    <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">${notif.title}</div>
+                    <div style="font-size: 0.9rem; color: #718096;">${notif.message}</div>
+                    <div class="time">${getTimeAgo(notif.timestamp)}</div>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.notification-item').forEach(item => {
+                item.addEventListener('click', () => markAsRead(item.dataset.id));
+            });
+        }
+
+        async function markAsRead(id) {
+            const notif = notifications.find(n => n.id === id);
+            if (notif && !notif.read) {
+                notif.read = true;
+                await updateDoc(doc(db, 'notifications', id), { read: true });
+                updateNotificationBadge();
+                renderNotifications();
+            }
+        }
+
+        async function markAllAsRead() {
+            const unread = notifications.filter(n => !n.read);
+            for (const notif of unread) {
+                notif.read = true;
+                await updateDoc(doc(db, 'notifications', notif.id), { read: true });
+            }
+            updateNotificationBadge();
+            renderNotifications();
+        }
+
+        // Notification bell click
+        document.getElementById('notification-bell').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('notification-tooltip').classList.toggle('show');
+        });
+
+        document.getElementById('mark-all-read').addEventListener('click', markAllAsRead);
+
+        document.addEventListener('click', (e) => {
+            const tooltip = document.getElementById('notification-tooltip');
+            const bell = document.getElementById('notification-bell');
+            if (!tooltip.contains(e.target) && !bell.contains(e.target)) {
+                tooltip.classList.remove('show');
+            }
+        });
+
+        // ============================================
+        // AUTH FUNCTIONS
+        // ============================================
+        
         // Auth toggle
         document.getElementById('auth-toggle-btn').addEventListener('click', () => {
             const signinForm = document.getElementById('signin-form');
@@ -1481,7 +1960,7 @@
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 if (!userCredential.user.emailVerified) {
-                    showAlert('Please verify your email before signing in.', 'error', 'auth-alert');
+                    showAlert('Please verify your email first.', 'error', 'auth-alert');
                     await signOut(auth);
                     return;
                 }
@@ -1508,7 +1987,6 @@
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 
-                // Create user document
                 await setDoc(doc(db, 'users', userCredential.user.uid), {
                     firstName,
                     surname,
@@ -1518,20 +1996,37 @@
                     kycStatus: 'pending',
                     rates: {},
                     contributedDays: {},
-                    withdrawalPassword: password, // In production, hash this properly
+                    withdrawalPassword: password,
                     withdrawalAttempts: 0,
-                    lockoutUntil: null
+                    lockoutUntil: null,
+                    notifications: {
+                        email: true,
+                        sms: true,
+                        security: true
+                    },
+                    paymentMethods: {
+                        mobileMoney: [],
+                        crypto: [],
+                        bank: []
+                    }
                 });
 
-                // Send verification email
                 await sendEmailVerification(userCredential.user);
                 
-                showAlert('Account created! Please check your email to verify your account.', 'success', 'auth-alert');
-                
-                // Switch back to sign in
+                showAlert('Account created! Check your email to verify.', 'success', 'auth-alert');
                 document.getElementById('auth-toggle-btn').click();
             } catch (error) {
                 showAlert(error.message, 'error', 'auth-alert');
+            }
+        });
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showAlert('Logged out successfully!', 'success', 'auth-alert');
+            } catch (error) {
+                showAlert(error.message, 'error');
             }
         });
 
@@ -1546,16 +2041,28 @@
             }
         });
 
-        // Load user data
+        // ============================================
+        // USER DATA FUNCTIONS
+        // ============================================
+        
         async function loadUserData() {
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (userDoc.exists()) {
                 userData = userDoc.data();
                 updateDashboard();
+                await loadNotifications();
+                
+                // Send login alert if enabled
+                if (userData.notifications?.security) {
+                    await createNotification(
+                        'New Login',
+                        `Login detected at ${new Date().toLocaleString()}`,
+                        'security'
+                    );
+                }
             }
         }
 
-        // Show/Hide views
         function showAuth() {
             document.getElementById('auth-wrapper').classList.remove('hidden');
             document.getElementById('app-header').classList.add('hidden');
@@ -1569,7 +2076,6 @@
             document.getElementById('sidebar').classList.remove('hidden');
             document.getElementById('main-content').classList.remove('hidden');
             
-            // Update header
             const avatar = document.getElementById('user-avatar');
             const userName = document.getElementById('user-name');
             const userEmail = document.getElementById('user-email');
@@ -1583,7 +2089,6 @@
             }
         }
 
-        // Update dashboard stats
         function updateDashboard() {
             document.getElementById('total-balance').textContent = formatCurrency(userData.balance);
             
@@ -1591,47 +2096,60 @@
             const currentRate = userData.rates?.[monthKey] || 0;
             document.getElementById('daily-rate').textContent = formatCurrency(currentRate);
             
-            // Calculate contributions count
             const contributedDays = userData.contributedDays?.[monthKey] || [];
             document.getElementById('contributions-count').textContent = contributedDays.length;
             
-            // Calculate progress
             const progress = Math.min((contributedDays.length / 31) * 100, 100);
             document.getElementById('current-month-progress').textContent = `${Math.round(progress)}%`;
         }
 
-        // Sidebar navigation
+        // ============================================
+        // NAVIGATION
+        // ============================================
+        
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
+                const currentPage = document.querySelector('.page-content:not(.hidden)');
+                if (currentPage) {
+                    currentPage.style.opacity = '0';
+                    setTimeout(() => {
+                        currentPage.classList.add('hidden');
+                        currentPage.style.opacity = '1';
+                    }, 200);
+                }
+                
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
                 
                 const page = item.dataset.page;
-                document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
-                document.getElementById(`${page}-page`).classList.remove('hidden');
                 
-                if (page === 'contributions') {
-                    initContributionsPage();
-                } else if (page === 'withdrawals') {
-                    initWithdrawalsPage();
-                } else if (page === 'transactions') {
-                    loadTransactions();
-                }
+                setTimeout(() => {
+                    document.getElementById(`${page}-page`).classList.remove('hidden');
+                    
+                    if (page === 'contributions') initContributionsPage();
+                    else if (page === 'withdrawals') initWithdrawalsPage();
+                    else if (page === 'transactions') loadTransactions();
+                    else if (page === 'payment-methods') loadPaymentMethods();
+                    else if (page === 'settings') loadSettings();
+                    else if (page === 'kyc') initKYCPage();
+                }, 200);
             });
         });
 
-        // Set Rate
+        // ============================================
+        // DASHBOARD FUNCTIONS
+        // ============================================
+        
         document.getElementById('set-rate-btn').addEventListener('click', async () => {
             const rate = parseFloat(document.getElementById('rate-input').value);
             
             if (!rate || rate < 1) {
-                showAlert('Please enter a valid rate amount.', 'error');
+                showAlert('Please enter a valid rate.', 'error');
                 return;
             }
 
             const monthKey = `${selectedYear}-${selectedMonth}`;
             
-            // Check if rate already set for this month
             if (userData.rates?.[monthKey]) {
                 showAlert('Rate is already locked for this month.', 'error');
                 return;
@@ -1648,20 +2166,28 @@
                 showAlert('Monthly rate set successfully!', 'success');
                 updateDashboard();
                 document.getElementById('rate-input').value = '';
-                document.getElementById('rate-info').classList.remove('hidden');
+                document.getElementById('rate-info').style.display = 'block';
+                
+                await createNotification(
+                    'Rate Set',
+                    `Monthly rate of ${formatCurrency(rate)} set for this month`,
+                    'info'
+                );
             } catch (error) {
                 showAlert('Error setting rate: ' + error.message, 'error');
             }
         });
 
-        // Initialize contributions page
+        // ============================================
+        // CONTRIBUTIONS FUNCTIONS
+        // ============================================
+        
         function initContributionsPage() {
             generateMonthSelector();
             renderContributionGrid();
             updateContributionAmount();
         }
 
-        // Generate month selector
         function generateMonthSelector() {
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const container = document.getElementById('month-selector');
@@ -1678,11 +2204,10 @@
                 container.appendChild(btn);
             });
             
-            const monthNames2 = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            document.getElementById('selected-month-display').textContent = `${monthNames2[selectedMonth]} ${selectedYear}`;
+            const fullMonthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('selected-month-display').textContent = `${fullMonthNames[selectedMonth]} ${selectedYear}`;
         }
 
-        // Render contribution grid
         function renderContributionGrid() {
             const grid = document.getElementById('contribution-grid');
             grid.innerHTML = '';
@@ -1709,6 +2234,14 @@
         }
 
         // Day selector
+        document.getElementById('days-input').addEventListener('input', (e) => {
+            let value = parseInt(e.target.value) || 1;
+            value = Math.max(1, Math.min(31, value));
+            e.target.value = value;
+            contributionDays = value;
+            updateContributionAmount();
+        });
+
         document.getElementById('increase-days').addEventListener('click', () => {
             if (contributionDays < 31) {
                 contributionDays++;
@@ -1725,7 +2258,6 @@
             }
         });
 
-        // Update contribution amount
         function updateContributionAmount() {
             const monthKey = `${selectedYear}-${selectedMonth}`;
             const rate = userData.rates?.[monthKey] || 0;
@@ -1748,7 +2280,10 @@
             document.getElementById('payment-modal').style.display = 'block';
         });
 
-        // Payment method selection
+        // ============================================
+        // PAYMENT MODAL FUNCTIONS
+        // ============================================
+        
         document.querySelectorAll('.payment-option').forEach(option => {
             option.addEventListener('click', () => {
                 document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
@@ -1769,90 +2304,59 @@
             });
         });
 
-        // Crypto option selection
         document.querySelectorAll('.crypto-option').forEach(option => {
             option.addEventListener('click', function() {
                 document.querySelectorAll('.crypto-option').forEach(o => {
-                    o.style.borderColor = '#e2e8f0';
-                    o.style.background = 'white';
+                    o.classList.remove('selected');
                 });
-                this.style.borderColor = '#667eea';
-                this.style.background = '#ebf8ff';
+                this.classList.add('selected');
                 selectedCrypto = this.dataset.crypto;
                 showPaymentInstructions();
             });
         });
 
-        // Show payment instructions
         function showPaymentInstructions() {
             const instructions = document.getElementById('payment-instructions');
             
             if (selectedPaymentMethod === 'mobile-money') {
                 instructions.innerHTML = `
-                    <strong>Mobile Money Payment Instructions:</strong><br>
+                    <strong>Mobile Money Payment:</strong><br>
                     1. Dial *170# or use your mobile money app<br>
                     2. Select "Send Money"<br>
-                    3. Enter: <strong>0244123456</strong> (SusuPay Merchant)<br>
+                    3. Enter: <strong>0244123456</strong> (SusuPay)<br>
                     4. Enter the amount shown above<br>
-                    5. Complete the transaction<br>
-                    6. Copy the transaction ID from the confirmation SMS<br>
-                    7. Paste it in the field below
+                    5. Paste transaction ID below
                 `;
             } else if (selectedPaymentMethod === 'crypto' && selectedCrypto) {
-                let address = '';
-                let network = '';
-                
                 if (selectedCrypto === 'usdt') {
-                    address = cryptoAddresses.usdt.erc20;
-                    network = 'ERC-20 (Ethereum) or TRC-20 (Tron)';
                     instructions.innerHTML = `
-                        <strong>USDT Payment Instructions:</strong><br>
-                        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px;">
-                            <strong>Network Options:</strong><br>
-                            <div style="margin: 10px 0;">
-                                <strong>ERC-20 (Ethereum):</strong><br>
-                                <code style="background: #f7fafc; padding: 5px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${cryptoAddresses.usdt.erc20}</code>
-                            </div>
-                            <div style="margin: 10px 0;">
-                                <strong>TRC-20 (Tron - Lower Fees):</strong><br>
-                                <code style="background: #f7fafc; padding: 5px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${cryptoAddresses.usdt.trc20}</code>
-                            </div>
+                        <strong>USDT Payment:</strong><br>
+                        <div style="margin: 10px 0;">
+                            <strong>ERC-20:</strong><br>
+                            <code style="background: #fff; padding: 5px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${cryptoAddresses.usdt.erc20}</code>
                         </div>
-                        ⚠️ <strong>Important:</strong> Make sure to select the correct network in your wallet!<br>
-                        After sending, paste the transaction hash below.
+                        <div style="margin: 10px 0;">
+                            <strong>TRC-20 (Lower Fees):</strong><br>
+                            <code style="background: #fff; padding: 5px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${cryptoAddresses.usdt.trc20}</code>
+                        </div>
+                        ⚠️ Select the correct network!
                     `;
                 } else {
-                    const cryptoNames = {
-                        btc: 'Bitcoin',
-                        eth: 'Ethereum',
-                        usdc: 'USD Coin',
-                        bnb: 'Binance Coin',
-                        trx: 'Tron'
-                    };
-                    
-                    address = cryptoAddresses[selectedCrypto];
+                    const address = cryptoAddresses[selectedCrypto];
                     instructions.innerHTML = `
-                        <strong>${cryptoNames[selectedCrypto]} Payment Instructions:</strong><br>
-                        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px;">
-                            <strong>Send to Address:</strong><br>
-                            <code style="background: #f7fafc; padding: 8px; border-radius: 4px; font-size: 0.9rem; word-break: break-all; display: block; margin: 10px 0;">${address}</code>
-                        </div>
-                        1. Open your crypto wallet<br>
-                        2. Send the exact amount shown above<br>
-                        3. Use the address provided<br>
-                        4. Wait for blockchain confirmation<br>
-                        5. Paste transaction hash below
+                        <strong>Send to Address:</strong><br>
+                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: block; margin: 10px 0; word-break: break-all;">${address}</code>
+                        Send exact amount and paste transaction hash below.
                     `;
                 }
             }
         }
 
-        // Confirm payment
         document.getElementById('confirm-payment-btn').addEventListener('click', async () => {
             const transactionId = document.getElementById('transaction-id').value.trim();
             
             if (!transactionId) {
-                showAlert('Please enter the transaction ID.', 'error');
+                showAlert('Please enter transaction ID.', 'error');
                 return;
             }
             
@@ -1861,7 +2365,6 @@
                 const rate = userData.rates[monthKey];
                 const amount = rate * contributionDays;
                 
-                // Get next available days
                 const contributedDays = userData.contributedDays?.[monthKey] || [];
                 const contributedDayNumbers = contributedDays.map(d => d.day);
                 const newDays = [];
@@ -1883,7 +2386,6 @@
                     dayCounter++;
                 }
                 
-                // Add transaction record
                 await addDoc(collection(db, 'transactions'), {
                     userId: currentUser.uid,
                     type: 'contribution',
@@ -1896,7 +2398,6 @@
                     timestamp: serverTimestamp()
                 });
                 
-                // Update user document
                 const updatedDays = [...contributedDays, ...newDays];
                 await updateDoc(doc(db, 'users', currentUser.uid), {
                     [`contributedDays.${monthKey}`]: updatedDays
@@ -1911,31 +2412,35 @@
                 document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
                 document.getElementById('payment-details').classList.add('hidden');
                 
-                showAlert('Thank you for the payment! Your transaction is under review. Check back in a few minutes for the deposit to reflect on your Total Balance.', 'success');
+                showAlert('Payment submitted! Under review.', 'success');
+                
+                await createNotification(
+                    'Contribution Submitted',
+                    `${formatCurrency(amount)} contribution submitted for review`,
+                    'transaction'
+                );
                 
                 renderContributionGrid();
                 updateDashboard();
-                
-                // Send email notification (in production, use Cloud Functions)
-                console.log('Email notification would be sent to:', userData.email);
             } catch (error) {
-                showAlert('Error processing contribution: ' + error.message, 'error');
+                showAlert('Error: ' + error.message, 'error');
             }
         });
 
-        // Close payment modal
         document.getElementById('close-payment-modal').addEventListener('click', () => {
             document.getElementById('payment-modal').style.display = 'none';
         });
 
-        // Initialize withdrawals page
+        // ============================================
+        // WITHDRAWAL FUNCTIONS
+        // ============================================
+        
         function initWithdrawalsPage() {
             const select = document.getElementById('withdrawal-month');
             select.innerHTML = '<option value="">Choose month...</option>';
             
             const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             
-            // Only show months with contributions
             Object.keys(userData.contributedDays || {}).forEach(monthKey => {
                 const [year, month] = monthKey.split('-');
                 const option = document.createElement('option');
@@ -1943,17 +2448,45 @@
                 option.textContent = `${monthNames[parseInt(month)]} ${year}`;
                 select.appendChild(option);
             });
+            
+            loadWithdrawalPaymentMethods();
         }
 
-        // Process withdrawal with 2FA verification
+        async function loadWithdrawalPaymentMethods() {
+            const select = document.getElementById('withdrawal-payment-method');
+            select.innerHTML = '<option value="">Select payment method...</option>';
+            
+            const methods = userData.paymentMethods || { mobileMoney: [], crypto: [], bank: [] };
+            
+            methods.mobileMoney.forEach((method, index) => {
+                const option = document.createElement('option');
+                option.value = `momo-${index}`;
+                option.textContent = `${method.provider.toUpperCase()} - ${method.number}`;
+                select.appendChild(option);
+            });
+            
+            methods.crypto.forEach((method, index) => {
+                const option = document.createElement('option');
+                option.value = `crypto-${index}`;
+                option.textContent = `${method.type.toUpperCase()} - ${method.address.slice(0, 10)}...`;
+                select.appendChild(option);
+            });
+            
+            methods.bank.forEach((method, index) => {
+                const option = document.createElement('option');
+                option.value = `bank-${index}`;
+                option.textContent = `${method.bankName} - ${method.accountNumber}`;
+                select.appendChild(option);
+            });
+        }
+
         document.getElementById('process-withdrawal-btn').addEventListener('click', async () => {
             const monthKey = document.getElementById('withdrawal-month').value;
             const amount = parseFloat(document.getElementById('withdrawal-amount').value);
-            const method = document.getElementById('withdrawal-method').value;
-            const address = document.getElementById('withdrawal-address').value;
+            const paymentMethodId = document.getElementById('withdrawal-payment-method').value;
             const password = document.getElementById('withdrawal-password').value;
             
-            if (!monthKey || !amount || !method || !address || !password) {
+            if (!monthKey || !amount || !paymentMethodId || !password) {
                 showAlert('Please fill in all fields.', 'error');
                 return;
             }
@@ -1961,14 +2494,14 @@
             // Check lockout
             if (userData.lockoutUntil && new Date(userData.lockoutUntil) > new Date()) {
                 const remainingTime = Math.ceil((new Date(userData.lockoutUntil) - new Date()) / 60000);
-                showAlert(`Account locked. Please try again in ${remainingTime} minutes.`, 'error');
+                showAlert(`Account locked. Try again in ${remainingTime} minutes.`, 'error');
                 return;
             }
             
             // Verify password
             if (password !== userData.withdrawalPassword) {
                 withdrawalAttempts++;
-                document.getElementById('withdrawal-attempts').classList.remove('hidden');
+                document.getElementById('withdrawal-attempts').style.display = 'block';
                 document.getElementById('attempts-remaining').textContent = 3 - withdrawalAttempts;
                 
                 if (withdrawalAttempts >= 3) {
@@ -1977,7 +2510,7 @@
                         lockoutUntil: lockoutTime.toISOString()
                     });
                     userData.lockoutUntil = lockoutTime.toISOString();
-                    showAlert('Too many failed attempts. Account locked for 30 minutes.', 'error');
+                    showAlert('Account locked for 30 minutes.', 'error');
                     return;
                 }
                 
@@ -1985,21 +2518,19 @@
                 return;
             }
             
-            // Reset attempts
             withdrawalAttempts = 0;
-            document.getElementById('withdrawal-attempts').classList.add('hidden');
+            document.getElementById('withdrawal-attempts').style.display = 'none';
             
             // Check if 2FA is required
             if (userData.biometricEnabled || userData.authenticatorEnabled) {
                 show2FAVerification(async () => {
-                    await processWithdrawalTransaction(monthKey, amount, method, address);
+                    await processWithdrawal(monthKey, amount, paymentMethodId);
                 });
             } else {
-                await processWithdrawalTransaction(monthKey, amount, method, address);
+                await processWithdrawal(monthKey, amount, paymentMethodId);
             }
         });
 
-        // Show 2FA verification modal
         function show2FAVerification(callback) {
             const modal = document.getElementById('verification-modal');
             const methodDiv = document.getElementById('verification-method');
@@ -2011,8 +2542,8 @@
                     <div style="text-align: center; margin-bottom: 20px;">
                         <div style="font-size: 3rem; margin-bottom: 15px;">👆</div>
                         <h3 style="color: #4a5568; margin-bottom: 10px;">Biometric Verification</h3>
-                        <p style="color: #718096;">Use your fingerprint or face to confirm</p>
-                        <button class="btn" id="verify-biometric" style="margin-top: 15px;">Verify with Biometric</button>
+                        <p style="color: #718096;">Verify with your fingerprint</p>
+                        <button class="btn" id="verify-biometric" style="margin-top: 15px;">Verify</button>
                     </div>
                 `;
             }
@@ -2022,9 +2553,8 @@
                     <div style="text-align: center;">
                         <div style="font-size: 3rem; margin-bottom: 15px;">📱</div>
                         <h3 style="color: #4a5568; margin-bottom: 10px;">Authenticator Code</h3>
-                        <p style="color: #718096; margin-bottom: 15px;">Enter the 6-digit code from your authenticator app</p>
                         <div class="form-group">
-                            <input type="text" id="verify-2fa-code" maxlength="6" placeholder="000000" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
+                            <input type="text" id="verify-2fa-code" maxlength="6" placeholder="000000" style="text-align: center; font-size: 1.5rem;">
                         </div>
                         <button class="btn" id="verify-2fa-btn">Verify Code</button>
                     </div>
@@ -2033,39 +2563,53 @@
             
             modal.style.display = 'block';
             
-            // Biometric verification
             if (userData.biometricEnabled) {
                 document.getElementById('verify-biometric').addEventListener('click', async () => {
                     try {
-                        // In production, implement WebAuthn verification
-                        modal.style.display = 'none';
-                        await callback();
+                        if (webAuthnCredential) {
+                            const assertion = await navigator.credentials.get({
+                                publicKey: {
+                                    challenge: new Uint8Array(32),
+                                    allowCredentials: [{
+                                        id: webAuthnCredential,
+                                        type: 'public-key'
+                                    }]
+                                }
+                            });
+                            
+                            if (assertion) {
+                                modal.style.display = 'none';
+                                await callback();
+                            }
+                        } else {
+                            showAlert('Biometric not properly configured', 'error');
+                        }
                     } catch (error) {
                         showAlert('Biometric verification failed', 'error');
                     }
                 });
             }
             
-            // Authenticator verification
             if (userData.authenticatorEnabled) {
                 document.getElementById('verify-2fa-btn').addEventListener('click', async () => {
                     const code = document.getElementById('verify-2fa-code').value;
                     
-                    if (code.length !== 6) {
-                        showAlert('Please enter a 6-digit code', 'error');
+                    if (code.length !== 6 || !/^\d+$/.test(code)) {
+                        showAlert('Please enter a valid 6-digit code', 'error');
                         return;
                     }
                     
-                    // In production, verify TOTP code
+                    // In production, verify TOTP code against stored secret
+                    // For now, accept any 6-digit number as a placeholder
                     modal.style.display = 'none';
                     await callback();
                 });
             }
         }
 
-        async function processWithdrawalTransaction(monthKey, amount, method, address) {
+        async function processWithdrawal(monthKey, amount, paymentMethodId) {
             try {
-                // Check withdrawal limits
+                // Check withdrawal count
                 const withdrawalsQuery = query(
                     collection(db, 'transactions'),
                     where('userId', '==', currentUser.uid),
@@ -2098,6 +2642,18 @@
                     return;
                 }
                 
+                // Get payment method details
+                const [type, index] = paymentMethodId.split('-');
+                let paymentDetails = {};
+                
+                if (type === 'momo') {
+                    paymentDetails = userData.paymentMethods.mobileMoney[index];
+                } else if (type === 'crypto') {
+                    paymentDetails = userData.paymentMethods.crypto[index];
+                } else if (type === 'bank') {
+                    paymentDetails = userData.paymentMethods.bank[index];
+                }
+                
                 // Create withdrawal transaction
                 await addDoc(collection(db, 'transactions'), {
                     userId: currentUser.uid,
@@ -2107,13 +2663,13 @@
                     commission,
                     totalAmount: totalDeduction,
                     month: monthKey,
-                    paymentMethod: method,
-                    paymentAddress: address,
+                    paymentMethod: type,
+                    paymentDetails,
                     status: 'pending',
                     timestamp: serverTimestamp()
                 });
                 
-                // Update balance
+                // Deduct from balance
                 const newBalance = userData.balance - totalDeduction;
                 await updateDoc(doc(db, 'users', currentUser.uid), {
                     balance: newBalance
@@ -2121,25 +2677,30 @@
                 
                 userData.balance = newBalance;
                 
-                showAlert(`Withdrawal request submitted! ${commission > 0 ? `Commission of ${formatCurrency(commission)} applied.` : ''}`, 'success');
+                showAlert(`Withdrawal submitted! ${commission > 0 ? `Commission: ${formatCurrency(commission)}` : ''}`, 'success');
+                
+                await createNotification(
+                    'Withdrawal Submitted',
+                    `${formatCurrency(amount)} withdrawal submitted for processing`,
+                    'withdrawal'
+                );
                 
                 // Clear form
                 document.getElementById('withdrawal-month').value = '';
                 document.getElementById('withdrawal-amount').value = '';
-                document.getElementById('withdrawal-method').value = '';
-                document.getElementById('withdrawal-address').value = '';
+                document.getElementById('withdrawal-payment-method').value = '';
                 document.getElementById('withdrawal-password').value = '';
                 
                 updateDashboard();
-                
-                // Send notification
-                console.log('Withdrawal notification sent to:', userData.email);
             } catch (error) {
-                showAlert('Error processing withdrawal: ' + error.message, 'error');
+                showAlert('Error: ' + error.message, 'error');
             }
         }
 
-        // Load transactions
+        // ============================================
+        // TRANSACTIONS FUNCTIONS
+        // ============================================
+        
         async function loadTransactions() {
             const container = document.getElementById('transactions-list');
             container.innerHTML = '<div class="spinner"></div>';
@@ -2166,6 +2727,7 @@
                     card.className = `transaction-card ${transaction.type}`;
                     
                     const isPaid = transaction.status === 'approved' && transaction.type === 'withdrawal';
+                    const timestamp = transaction.timestamp?.toDate() || new Date();
                     
                     card.innerHTML = `
                         <div class="transaction-header">
@@ -2180,7 +2742,8 @@
                         <div style="font-size: 0.9rem; color: #718096; margin-top: 8px;">
                             ${transaction.month ? `Month: ${transaction.month}` : ''}
                             ${transaction.commission ? `<br>Commission: ${formatCurrency(transaction.commission)}` : ''}
-                            ${transaction.paymentMethod ? `<br>Payment Method: ${transaction.paymentMethod}` : ''}
+                            ${transaction.paymentMethod ? `<br>Payment: ${transaction.paymentMethod}` : ''}
+                            <br>Date: ${timestamp.toLocaleDateString()}
                         </div>
                         <div class="transaction-status status-${transaction.status}">
                             ${transaction.status.toUpperCase()}
@@ -2191,7 +2754,7 @@
                                     <div class="stamp-text-top">SUSUPAY</div>
                                     <div class="stamp-inner">
                                         <div class="stamp-paid">PAID</div>
-                                        <div class="stamp-date">${new Date(transaction.timestamp?.toDate()).toLocaleDateString()}</div>
+                                        <div class="stamp-date">${timestamp.toLocaleDateString()}</div>
                                     </div>
                                     <div class="stamp-text-bottom">SUSUPAY</div>
                                 </div>
@@ -2202,324 +2765,30 @@
                     container.appendChild(card);
                 });
             } catch (error) {
-                container.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error loading transactions: ${error.message}</p>`;
+                container.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error: ${error.message}</p>`;
             }
         }
 
-
-
-               // Logout
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                showAlert('Logged out successfully!', 'success', 'auth-alert');
-            } catch (error) {
-                showAlert('Error logging out: ' + error.message, 'error');
-            }
-        });
-
-        // ============ SETTINGS FUNCTIONALITY ============
-
-        // Load settings when settings page is opened
-        document.querySelector('[data-page="settings"]').addEventListener('click', () => {
-            loadSettings();
-        });
-
-        function loadSettings() {
-            // Load profile data
-            document.getElementById('edit-first-name').value = userData.firstName || '';
-            document.getElementById('edit-surname').value = userData.surname || '';
-            document.getElementById('edit-email').value = userData.email || '';
-            
-            // Load 2FA status
-            updateAuthenticationStatus();
-        }
-
-        function updateAuthenticationStatus() {
-            const biometricStatus = document.getElementById('biometric-status-text');
-            const authenticatorStatus = document.getElementById('authenticator-status-text');
-            
-            if (userData.biometricEnabled) {
-                biometricStatus.textContent = 'Enabled ✓';
-                biometricStatus.style.color = '#48bb78';
-                document.getElementById('setup-biometric-btn').textContent = 'Disable';
-            } else {
-                biometricStatus.textContent = 'Not configured';
-                biometricStatus.style.color = '#718096';
-                document.getElementById('setup-biometric-btn').textContent = 'Setup';
-            }
-            
-            if (userData.authenticatorEnabled) {
-                authenticatorStatus.textContent = 'Enabled ✓';
-                authenticatorStatus.style.color = '#48bb78';
-                document.getElementById('setup-authenticator-btn').textContent = 'Disable';
-            } else {
-                authenticatorStatus.textContent = 'Not configured';
-                authenticatorStatus.style.color = '#718096';
-                document.getElementById('setup-authenticator-btn').textContent = 'Setup';
-            }
-        }
-
-        // Profile update
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const firstName = document.getElementById('edit-first-name').value;
-            const surname = document.getElementById('edit-surname').value;
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    firstName,
-                    surname
-                });
-                
-                userData.firstName = firstName;
-                userData.surname = surname;
-                
-                showAlert('Profile updated successfully!', 'success');
-                showDashboard();
-            } catch (error) {
-                showAlert('Error updating profile: ' + error.message, 'error');
-            }
-        });
-
-        // Withdrawal password setup
-        document.getElementById('withdrawal-password-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const newPassword = document.getElementById('new-withdrawal-password').value;
-            const confirmPassword = document.getElementById('confirm-withdrawal-password').value;
-            const currentPassword = document.getElementById('current-auth-password').value;
-            
-            if (newPassword !== confirmPassword) {
-                showAlert('Passwords do not match!', 'error');
-                return;
-            }
-            
-            try {
-                // Verify current password
-                const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
-                await reauthenticateWithCredential(currentUser, credential);
-                
-                // Update withdrawal password
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    withdrawalPassword: newPassword
-                });
-                
-                userData.withdrawalPassword = newPassword;
-                
-                showAlert('Withdrawal password set successfully!', 'success');
-                document.getElementById('withdrawal-password-form').reset();
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        });
-
-        // Account password change
-        document.getElementById('account-password-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-account-password').value;
-            const confirmPassword = document.getElementById('confirm-account-password').value;
-            
-            if (newPassword !== confirmPassword) {
-                showAlert('Passwords do not match!', 'error');
-                return;
-            }
-            
-            try {
-                const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
-                await reauthenticateWithCredential(currentUser, credential);
-                await updatePassword(currentUser, newPassword);
-                
-                showAlert('Account password updated successfully!', 'success');
-                document.getElementById('account-password-form').reset();
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        });
-
-        // Biometric setup
-        document.getElementById('setup-biometric-btn').addEventListener('click', () => {
-            if (userData.biometricEnabled) {
-                disableBiometric();
-            } else {
-                document.getElementById('biometric-modal').style.display = 'block';
-                checkBiometricSupport();
-            }
-        });
-
-        async function checkBiometricSupport() {
-            const messageDiv = document.getElementById('biometric-support-message');
-            
-            if (window.PublicKeyCredential) {
-                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                if (available) {
-                    messageDiv.innerHTML = '<div style="color: #48bb78;">✓ Your device supports biometric authentication</div>';
-                    document.getElementById('enable-biometric-btn').disabled = false;
-                } else {
-                    messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Your device does not support biometric authentication</div>';
-                    document.getElementById('enable-biometric-btn').disabled = true;
-                }
-            } else {
-                messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Your browser does not support WebAuthn</div>';
-                document.getElementById('enable-biometric-btn').disabled = true;
-            }
-        }
-
-        document.getElementById('enable-biometric-btn').addEventListener('click', async () => {
-            try {
-                // In production, implement WebAuthn registration
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    biometricEnabled: true
-                });
-                
-                userData.biometricEnabled = true;
-                updateAuthenticationStatus();
-                
-                document.getElementById('biometric-modal').style.display = 'none';
-                showAlert('Biometric authentication enabled successfully!', 'success');
-            } catch (error) {
-                showAlert('Error enabling biometric: ' + error.message, 'error');
-            }
-        });
-
-        async function disableBiometric() {
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    biometricEnabled: false
-                });
-                
-                userData.biometricEnabled = false;
-                updateAuthenticationStatus();
-                
-                showAlert('Biometric authentication disabled', 'info');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        }
-
-        document.getElementById('close-biometric-modal').addEventListener('click', () => {
-            document.getElementById('biometric-modal').style.display = 'none';
-        });
-
-        // Authenticator setup
-        document.getElementById('setup-authenticator-btn').addEventListener('click', () => {
-            if (userData.authenticatorEnabled) {
-                disableAuthenticator();
-            } else {
-                document.getElementById('authenticator-modal').style.display = 'block';
-                generateAuthenticatorSecret();
-            }
-        });
-
-        function generateAuthenticatorSecret() {
-            // Generate random secret
-            const secret = Array.from({length: 16}, () => 
-                'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[Math.floor(Math.random() * 32)]
-            ).join('');
-            
-            const formattedSecret = secret.match(/.{1,4}/g).join(' ');
-            document.getElementById('secret-key').textContent = formattedSecret;
-            
-            // Store for verification
-            window.tempAuthSecret = secret;
-        }
-
-        document.getElementById('verify-authenticator-btn').addEventListener('click', async () => {
-            const code = document.getElementById('verify-code').value;
-            
-            if (code.length !== 6) {
-                showAlert('Please enter a 6-digit code', 'error');
-                return;
-            }
-            
-            try {
-                // In production, verify TOTP code
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    authenticatorEnabled: true,
-                    authenticatorSecret: window.tempAuthSecret
-                });
-                
-                userData.authenticatorEnabled = true;
-                userData.authenticatorSecret = window.tempAuthSecret;
-                updateAuthenticationStatus();
-                
-                document.getElementById('authenticator-modal').style.display = 'none';
-                document.getElementById('verify-code').value = '';
-                showAlert('Authenticator app enabled successfully!', 'success');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        });
-
-        async function disableAuthenticator() {
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    authenticatorEnabled: false,
-                    authenticatorSecret: null
-                });
-                
-                userData.authenticatorEnabled = false;
-                userData.authenticatorSecret = null;
-                updateAuthenticationStatus();
-                
-                showAlert('Authenticator app disabled', 'info');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        }
-
-        document.getElementById('close-authenticator-modal').addEventListener('click', () => {
-            document.getElementById('authenticator-modal').style.display = 'none';
-        });
-
-        // Notification preferences
-        document.getElementById('save-notifications-btn').addEventListener('click', async () => {
-            const emailNotifications = document.getElementById('email-notifications').checked;
-            const smsNotifications = document.getElementById('sms-notifications').checked;
-            const securityAlerts = document.getElementById('security-alerts').checked;
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    notifications: {
-                        email: emailNotifications,
-                        sms: smsNotifications,
-                        security: securityAlerts
-                    }
-                });
-                
-                showAlert('Notification preferences saved!', 'success');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        });
-                // ============ KYC FUNCTIONALITY ============
-
-        // Load KYC page
-        document.querySelector('[data-page="kyc"]').addEventListener('click', () => {
-            initKYCPage();
-        });
-
+        // ============================================
+        // KYC FUNCTIONS
+        // ============================================
+        
         async function initKYCPage() {
-            // Check KYC status
-            if (userData.kycStatus === 'pending' || userData.kycStatus === 'under_review') {
+            if (userData.kycStatus === 'under_review' || userData.kycStatus === 'pending') {
                 document.getElementById('kyc-form-container').style.display = 'none';
                 document.getElementById('kyc-status-display').classList.remove('hidden');
-                document.getElementById('kyc-verification-status').textContent = 
-                    userData.kycStatus === 'pending' ? 'Pending Review' : 'Under Review';
             } else if (userData.kycStatus === 'approved') {
                 document.getElementById('kyc-form-container').style.display = 'none';
                 document.getElementById('kyc-status-display').classList.remove('hidden');
                 document.getElementById('kyc-status-display').innerHTML = `
-                    <div style="background: white; border-radius: 15px; padding: 40px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); text-align: center;">
+                    <div class="card" style="text-align: center;">
                         <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
                         <h3 style="color: #48bb78; margin-bottom: 15px;">Verification Approved!</h3>
                         <p style="color: #718096; margin-bottom: 20px;">
-                            Congratulations! Your identity has been verified. You now have access to all VIP features.
+                            Your identity has been verified. You now have VIP access.
                         </p>
                         <div style="padding: 15px; background: #c6f6d5; border-radius: 8px; color: #22543d; font-weight: 600;">
-                            Status: <span>Approved ✓</span>
+                            Status: Approved ✓
                         </div>
                     </div>
                 `;
@@ -2529,26 +2798,22 @@
             }
         }
 
-        // Terms checkbox
         document.getElementById('terms-checkbox').addEventListener('change', (e) => {
             if (e.target.checked) {
-                document.getElementById('id-type').disabled = false;
+                document.getElementById('id-type-section').classList.remove('hidden');
             } else {
-                document.getElementById('id-type').disabled = true;
-                document.getElementById('id-upload-section').style.display = 'none';
+                document.getElementById('id-type-section').classList.add('hidden');
+                document.getElementById('id-upload-section').classList.add('hidden');
             }
         });
 
-        // ID Type selection
         document.getElementById('id-type').addEventListener('change', (e) => {
             if (e.target.value) {
-                document.getElementById('id-upload-section').style.display = 'block';
-            } else {
-                document.getElementById('id-upload-section').style.display = 'none';
+                document.getElementById('id-upload-section').classList.remove('hidden');
             }
         });
 
-        // Front ID Upload
+        // File uploads
         document.getElementById('front-upload-area').addEventListener('click', () => {
             document.getElementById('front-id-input').click();
         });
@@ -2567,7 +2832,6 @@
             }
         });
 
-        // Back ID Upload
         document.getElementById('back-upload-area').addEventListener('click', () => {
             document.getElementById('back-id-input').click();
         });
@@ -2586,10 +2850,9 @@
             }
         });
 
-        // Show selfie section after both IDs uploaded
         function checkKYCCompletion() {
             if (frontIdFile && backIdFile) {
-                document.getElementById('selfie-section').style.display = 'block';
+                document.getElementById('selfie-section').classList.remove('hidden');
             }
             
             if (frontIdFile && backIdFile && selfieBlob) {
@@ -2630,7 +2893,6 @@
                 document.getElementById('selfie-preview-img').src = url;
                 document.getElementById('selfie-captured').style.display = 'block';
                 
-                // Stop camera
                 if (mediaStream) {
                     mediaStream.getTracks().forEach(track => track.stop());
                 }
@@ -2651,17 +2913,9 @@
             document.getElementById('submit-kyc-btn').style.display = 'none';
         });
 
-        // Submit KYC
         document.getElementById('submit-kyc-btn').addEventListener('click', async () => {
             if (!document.getElementById('terms-checkbox').checked) {
-                showAlert('Please accept the terms of service', 'error');
-                return;
-            }
-
-            const idType = document.getElementById('id-type').value;
-            
-            if (!idType || !frontIdFile || !backIdFile || !selfieBlob) {
-                showAlert('Please complete all verification steps', 'error');
+                showAlert('Please accept the terms', 'error');
                 return;
             }
 
@@ -2669,104 +2923,582 @@
                 document.getElementById('submit-kyc-btn').disabled = true;
                 document.getElementById('submit-kyc-btn').textContent = 'Uploading...';
 
-                // In production, upload files to Firebase Storage
-                // For now, we'll create base64 data URLs
-                const frontReader = new FileReader();
-                const backReader = new FileReader();
-                
-                frontReader.readAsDataURL(frontIdFile);
-                backReader.readAsDataURL(backIdFile);
-                
-                Promise.all([
-                    new Promise(resolve => frontReader.onload = () => resolve(frontReader.result)),
-                    new Promise(resolve => backReader.onload = () => resolve(backReader.result))
-                ]).then(async ([frontData, backData]) => {
-                    // Convert selfie blob to base64
-                    const selfieReader = new FileReader();
-                    selfieReader.readAsDataURL(selfieBlob);
-                    selfieReader.onload = async () => {
-                        // Create KYC submission document
-                        const kycData = {
-                            userId: currentUser.uid,
-                            idType,
-                            frontIdUrl: frontData, // In production, upload to Storage and store URL
-                            backIdUrl: backData,
-                            selfieUrl: selfieReader.result,
-                            status: 'under_review',
-                            submittedAt: serverTimestamp(),
-                            termsAccepted: true
-                        };
-
-                        await addDoc(collection(db, 'kyc_submissions'), kycData);
-
-                        // Update user document
-                        await updateDoc(doc(db, 'users', currentUser.uid), {
-                            kycStatus: 'under_review',
-                            kycSubmittedAt: serverTimestamp()
-                        });
-
-                        userData.kycStatus = 'under_review';
-
-                        showAlert('KYC documents submitted successfully! Your verification is under review.', 'success');
-
-                        // Show status display
-                        document.getElementById('kyc-form-container').style.display = 'none';
-                        document.getElementById('kyc-status-display').classList.remove('hidden');
-                        document.getElementById('kyc-verification-status').textContent = 'Under Review';
-
-                        // Send email notification
-                        console.log('KYC submission notification sent to:', userData.email);
-                    };
+                // In production, upload to Firebase Storage
+                await addDoc(collection(db, 'kyc_submissions'), {
+                    userId: currentUser.uid,
+                    idType: document.getElementById('id-type').value,
+                    status: 'under_review',
+                    submittedAt: serverTimestamp()
                 });
 
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    kycStatus: 'under_review'
+                });
+
+                userData.kycStatus = 'under_review';
+
+                showAlert('KYC submitted successfully!', 'success');
+                
+                await createNotification(
+                    'KYC Submitted',
+                    'Your verification documents are under review',
+                    'info'
+                );
+
+                initKYCPage();
             } catch (error) {
-                showAlert('Error submitting KYC: ' + error.message, 'error');
+                showAlert('Error: ' + error.message, 'error');
                 document.getElementById('submit-kyc-btn').disabled = false;
                 document.getElementById('submit-kyc-btn').textContent = 'Submit KYC Documents';
             }
         });
 
-        // Drag and drop for file uploads
-        ['front-upload-area', 'back-upload-area'].forEach(areaId => {
-            const area = document.getElementById(areaId);
+      
+        // ============================================
+        // PAYMENT METHODS FUNCTIONS
+        // ============================================
+        
+        async function loadPaymentMethods() {
+            renderMobileMoneyAccounts();
+            renderCryptoWallets();
+            renderBankAccounts();
+        }
+
+        function renderMobileMoneyAccounts() {
+            const container = document.getElementById('mobile-money-list');
+            const accounts = userData.paymentMethods?.mobileMoney || [];
             
-            area.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                area.style.borderColor = '#667eea';
-                area.style.background = '#f7fafc';
-            });
+            if (accounts.length === 0) {
+                container.innerHTML = '<p style="color: #718096; padding: 15px; background: #f7fafc; border-radius: 8px;">No mobile money accounts added yet.</p>';
+                return;
+            }
             
-            area.addEventListener('dragleave', () => {
-                area.style.borderColor = '#cbd5e0';
-                area.style.background = 'white';
-            });
+            container.innerHTML = accounts.map((acc, index) => `
+                <div class="payment-method-card">
+                    <div>
+                        <div style="font-weight: 600; color: #4a5568;">${acc.provider.toUpperCase()}</div>
+                        <div style="font-size: 0.9rem; color: #718096;">${acc.number} - ${acc.name}</div>
+                    </div>
+                    <button class="btn" onclick="deletePaymentMethod('mobileMoney', ${index})" style="width: auto; padding: 8px 16px; background: #e53e3e; font-size: 0.85rem;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function renderCryptoWallets() {
+            const container = document.getElementById('crypto-wallet-list');
+            const wallets = userData.paymentMethods?.crypto || [];
             
-            area.addEventListener('drop', (e) => {
-                e.preventDefault();
-                area.style.borderColor = '#cbd5e0';
-                area.style.background = 'white';
+            if (wallets.length === 0) {
+                container.innerHTML = '<p style="color: #718096; padding: 15px; background: #f7fafc; border-radius: 8px;">No crypto wallets added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = wallets.map((wallet, index) => `
+                <div class="payment-method-card">
+                    <div>
+                        <div style="font-weight: 600; color: #4a5568;">${wallet.type.toUpperCase()} ${wallet.label ? `- ${wallet.label}` : ''}</div>
+                        <div style="font-size: 0.85rem; color: #718096; font-family: monospace;">${wallet.address.slice(0, 20)}...${wallet.address.slice(-10)}</div>
+                    </div>
+                    <button class="btn" onclick="deletePaymentMethod('crypto', ${index})" style="width: auto; padding: 8px 16px; background: #e53e3e; font-size: 0.85rem;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function renderBankAccounts() {
+            const container = document.getElementById('bank-account-list');
+            const accounts = userData.paymentMethods?.bank || [];
+            
+            if (accounts.length === 0) {
+                container.innerHTML = '<p style="color: #718096; padding: 15px; background: #f7fafc; border-radius: 8px;">No bank accounts added yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = accounts.map((acc, index) => `
+                <div class="payment-method-card">
+                    <div>
+                        <div style="font-weight: 600; color: #4a5568;">${acc.bankName}</div>
+                        <div style="font-size: 0.9rem; color: #718096;">${acc.accountNumber} - ${acc.accountName}</div>
+                    </div>
+                    <button class="btn" onclick="deletePaymentMethod('bank', ${index})" style="width: auto; padding: 8px 16px; background: #e53e3e; font-size: 0.85rem;">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        window.deletePaymentMethod = async function(type, index) {
+            if (!confirm('Are you sure you want to delete this payment method?')) return;
+            
+            try {
+                const methods = userData.paymentMethods || {};
+                methods[type].splice(index, 1);
                 
-                const file = e.dataTransfer.files[0];
-                if (file && file.type.startsWith('image/')) {
-                    const input = document.getElementById(areaId.replace('upload-area', 'input'));
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(file);
-                    input.files = dataTransfer.files;
-                    input.dispatchEvent(new Event('change'));
-                }
-            });
-        });
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    [`paymentMethods.${type}`]: methods[type]
+                });
+                
+                userData.paymentMethods = methods;
+                loadPaymentMethods();
+                showAlert('Payment method deleted', 'success');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        };
 
-        // ============ END OF KYC FUNCTIONALITY ============
-
-        // Clean up camera on page unload
-        window.addEventListener('beforeunload', () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
+        document.getElementById('add-mobile-money-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const provider = document.getElementById('momo-provider').value;
+            const number = document.getElementById('momo-number').value;
+            const name = document.getElementById('momo-name').value;
+            
+            try {
+                const methods = userData.paymentMethods || { mobileMoney: [], crypto: [], bank: [] };
+                methods.mobileMoney.push({ provider, number, name });
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    'paymentMethods.mobileMoney': methods.mobileMoney
+                });
+                
+                userData.paymentMethods = methods;
+                
+                e.target.reset();
+                loadPaymentMethods();
+                showAlert('Mobile money account added!', 'success');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
             }
         });
 
-        // Close modals when clicking outside
+        document.getElementById('add-crypto-wallet-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const type = document.getElementById('crypto-type').value;
+            const address = document.getElementById('crypto-address').value;
+            const label = document.getElementById('crypto-label').value;
+            
+            try {
+                const methods = userData.paymentMethods || { mobileMoney: [], crypto: [], bank: [] };
+                methods.crypto.push({ type, address, label });
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    'paymentMethods.crypto': methods.crypto
+                });
+                
+                userData.paymentMethods = methods;
+                
+                e.target.reset();
+                loadPaymentMethods();
+                showAlert('Crypto wallet added!', 'success');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('add-bank-account-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const bankName = document.getElementById('bank-name').value;
+            const accountNumber = document.getElementById('account-number').value;
+            const accountName = document.getElementById('account-name').value;
+            
+            try {
+                const methods = userData.paymentMethods || { mobileMoney: [], crypto: [], bank: [] };
+                methods.bank.push({ bankName, accountNumber, accountName });
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    'paymentMethods.bank': methods.bank
+                });
+                
+                userData.paymentMethods = methods;
+                
+                e.target.reset();
+                loadPaymentMethods();
+                showAlert('Bank account added!', 'success');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ============================================
+        // SETTINGS FUNCTIONS
+        // ============================================
+        
+        function loadSettings() {
+            document.getElementById('edit-first-name').value = userData.firstName || '';
+            document.getElementById('edit-surname').value = userData.surname || '';
+            document.getElementById('edit-email').value = userData.email || '';
+            
+            document.getElementById('email-notifications').checked = userData.notifications?.email ?? true;
+            document.getElementById('sms-notifications').checked = userData.notifications?.sms ?? true;
+            document.getElementById('security-alerts').checked = userData.notifications?.security ?? true;
+            
+            updateAuthenticationStatus();
+        }
+
+        function updateAuthenticationStatus() {
+            const biometricStatus = document.getElementById('biometric-status-text');
+            const authenticatorStatus = document.getElementById('authenticator-status-text');
+            
+            if (userData.biometricEnabled) {
+                biometricStatus.textContent = 'Enabled ✓';
+                biometricStatus.style.color = '#48bb78';
+                document.getElementById('setup-biometric-btn').textContent = 'Disable';
+            } else {
+                biometricStatus.textContent = 'Not configured';
+                biometricStatus.style.color = '#718096';
+                document.getElementById('setup-biometric-btn').textContent = 'Setup';
+            }
+            
+           
+            if (userData.authenticatorEnabled) {
+                authenticatorStatus.textContent = 'Enabled ✓';
+                authenticatorStatus.style.color = '#48bb78';
+                document.getElementById('setup-authenticator-btn').textContent = 'Disable';
+            } else {
+                authenticatorStatus.textContent = 'Not configured';
+                authenticatorStatus.style.color = '#718096';
+                document.getElementById('setup-authenticator-btn').textContent = 'Setup';
+            }
+        }
+
+        // Profile update
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('edit-first-name').value;
+            const surname = document.getElementById('edit-surname').value;
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    firstName,
+                    surname
+                });
+                
+                userData.firstName = firstName;
+                userData.surname = surname;
+                
+                showAlert('Profile updated successfully!', 'success');
+                showDashboard();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+       
+        // Profile update
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('edit-first-name').value;
+            const surname = document.getElementById('edit-surname').value;
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    firstName,
+                    surname
+                });
+                
+                userData.firstName = firstName;
+                userData.surname = surname;
+                
+                showAlert('Profile updated successfully!', 'success');
+                showDashboard();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Withdrawal password
+        document.getElementById('withdrawal-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('new-withdrawal-password').value;
+            const confirmPassword = document.getElementById('confirm-withdrawal-password').value;
+            const currentPassword = document.getElementById('current-auth-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Passwords do not match!', 'error');
+                return;
+            }
+            
+            try {
+                const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+                await reauthenticateWithCredential(currentUser, credential);
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    withdrawalPassword: newPassword
+                });
+                
+                userData.withdrawalPassword = newPassword;
+                
+                showAlert('Withdrawal password set successfully!', 'success');
+                e.target.reset();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Account password
+        document.getElementById('account-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-account-password').value;
+            const confirmPassword = document.getElementById('confirm-account-password').value;
+            
+            if (newPassword !== confirmPassword) {
+                showAlert('Passwords do not match!', 'error');
+                return;
+            }
+            
+            try {
+                const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+                await reauthenticateWithCredential(currentUser, credential);
+                await updatePassword(currentUser, newPassword);
+                
+                showAlert('Password updated successfully!', 'success');
+                e.target.reset();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Biometric setup
+        document.getElementById('setup-biometric-btn').addEventListener('click', () => {
+            if (userData.biometricEnabled) {
+                disableBiometric();
+            } else {
+                document.getElementById('biometric-modal').style.display = 'block';
+                checkBiometricSupport();
+            }
+        });
+
+        async function checkBiometricSupport() {
+            const messageDiv = document.getElementById('biometric-support-message');
+            
+            if (window.PublicKeyCredential) {
+                try {
+                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                    if (available) {
+                        messageDiv.innerHTML = '<div style="color: #48bb78;">✓ Your device supports biometric authentication</div>';
+                        document.getElementById('enable-biometric-btn').disabled = false;
+                    } else {
+                        messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Your device does not support biometric authentication</div>';
+                        document.getElementById('enable-biometric-btn').disabled = true;
+                    }
+                } catch (error) {
+                    messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Error checking biometric support</div>';
+                    document.getElementById('enable-biometric-btn').disabled = true;
+                }
+            } else {
+                messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Your browser does not support WebAuthn</div>';
+                document.getElementById('enable-biometric-btn').disabled = true;
+            }
+        }
+
+        document.getElementById('enable-biometric-btn').addEventListener('click', async () => {
+            try {
+                // Create WebAuthn credential
+                const challenge = new Uint8Array(32);
+                crypto.getRandomValues(challenge);
+                
+                const credential = await navigator.credentials.create({
+                    publicKey: {
+                        challenge: challenge,
+                        rp: {
+                            name: "SusuPay",
+                            id: window.location.hostname
+                        },
+                        user: {
+                            id: new TextEncoder().encode(currentUser.uid),
+                            name: currentUser.email,
+                            displayName: `${userData.firstName} ${userData.surname}`
+                        },
+                        pubKeyCredParams: [{
+                            type: "public-key",
+                            alg: -7
+                        }],
+                        authenticatorSelection: {
+                            authenticatorAttachment: "platform",
+                            userVerification: "required"
+                        }
+                    }
+                });
+                
+                webAuthnCredential = credential.rawId;
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    biometricEnabled: true,
+                    biometricCredential: Array.from(new Uint8Array(credential.rawId))
+                });
+                
+                userData.biometricEnabled = true;
+                updateAuthenticationStatus();
+                
+                document.getElementById('biometric-modal').style.display = 'none';
+                showAlert('Biometric authentication enabled!', 'success');
+            } catch (error) {
+                showAlert('Error enabling biometric: ' + error.message, 'error');
+            }
+        });
+
+        async function disableBiometric() {
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    biometricEnabled: false,
+                    biometricCredential: null
+                });
+                
+                userData.biometricEnabled = false;
+                webAuthnCredential = null;
+                updateAuthenticationStatus();
+                
+                showAlert('Biometric authentication disabled', 'info');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+
+        document.getElementById('close-biometric-modal').addEventListener('click', () => {
+            document.getElementById('biometric-modal').style.display = 'none';
+        });
+
+        // Authenticator setup
+        document.getElementById('setup-authenticator-btn').addEventListener('click', () => {
+            if (userData.authenticatorEnabled) {
+                disableAuthenticator();
+            } else {
+                document.getElementById('authenticator-modal').style.display = 'block';
+                generateAuthenticatorSecret();
+            }
+        });
+
+        function generateAuthenticatorSecret() {
+            const secret = Array.from({length: 16}, () => 
+                'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[Math.floor(Math.random() * 32)]
+            ).join('');
+            
+            const formattedSecret = secret.match(/.{1,4}/g).join(' ');
+            document.getElementById('secret-key').textContent = formattedSecret;
+            
+            window.tempAuthSecret = secret;
+        }
+
+        document.getElementById('verify-authenticator-btn').addEventListener('click', async () => {
+            const code = document.getElementById('verify-code').value;
+            
+            if (code.length !== 6 || !/^\d+$/.test(code)) {
+                showAlert('Please enter a valid 6-digit code', 'error');
+                return;
+            }
+            
+            try {
+                // In production, verify TOTP code against the secret
+                // For demo purposes, we'll accept the code
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    authenticatorEnabled: true,
+                    authenticatorSecret: window.tempAuthSecret
+                });
+                
+                userData.authenticatorEnabled = true;
+                userData.authenticatorSecret = window.tempAuthSecret;
+                updateAuthenticationStatus();
+                
+                document.getElementById('authenticator-modal').style.display = 'none';
+                document.getElementById('verify-code').value = '';
+                showAlert('Authenticator enabled successfully!', 'success');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        async function disableAuthenticator() {
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    authenticatorEnabled: false,
+                    authenticatorSecret: null
+                });
+                
+                userData.authenticatorEnabled = false;
+                userData.authenticatorSecret = null;
+                updateAuthenticationStatus();
+                
+                showAlert('Authenticator disabled', 'info');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        }
+
+        document.getElementById('close-authenticator-modal').addEventListener('click', () => {
+            document.getElementById('authenticator-modal').style.display = 'none';
+        });
+
+        // Notification preferences
+        document.getElementById('save-notifications-btn').addEventListener('click', async () => {
+            const emailNotifications = document.getElementById('email-notifications').checked;
+            const smsNotifications = document.getElementById('sms-notifications').checked;
+            const securityAlerts = document.getElementById('security-alerts').checked;
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    'notifications.email': emailNotifications,
+                    'notifications.sms': smsNotifications,
+                    'notifications.security': securityAlerts
+                });
+                
+                userData.notifications = {
+                    email: emailNotifications,
+                    sms: smsNotifications,
+                    security: securityAlerts
+                };
+                
+                showAlert('Notification preferences saved!', 'success');
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ============================================
+        // REPORT A PROBLEM
+        // ============================================
+        
+        document.getElementById('report-problem-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const category = document.getElementById('problem-category').value;
+            const subject = document.getElementById('problem-subject').value;
+            const description = document.getElementById('problem-description').value;
+            const priority = document.getElementById('problem-priority').value;
+            
+            try {
+                await addDoc(collection(db, 'problem_reports'), {
+                    userId: currentUser.uid,
+                    userName: `${userData.firstName} ${userData.surname}`,
+                    userEmail: userData.email,
+                    category,
+                    subject,
+                    description,
+                    priority,
+                    status: 'open',
+                    submittedAt: serverTimestamp()
+                });
+                
+                showAlert('Problem report submitted! We will contact you soon.', 'success');
+                e.target.reset();
+                
+                await createNotification(
+                    'Problem Report Received',
+                    'We have received your report and will respond soon',
+                    'info'
+                );
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // ============================================
+        // MODAL CLOSE HANDLERS
+        // ============================================
+        
         window.addEventListener('click', (e) => {
             const modals = document.querySelectorAll('.modal');
             modals.forEach(modal => {
@@ -2775,6 +3507,18 @@
                 }
             });
         });
+
+        // Clean up camera on page unload
+        window.addEventListener('beforeunload', () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // ============================================
+        // INITIALIZE APP
+        // ============================================
+        
+        console.log('SusuPay Dashboard Initialized');
     </script>
 </body>
-</html>
