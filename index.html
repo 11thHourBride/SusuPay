@@ -4,10 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusuPay - Professional Daily Savings</title>
+    <link rel="manifest" href="/manifest.json"> <!-- For PWA -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For charts -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script> <!-- For celebrations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script> <!-- For advanced animations -->
     <style>
         /* ============================================
-           BASE STYLES
+           BASE STYLES (Enhanced with better typography and variables)
         ============================================ */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            --accent-color: #667eea;
+            --text-primary: #333;
+            --text-secondary: #1b3255;
+            --bg-light: rgba(255, 255, 255, 0.98);
+            --shadow-soft: 0 5px 15px rgb(0, 0, 0);
+            --shadow-deep: 0 15px 40px rgb(0, 0, 0);
+            --transition-fast: 0.3s ease;
+            --transition-slow: 0.5s ease-in-out;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -15,10 +33,20 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Better font stack */
+            background: var(--primary-gradient);
             min-height: 100vh;
-            color: #333;
+            color: var(--text-primary);
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode {
+            --primary-gradient: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+            --accent-color: #4ca1af;
+            --text-primary: #f4f4f4;
+            --text-secondary: #a0aec0;
+            --bg-light: rgba(45, 55, 72, 0.98);
+            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .hidden {
@@ -26,41 +54,45 @@
         }
 
         /* ============================================
-           ANIMATIONS
+           ANIMATIONS (Enhanced with GSAP integration points)
         ============================================ */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .page-content {
-            animation: fadeIn 0.4s ease-in-out;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        .stat-card {
+            transition: transform var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-deep);
+        }
+
+        /* Particle background (optional, can be toggled) */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
 
         /* ============================================
-           AUTH STYLES
+           AUTH STYLES (Improved with better spacing and effects)
         ============================================ */
         .auth-wrapper {
             display: flex;
@@ -71,35 +103,58 @@
         }
 
         .auth-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: var(--bg-light);
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-deep);
             backdrop-filter: blur(10px);
             width: 100%;
             max-width: 500px;
             max-height: 90vh;
             overflow-y: auto;
+            animation: fadeIn 0.6s ease-in-out;
         }
 
         .logo {
-            font-size: 3rem;
+            font-size: 4rem; /* Larger for impact */
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
         }
 
         .auth-title {
-            color: #4a5568;
-            font-size: 2rem;
+            color: var(--text-primary);
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 10px;
             text-align: center;
         }
 
         .auth-subtitle {
-            color: #718096;
+            color: var(--text-secondary);
             margin-bottom: 30px;
             text-align: center;
+        }
+
+        /* Add more styles as in original, but with variables */
+
+        /* Dark mode toggles */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-light);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-fast);
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
         }
 
         /* ============================================
@@ -511,6 +566,7 @@
             gap: 8px;
             margin-bottom: 20px;
         }
+        
 
         .day-cell {
             aspect-ratio: 1;
@@ -844,6 +900,13 @@
     <!-- ============================================
          AUTH SECTION
     ============================================ -->
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="dark-mode-toggle">🌙</button>
+
+    <!-- Particle Container -->
+    <canvas id="particles"></canvas>
+
+ 
     <div class="auth-wrapper" id="auth-wrapper">
         <div class="auth-container">
             <div class="logo">🏦</div>
@@ -1283,7 +1346,7 @@
                         </div>
                         <div class="form-group">
                             <label for="momo-number">Phone Number</label>
-                            <input type="tel" id="momo-number" placeholder="0244123456" required>
+                            <input type="tel" id="momo-number" placeholder="0551000715" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -1535,10 +1598,11 @@
                 <div style="margin-top: 30px; padding: 20px; background: #f7fafc; border-radius: 10px;">
                     <h4 style="color: #4a5568; margin-bottom: 15px;">Contact Us</h4>
                     <div style="color: #718096; line-height: 2;">
-                        <div>📧 Email: support@susupay.com</div>
-                        <div>📱 WhatsApp: +233 24 412 3456</div>
-                        <div>📞 Phone: +233 30 271 5678</div>
-                        <div>🕒 Hours: Mon-Fri, 8AM-6PM GMT</div>
+                        <div>📧 Email: fullword17@gmail.com</div>
+                        <div>📱 WhatsApp: +233 55 100 0715</div>
+                        <div>📞 Phone: +233 20 855 1270</div>
+                        <div>🕒 Hours: Mon-Sat, 8AM-6PM GMT</div>
+                        <div><b>Note:</b> We don't work on Sundays</div>
                     </div>
                 </div>
             </div>
@@ -1898,7 +1962,66 @@
                 tooltip.classList.remove('show');
             }
         });
+// Add dark mode
+        const toggle = document.getElementById('dark-mode-toggle');
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
 
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            toggle.textContent = '☀️';
+        }
+
+        // Particle.js for background (simple implementation)
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 1,
+                    speed: Math.random() * 0.5 + 0.1,
+                    color: 'rgba(255,255,255,0.3)'
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speed;
+                    if (p.y > canvas.height) p.y = 0;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        initParticles();
+
+        // GSAP animations example for nav items
+        gsap.from('.nav-item', {
+            duration: 0.5,
+            y: 20,
+            opacity: 0,
+            stagger: 0.1,
+            ease: 'power2.out'
+        });
         // ============================================
         // AUTH FUNCTIONS
         // ============================================
@@ -2321,11 +2444,13 @@
             if (selectedPaymentMethod === 'mobile-money') {
                 instructions.innerHTML = `
                     <strong>Mobile Money Payment:</strong><br>
-                    1. Dial *170# or use your mobile money app<br>
-                    2. Select "Send Money"<br>
-                    3. Enter: <strong>0244123456</strong> (SusuPay)<br>
-                    4. Enter the amount shown above<br>
-                    5. Paste transaction ID below
+                    1. Dial *170# or use your mobile money app this option is for MTN<br>
+                    2. Dial *110# or use your mobile money app this option is for Telecel<br>
+                    3. Select "Send Money"<br>
+                    4. Enter: <strong>0551000715</strong> (Godfred Mensah)<br>
+                    5. Enter: <strong>0208551270</strong> (Godfred Mensah)<br>
+                    6. Enter the amount shown above<br>
+                    7. Paste transaction ID below
                 `;
             } else if (selectedPaymentMethod === 'crypto' && selectedCrypto) {
                 if (selectedCrypto === 'usdt') {
