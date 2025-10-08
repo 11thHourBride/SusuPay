@@ -160,6 +160,9 @@
         /* ============================================
            HEADER STYLES
         ============================================ */
+       /* ============================================
+           HEADER & HAMBURGER MENU
+        ============================================ */
         .app-header {
             position: fixed;
             top: 0;
@@ -185,11 +188,49 @@
             color: #4a5568;
         }
 
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 15px;
+        }
+
+        .hamburger-menu:hover { opacity: 0.7; }
+
+        .hamburger-line {
+            width: 30px;
+            height: 3px;
+            background: #4a5568;
+            border-radius: 10px;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-origin: center;
+        }
+
+        .hamburger-menu.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translateY(10px);
+        }
+
+        .hamburger-menu.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .hamburger-menu.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translateY(-10px);
+        }
+
         .header-user {
             display: flex;
             align-items: center;
             gap: 15px;
         }
+
 
         .user-avatar {
             width: 45px;
@@ -220,6 +261,28 @@
             background: #c53030;
             transform: translateY(-2px);
         }
+        .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 899;
+    display: none;
+}
+
+.sidebar-overlay.show {
+    display: block;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-260px);
+}
+
+.main-content.expanded {
+    margin-left: 0;
+}
 
         /* ============================================
            NOTIFICATION STYLES
@@ -998,10 +1061,17 @@
     <!-- ============================================
          APP HEADER
     ============================================ -->
-    <header class="app-header hidden" id="app-header">
-        <div class="app-logo">
-            <span>🏦</span>
-            <span>SusuPay</span>
+     <header class="app-header hidden" id="app-header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <button class="hamburger-menu" id="hamburger-toggle">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <div class="app-logo">
+                <span>🏦</span>
+                <span>SusuPay</span>
+            </div>
         </div>
         <div class="header-user">
             <div class="notification-badge" id="notification-bell">
@@ -1033,6 +1103,7 @@
     <!-- ============================================
          SIDEBAR
     ============================================ -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar hidden" id="sidebar">
         <nav class="sidebar-nav">
             <div class="nav-item active" data-page="dashboard">
@@ -1816,7 +1887,55 @@
             eth: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
             usdc: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'
         };
+// HAMBURGER MENU
+        // ============================================
+        const hamburger = document.getElementById('hamburger-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mainContent = document.getElementById('main-content');
+        let sidebarOpen = true;
 
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            hamburger.classList.toggle('active');
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            
+            if (window.innerWidth <= 768) {
+                if (sidebarOpen) {
+                    sidebar.classList.add('open');
+                    sidebarOverlay.classList.add('show');
+                } else {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('show');
+                }
+            }
+            
+            localStorage.setItem('sidebarOpen', sidebarOpen);
+        }
+
+        hamburger.addEventListener('click', toggleSidebar);
+
+        sidebarOverlay.addEventListener('click', () => {
+            if (window.innerWidth <= 768 && sidebarOpen) {
+                toggleSidebar();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                sidebarOverlay.classList.remove('show');
+                sidebar.classList.remove('open');
+            } else if (sidebarOpen) {
+                sidebar.classList.add('open');
+            }
+        });
+
+        const savedSidebarState = localStorage.getItem('sidebarOpen');
+        if (savedSidebarState === 'false') {
+            sidebarOpen = true;
+            toggleSidebar();
+        }
         // ============================================
         // UTILITY FUNCTIONS
         // ============================================
@@ -2022,6 +2141,7 @@
             stagger: 0.1,
             ease: 'power2.out'
         });
+        
         // ============================================
         // AUTH FUNCTIONS
         // ============================================
