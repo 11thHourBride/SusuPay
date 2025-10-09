@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SusuPay - Professional Daily Savings</title>
-    <link rel="manifest" href="/manifest.json"> <!-- For PWA -->
+    <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- For charts -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script> <!-- For celebrations -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script> <!-- For advanced animations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
-        /* ============================================
-           BASE STYLES (Enhanced with better typography and variables)
-        ============================================ */
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --secondary-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
@@ -33,7 +30,7 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Better font stack */
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--primary-gradient);
             min-height: 100vh;
             color: var(--text-primary);
@@ -53,9 +50,6 @@
             display: none !important;
         }
 
-        /* ============================================
-           ANIMATIONS (Enhanced with GSAP integration points)
-        ============================================ */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -80,7 +74,6 @@
             box-shadow: var(--shadow-deep);
         }
 
-        /* Particle background (optional, can be toggled) */
         #particles {
             position: fixed;
             top: 0;
@@ -91,9 +84,6 @@
             z-index: -1;
         }
 
-        /* ============================================
-           AUTH STYLES (Improved with better spacing and effects)
-        ============================================ */
         .auth-wrapper {
             display: flex;
             align-items: center;
@@ -116,7 +106,7 @@
         }
 
         .logo {
-            font-size: 4rem; /* Larger for impact */
+            font-size: 4rem;
             text-align: center;
             margin-bottom: 20px;
             animation: pulse 2s infinite;
@@ -136,9 +126,6 @@
             text-align: center;
         }
 
-        /* Add more styles as in original, but with variables */
-
-        /* Dark mode toggles */
         .dark-mode-toggle {
             position: fixed;
             bottom: 20px;
@@ -157,12 +144,6 @@
             transform: scale(1.1);
         }
 
-        /* ============================================
-           HEADER STYLES
-        ============================================ */
-       /* ============================================
-           HEADER & HAMBURGER MENU
-        ============================================ */
         .app-header {
             position: fixed;
             top: 0;
@@ -231,7 +212,6 @@
             gap: 15px;
         }
 
-
         .user-avatar {
             width: 45px;
             height: 45px;
@@ -261,32 +241,30 @@
             background: #c53030;
             transform: translateY(-2px);
         }
+
         .sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 899;
-    display: none;
-}
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 899;
+            display: none;
+        }
 
-.sidebar-overlay.show {
-    display: block;
-}
+        .sidebar-overlay.show {
+            display: block;
+        }
 
-.sidebar.collapsed {
-    transform: translateX(-260px);
-}
+        .sidebar.collapsed {
+            transform: translateX(-260px);
+        }
 
-.main-content.expanded {
-    margin-left: 0;
-}
+        .main-content.expanded {
+            margin-left: 0;
+        }
 
-        /* ============================================
-           NOTIFICATION STYLES
-        ============================================ */
         .notification-badge {
             position: relative;
             cursor: pointer;
@@ -358,9 +336,6 @@
             margin-top: 5px;
         }
 
-        /* ============================================
-           SIDEBAR STYLES
-        ============================================ */
         .sidebar {
             position: fixed;
             left: 0;
@@ -405,9 +380,6 @@
             font-size: 1.3rem;
         }
 
-        /* ============================================
-           MAIN CONTENT STYLES
-        ============================================ */
         .main-content {
             margin-left: 260px;
             margin-top: 70px;
@@ -415,9 +387,6 @@
             min-height: calc(100vh - 70px);
         }
 
-        /* ============================================
-           CARD STYLES
-        ============================================ */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -451,9 +420,6 @@
             margin-bottom: 20px;
         }
 
-        /* ============================================
-           FORM STYLES
-        ============================================ */
         .form-group {
             margin-bottom: 20px;
         }
@@ -517,9 +483,6 @@
             transform: none;
         }
 
-        /* ============================================
-           ALERT STYLES
-        ============================================ */
         .alert {
             padding: 12px 16px;
             border-radius: 8px;
@@ -546,9 +509,6 @@
             border: 1px solid #90cdf4;
         }
 
-        /* ============================================
-           MODAL STYLES
-        ============================================ */
         .modal {
             display: none;
             position: fixed;
@@ -597,9 +557,6 @@
             background: #f7fafc;
         }
 
-        /* ============================================
-           CONTRIBUTION CALENDAR STYLES
-        ============================================ */
         .month-selector {
             display: flex;
             gap: 10px;
@@ -629,7 +586,6 @@
             gap: 8px;
             margin-bottom: 20px;
         }
-        
 
         .day-cell {
             aspect-ratio: 1;
@@ -692,9 +648,6 @@
             transform: scale(1.1);
         }
 
-        /* ============================================
-           PAYMENT STYLES
-        ============================================ */
         .payment-method-selector {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -740,9 +693,6 @@
             background: #ebf8ff;
         }
 
-        /* ============================================
-           TRANSACTION STYLES
-        ============================================ */
         .transaction-card {
             background: white;
             border-radius: 10px;
@@ -816,9 +766,6 @@
             color: #742a2a;
         }
 
-        /* ============================================
-           PAID STAMP
-        ============================================ */
         .paid-stamp {
             position: relative;
             width: 120px;
@@ -879,9 +826,6 @@
             margin-top: 5px;
         }
 
-        /* ============================================
-           PAYMENT METHOD CARD
-        ============================================ */
         .payment-method-card {
             padding: 15px;
             background: #f7fafc;
@@ -897,9 +841,6 @@
             background: #edf2f7;
         }
 
-        /* ============================================
-           VIP BADGE
-        ============================================ */
         .vip-badge {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -910,9 +851,6 @@
             margin-left: 10px;
         }
 
-        /* ============================================
-           LOADING SPINNER
-        ============================================ */
         .spinner {
             border: 3px solid #e2e8f0;
             border-top: 3px solid #667eea;
@@ -923,9 +861,11 @@
             margin: 20px auto;
         }
 
-        /* ============================================
-           RESPONSIVE STYLES
-        ============================================ */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -960,16 +900,9 @@
     </style>
 </head>
 <body>
-    <!-- ============================================
-         AUTH SECTION
-    ============================================ -->
-    <!-- Dark Mode Toggle -->
     <button class="dark-mode-toggle" id="dark-mode-toggle">🌙</button>
-
-    <!-- Particle Container -->
     <canvas id="particles"></canvas>
 
- 
     <div class="auth-wrapper" id="auth-wrapper">
         <div class="auth-container">
             <div class="logo">🏦</div>
@@ -978,7 +911,6 @@
 
             <div id="auth-alert"></div>
 
-            <!-- Sign In Form -->
             <form id="signin-form">
                 <div class="form-group">
                     <label for="signin-email">Email Address</label>
@@ -991,7 +923,6 @@
                 <button type="submit" class="btn">Sign In</button>
             </form>
 
-            <!-- Sign Up Form -->
             <form id="signup-form" class="hidden">
                 <div class="form-row">
                     <div class="form-group">
@@ -1031,7 +962,6 @@
         </div>
     </div>
 
-    <!-- Forgot Password Modal -->
     <div class="modal" id="forgot-password-modal">
         <div class="modal-content" style="max-width: 450px;">
             <button class="close-btn" id="close-forgot-password">&times;</button>
@@ -1058,10 +988,7 @@
         </div>
     </div>
 
-    <!-- ============================================
-         APP HEADER
-    ============================================ -->
-     <header class="app-header hidden" id="app-header">
+    <header class="app-header hidden" id="app-header">
         <div style="display: flex; align-items: center; gap: 15px;">
             <button class="hamburger-menu" id="hamburger-toggle">
                 <span class="hamburger-line"></span>
@@ -1086,7 +1013,6 @@
             <button class="logout-btn" id="logout-btn">Logout</button>
         </div>
         
-        <!-- Notification Tooltip -->
         <div class="notification-tooltip" id="notification-tooltip">
             <div class="notification-header">
                 <h3 style="color: #4a5568; font-size: 1rem; margin: 0;">Notifications</h3>
@@ -1100,9 +1026,6 @@
         </div>
     </header>
 
-    <!-- ============================================
-         SIDEBAR
-    ============================================ -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar hidden" id="sidebar">
         <nav class="sidebar-nav">
@@ -1141,13 +1064,9 @@
         </nav>
     </aside>
 
-    <!-- ============================================
-         MAIN CONTENT
-    ============================================ -->
     <main class="main-content hidden" id="main-content">
         <div id="dashboard-alert"></div>
 
-        <!-- DASHBOARD PAGE -->
         <div id="dashboard-page" class="page-content">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Dashboard Overview</h2>
             
@@ -1183,20 +1102,15 @@
             </div>
         </div>
 
-        <!-- CONTRIBUTIONS PAGE -->
         <div id="contributions-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Monthly Contributions</h2>
             
             <div class="card">
-                <div class="month-selector" id="month-selector">
-                    <!-- Months will be populated by JS -->
-                </div>
+                <div class="month-selector" id="month-selector"></div>
                 
                 <h3 id="selected-month-display" style="margin-bottom: 15px; color: #4a5568;"></h3>
                 
-                <div class="contribution-grid" id="contribution-grid">
-                    <!-- Days will be populated by JS -->
-                </div>
+                <div class="contribution-grid" id="contribution-grid"></div>
 
                 <div class="day-selector">
                     <span style="font-weight: 600; color: #4a5568;">Select Days:</span>
@@ -1210,7 +1124,6 @@
             </div>
         </div>
 
-        <!-- WITHDRAWALS PAGE -->
         <div id="withdrawals-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Process Withdrawal</h2>
             
@@ -1247,7 +1160,6 @@
             </div>
         </div>
 
-        <!-- TRANSACTIONS PAGE -->
         <div id="transactions-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Transaction History</h2>
             <div id="transactions-list">
@@ -1255,11 +1167,9 @@
             </div>
         </div>
 
-        <!-- KYC PAGE -->
         <div id="kyc-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">KYC Verification</h2>
             
-            <!-- KYC Status Display -->
             <div id="kyc-status-display" class="hidden">
                 <div class="card" style="text-align: center;">
                     <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
@@ -1274,9 +1184,7 @@
                 </div>
             </div>
 
-            <!-- KYC Form -->
             <div id="kyc-form-container">
-                <!-- Terms of Service -->
                 <div class="card">
                     <h3 style="color: #4a5568; margin-bottom: 15px;">📜 Terms of Service</h3>
                     <div style="max-height: 300px; overflow-y: auto; padding: 20px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px;">
@@ -1300,7 +1208,6 @@
                     </label>
                 </div>
 
-                <!-- ID Type Selection -->
                 <div id="id-type-section" class="card hidden">
                     <h3 style="color: #4a5568; margin-bottom: 15px;">🪪 Select ID Type</h3>
                     <div class="form-group">
@@ -1315,11 +1222,9 @@
                     </div>
                 </div>
 
-                <!-- ID Upload Section -->
                 <div id="id-upload-section" class="card hidden">
                     <h3 style="color: #4a5568; margin-bottom: 20px;">📄 Upload ID Documents</h3>
                     
-                    <!-- Front of ID -->
                     <div style="margin-bottom: 30px;">
                         <h4 style="color: #4a5568; margin-bottom: 15px;">Front of ID</h4>
                         <div id="front-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer;">
@@ -1334,7 +1239,6 @@
                         </div>
                     </div>
 
-                    <!-- Back of ID -->
                     <div>
                         <h4 style="color: #4a5568; margin-bottom: 15px;">Back of ID</h4>
                         <div id="back-upload-area" style="border: 2px dashed #cbd5e0; border-radius: 10px; padding: 30px; text-align: center; cursor: pointer;">
@@ -1350,7 +1254,6 @@
                     </div>
                 </div>
 
-                <!-- Selfie Section -->
                 <div id="selfie-section" class="card hidden">
                     <h3 style="color: #4a5568; margin-bottom: 20px;">🤳 Live Selfie Verification</h3>
                     
@@ -1387,23 +1290,18 @@
                     </div>
                 </div>
 
-                <!-- Submit Button -->
                 <button class="btn" id="submit-kyc-btn" style="display: none;">
                     Submit KYC Documents
                 </button>
             </div>
         </div>
 
-        <!-- PAYMENT METHODS PAGE -->
         <div id="payment-methods-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Payment Methods</h2>
             
-            <!-- Mobile Money -->
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">📱 Mobile Money Accounts</h3>
-                <div id="mobile-money-list" style="margin-bottom: 20px;">
-                    <!-- Saved accounts -->
-                </div>
+                <div id="mobile-money-list" style="margin-bottom: 20px;"></div>
                 <form id="add-mobile-money-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -1428,12 +1326,9 @@
                 </form>
             </div>
 
-            <!-- Cryptocurrency Wallets -->
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">₿ Cryptocurrency Wallets</h3>
-                <div id="crypto-wallet-list" style="margin-bottom: 20px;">
-                    <!-- Saved wallets -->
-                </div>
+                <div id="crypto-wallet-list" style="margin-bottom: 20px;"></div>
                 <form id="add-crypto-wallet-form">
                     <div class="form-group">
                         <label for="crypto-type">Cryptocurrency</label>
@@ -1460,12 +1355,9 @@
                 </form>
             </div>
 
-            <!-- Bank Transfer -->
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">🏦 Bank Accounts</h3>
-                <div id="bank-account-list" style="margin-bottom: 20px;">
-                    <!-- Saved accounts -->
-                </div>
+                <div id="bank-account-list" style="margin-bottom: 20px;"></div>
                 <form id="add-bank-account-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -1486,11 +1378,9 @@
             </div>
         </div>
 
-        <!-- SETTINGS PAGE -->
         <div id="settings-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Account Settings</h2>
             
-            <!-- Profile Settings -->
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">👤 Profile Information</h3>
                 <form id="profile-form">
@@ -1513,11 +1403,9 @@
                 </form>
             </div>
 
-            <!-- Security Settings -->
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">🔐 Security</h3>
                 
-                <!-- Withdrawal Password -->
                 <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px; color: #4a5568;">Withdrawal Password</h4>
                     <form id="withdrawal-password-form">
@@ -1537,7 +1425,6 @@
                     </form>
                 </div>
 
-                <!-- Account Password -->
                 <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px; color: #4a5568;">Change Account Password</h4>
                     <form id="account-password-form">
@@ -1557,7 +1444,6 @@
                     </form>
                 </div>
 
-                <!-- 2FA -->
                 <div style="padding: 20px; background: #f7fafc; border-radius: 10px;">
                     <h4 style="margin-bottom: 15px; color: #4a5568;">Two-Factor Authentication</h4>
                     
@@ -1593,7 +1479,6 @@
                 </div>
             </div>
 
-            <!-- Notifications -->
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">🔔 Notifications</h3>
                 <div class="form-group">
@@ -1618,7 +1503,6 @@
             </div>
         </div>
 
-        <!-- REPORT A PROBLEM PAGE -->
         <div id="report-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Report a Problem</h2>
             
@@ -1680,11 +1564,6 @@
         </div>
     </main>
 
-    <!-- ============================================
-         MODALS
-    ============================================ -->
-    
-    <!-- Payment Modal -->
     <div class="modal" id="payment-modal">
         <div class="modal-content">
             <button class="close-btn" id="close-payment-modal">&times;</button>
@@ -1702,7 +1581,6 @@
             </div>
 
             <div id="payment-details" class="hidden">
-                <!-- Crypto selection -->
                 <div id="crypto-selection" class="hidden" style="margin-bottom: 20px;">
                     <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #4a5568;">Select Cryptocurrency</label>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
@@ -1746,7 +1624,6 @@
         </div>
     </div>
 
-    <!-- Biometric Setup Modal -->
     <div class="modal" id="biometric-modal">
         <div class="modal-content">
             <button class="close-btn" id="close-biometric-modal">&times;</button>
@@ -1767,7 +1644,6 @@
         </div>
     </div>
 
-    <!-- Authenticator Setup Modal -->
     <div class="modal" id="authenticator-modal">
         <div class="modal-content">
             <button class="close-btn" id="close-authenticator-modal">&times;</button>
@@ -1803,20 +1679,14 @@
         </div>
     </div>
 
-    <!-- 2FA Verification Modal -->
     <div class="modal" id="verification-modal">
         <div class="modal-content">
             <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">Verify Withdrawal</h2>
-            <div id="verification-method" style="padding: 20px;">
-                <!-- Will be populated based on enabled auth -->
-            </div>
+            <div id="verification-method" style="padding: 20px;"></div>
         </div>
     </div>
 
     <script type="module">
-        // ============================================
-        // FIREBASE INITIALIZATION
-        // ============================================
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { 
             getAuth, 
@@ -1859,9 +1729,6 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // ============================================
-        // GLOBAL VARIABLES
-        // ============================================
         let currentUser = null;
         let userData = null;
         let selectedMonth = new Date().getMonth();
@@ -1877,7 +1744,6 @@
         let notifications = [];
         let webAuthnCredential = null;
 
-        // Crypto addresses for deposits
         const cryptoAddresses = {
             usdt: {
                 erc20: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
@@ -1887,8 +1753,7 @@
             eth: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
             usdc: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'
         };
-// HAMBURGER MENU
-        // ============================================
+
         const hamburger = document.getElementById('hamburger-toggle');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -1936,9 +1801,7 @@
             sidebarOpen = true;
             toggleSidebar();
         }
-        // ============================================
-        // UTILITY FUNCTIONS
-        // ============================================
+
         function showAlert(message, type = 'info', container = 'dashboard-alert') {
             const alertDiv = document.getElementById(container);
             alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
@@ -1958,9 +1821,6 @@
             return date.toLocaleDateString();
         }
 
-        // ============================================
-        // NOTIFICATION FUNCTIONS
-        // ============================================
         async function createNotification(title, message, type = 'info') {
             try {
                 const notification = {
@@ -1973,16 +1833,12 @@
                 };
                 
                 await addDoc(collection(db, 'notifications'), notification);
-                
-                // Reload notifications
                 await loadNotifications();
                 
-                // Send email if enabled
                 if (userData.notifications?.email && type === 'transaction') {
                     console.log(`Email sent to ${userData.email}: ${title}`);
                 }
                 
-                // Send SMS if enabled
                 if (userData.notifications?.sms && type === 'withdrawal') {
                     console.log(`SMS sent for withdrawal: ${title}`);
                 }
@@ -2066,7 +1922,6 @@
             renderNotifications();
         }
 
-        // Notification bell click
         document.getElementById('notification-bell').addEventListener('click', (e) => {
             e.stopPropagation();
             document.getElementById('notification-tooltip').classList.toggle('show');
@@ -2081,7 +1936,7 @@
                 tooltip.classList.remove('show');
             }
         });
-// Add dark mode
+
         const toggle = document.getElementById('dark-mode-toggle');
         toggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
@@ -2094,7 +1949,6 @@
             toggle.textContent = '☀️';
         }
 
-        // Particle.js for background (simple implementation)
         function initParticles() {
             const canvas = document.getElementById('particles');
             const ctx = canvas.getContext('2d');
@@ -2133,7 +1987,6 @@
         }
         initParticles();
 
-        // GSAP animations example for nav items
         gsap.from('.nav-item', {
             duration: 0.5,
             y: 20,
@@ -2141,12 +1994,7 @@
             stagger: 0.1,
             ease: 'power2.out'
         });
-        
-        // ============================================
-        // AUTH FUNCTIONS
-        // ============================================
-        
-        // Auth toggle
+
         document.getElementById('auth-toggle-btn').addEventListener('click', () => {
             const signinForm = document.getElementById('signin-form');
             const signupForm = document.getElementById('signup-form');
@@ -2166,7 +2014,6 @@
             }
         });
 
-        // Forgot Password
         document.getElementById('forgot-password-btn').addEventListener('click', () => {
             document.getElementById('forgot-password-modal').style.display = 'block';
             document.getElementById('reset-success').classList.add('hidden');
@@ -2194,7 +2041,6 @@
             }
         });
 
-        // Sign In
         document.getElementById('signin-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('signin-email').value;
@@ -2213,7 +2059,6 @@
             }
         });
 
-        // Sign Up
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const firstName = document.getElementById('first-name').value;
@@ -2263,7 +2108,6 @@
             }
         });
 
-        // Logout
         document.getElementById('logout-btn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
@@ -2273,7 +2117,6 @@
             }
         });
 
-        // Auth state observer
         onAuthStateChanged(auth, async (user) => {
             if (user && user.emailVerified) {
                 currentUser = user;
@@ -2284,10 +2127,6 @@
             }
         });
 
-        // ============================================
-        // USER DATA FUNCTIONS
-        // ============================================
-        
         async function loadUserData() {
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (userDoc.exists()) {
@@ -2295,7 +2134,6 @@
                 updateDashboard();
                 await loadNotifications();
                 
-                // Send login alert if enabled
                 if (userData.notifications?.security) {
                     await createNotification(
                         'New Login',
@@ -2346,10 +2184,6 @@
             document.getElementById('current-month-progress').textContent = `${Math.round(progress)}%`;
         }
 
-        // ============================================
-        // NAVIGATION
-        // ============================================
-        
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const currentPage = document.querySelector('.page-content:not(.hidden)');
@@ -2379,10 +2213,6 @@
             });
         });
 
-        // ============================================
-        // DASHBOARD FUNCTIONS
-        // ============================================
-        
         document.getElementById('set-rate-btn').addEventListener('click', async () => {
             const rate = parseFloat(document.getElementById('rate-input').value);
             
@@ -2391,6 +2221,7 @@
                 return;
             }
 
+            
             const monthKey = `${selectedYear}-${selectedMonth}`;
             
             if (userData.rates?.[monthKey]) {
@@ -2421,13 +2252,9 @@
             }
         });
 
-        // ============================================
-        // CONTRIBUTIONS FUNCTIONS
-        // ============================================
-        
-        function initContributionsPage() {
+        async function initContributionsPage() {
             generateMonthSelector();
-            renderContributionGrid();
+            await renderContributionGrid();
             updateContributionAmount();
         }
 
@@ -2451,7 +2278,7 @@
             document.getElementById('selected-month-display').textContent = `${fullMonthNames[selectedMonth]} ${selectedYear}`;
         }
 
-        function renderContributionGrid() {
+        async function renderContributionGrid() {
             const grid = document.getElementById('contribution-grid');
             grid.innerHTML = '';
             
@@ -2474,9 +2301,107 @@
                 
                 grid.appendChild(cell);
             }
+            
+            await displayMonthWithdrawalInfo(monthKey);
+        }
+        
+        async function displayMonthWithdrawalInfo(monthKey) {
+            const container = document.querySelector('#contributions-page .card');
+            
+            const existingInfo = document.getElementById('month-withdrawal-info');
+            if (existingInfo) {
+                existingInfo.remove();
+            }
+            
+            try {
+                const q = query(
+                    collection(db, 'transactions'),
+                    where('userId', '==', currentUser.uid),
+                    where('type', '==', 'withdrawal'),
+                    where('month', '==', monthKey)
+                );
+                
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const withdrawals = querySnapshot.docs.map(doc => doc.data());
+                    const approvedWithdrawals = withdrawals.filter(w => w.status === 'approved');
+                    
+                    if (approvedWithdrawals.length > 0) {
+                        const infoDiv = document.createElement('div');
+                        infoDiv.id = 'month-withdrawal-info';
+                        infoDiv.style.marginTop = '20px';
+                        
+                        const finalWithdrawal = approvedWithdrawals.find(w => w.withdrawalType === 'final');
+                        
+                        if (finalWithdrawal) {
+                            infoDiv.innerHTML = `
+                                <div style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);">
+                                    <div class="paid-stamp" style="margin: 0 auto 15px;">
+                                        <div class="stamp-outer">
+                                            <div class="stamp-text-top">SUSUPAY</div>
+                                            <div class="stamp-inner">
+                                                <div class="stamp-paid">PAID</div>
+                                                <div class="stamp-date">${new Date(finalWithdrawal.timestamp?.toDate?.() || Date.now()).toLocaleDateString()}</div>
+                                            </div>
+                                            <div class="stamp-text-bottom">SUSUPAY</div>
+                                        </div>
+                                    </div>
+                                    <h3 style="color: white; margin-bottom: 10px; font-size: 1.3rem;">Month Fully Withdrawn</h3>
+                                    <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem;">
+                                        This month's balance has been completely withdrawn.<br>
+                                        <strong>Amount:</strong> ${formatCurrency(finalWithdrawal.amount)}
+                                    </p>
+                                </div>
+                            `;
+                        } else {
+                            const advanceWithdrawals = approvedWithdrawals.filter(w => w.withdrawalType === 'advance');
+                            const totalAdvance = advanceWithdrawals.reduce((sum, w) => sum + (w.amount || 0), 0);
+                            
+                            if (totalAdvance > 0) {
+                                infoDiv.innerHTML = `
+                                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);">
+                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                                            <div style="font-size: 2.5rem;">💸</div>
+                                            <div>
+                                                <h3 style="color: white; margin: 0; font-size: 1.2rem;">Advance Withdrawal Taken</h3>
+                                                <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">
+                                                    ${advanceWithdrawals.length} advance withdrawal${advanceWithdrawals.length > 1 ? 's' : ''}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
+                                            <div style="color: white; font-size: 2rem; font-weight: 700; margin-bottom: 5px;">
+                                                ${formatCurrency(totalAdvance)}
+                                            </div>
+                                            <div style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">
+                                                Total advance amount withdrawn from this month
+                                            </div>
+                                        </div>
+                                        ${advanceWithdrawals.length > 1 ? `
+                                            <div style="margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                                                <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin-bottom: 8px;">Breakdown:</div>
+                                                ${advanceWithdrawals.map(w => `
+                                                    <div style="color: white; font-size: 0.9rem; margin: 5px 0;">
+                                                        • ${formatCurrency(w.amount)} - ${new Date(w.timestamp?.toDate?.() || Date.now()).toLocaleDateString()}
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }
+                        }
+                        
+                        const gridContainer = document.getElementById('contribution-grid');
+                        gridContainer.parentNode.insertBefore(infoDiv, gridContainer.nextSibling);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading withdrawal info:', error);
+            }
         }
 
-        // Day selector
         document.getElementById('days-input').addEventListener('input', (e) => {
             let value = parseInt(e.target.value) || 1;
             value = Math.max(1, Math.min(31, value));
@@ -2508,7 +2433,6 @@
             document.getElementById('total-amount').textContent = total.toFixed(2);
         }
 
-        // Contribute button
         document.getElementById('contribute-btn').addEventListener('click', () => {
             const monthKey = `${selectedYear}-${selectedMonth}`;
             const rate = userData.rates?.[monthKey];
@@ -2523,10 +2447,6 @@
             document.getElementById('payment-modal').style.display = 'block';
         });
 
-        // ============================================
-        // PAYMENT MODAL FUNCTIONS
-        // ============================================
-        
         document.querySelectorAll('.payment-option').forEach(option => {
             option.addEventListener('click', () => {
                 document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
@@ -2676,10 +2596,6 @@
             document.getElementById('payment-modal').style.display = 'none';
         });
 
-        // ============================================
-        // WITHDRAWAL FUNCTIONS
-        // ============================================
-        
         function initWithdrawalsPage() {
             const select = document.getElementById('withdrawal-month');
             select.innerHTML = '<option value="">Choose month...</option>';
@@ -2736,14 +2652,12 @@
                 return;
             }
             
-            // Check lockout
             if (userData.lockoutUntil && new Date(userData.lockoutUntil) > new Date()) {
                 const remainingTime = Math.ceil((new Date(userData.lockoutUntil) - new Date()) / 60000);
                 showAlert(`Account locked. Try again in ${remainingTime} minutes.`, 'error');
                 return;
             }
             
-            // Verify password
             if (password !== userData.withdrawalPassword) {
                 withdrawalAttempts++;
                 document.getElementById('withdrawal-attempts').style.display = 'block';
@@ -2766,7 +2680,6 @@
             withdrawalAttempts = 0;
             document.getElementById('withdrawal-attempts').style.display = 'none';
             
-            // Check if 2FA is required
             if (userData.biometricEnabled || userData.authenticatorEnabled) {
                 show2FAVerification(async () => {
                     await processWithdrawal(monthKey, amount, paymentMethodId);
@@ -2844,8 +2757,6 @@
                         return;
                     }
                     
-                    // In production, verify TOTP code against stored secret
-                    // For now, accept any 6-digit number as a placeholder
                     modal.style.display = 'none';
                     await callback();
                 });
@@ -2854,7 +2765,6 @@
 
         async function processWithdrawal(monthKey, amount, paymentMethodId) {
             try {
-                // Check withdrawal count
                 const withdrawalsQuery = query(
                     collection(db, 'transactions'),
                     where('userId', '==', currentUser.uid),
@@ -2870,7 +2780,6 @@
                     return;
                 }
                 
-                // Calculate commission
                 const rate = userData.rates[monthKey] || 0;
                 let commission = 0;
                 let withdrawalType = 'advance';
@@ -2887,7 +2796,6 @@
                     return;
                 }
                 
-                // Get payment method details
                 const [type, index] = paymentMethodId.split('-');
                 let paymentDetails = {};
                 
@@ -2899,7 +2807,6 @@
                     paymentDetails = userData.paymentMethods.bank[index];
                 }
                 
-                // Create withdrawal transaction
                 await addDoc(collection(db, 'transactions'), {
                     userId: currentUser.uid,
                     type: 'withdrawal',
@@ -2914,7 +2821,6 @@
                     timestamp: serverTimestamp()
                 });
                 
-                // Deduct from balance
                 const newBalance = userData.balance - totalDeduction;
                 await updateDoc(doc(db, 'users', currentUser.uid), {
                     balance: newBalance
@@ -2930,7 +2836,6 @@
                     'withdrawal'
                 );
                 
-                // Clear form
                 document.getElementById('withdrawal-month').value = '';
                 document.getElementById('withdrawal-amount').value = '';
                 document.getElementById('withdrawal-payment-method').value = '';
@@ -2942,16 +2847,11 @@
             }
         }
 
-        // ============================================
-        // TRANSACTIONS FUNCTIONS
-        // ============================================
-
         async function loadTransactions() {
             const container = document.getElementById('transactions-list');
             container.innerHTML = '<div class="spinner"></div>';
             
             try {
-                // Use simple query without orderBy to avoid index requirement
                 const q = query(
                     collection(db, 'transactions'),
                     where('userId', '==', currentUser.uid)
@@ -2972,7 +2872,6 @@
                 
                 container.innerHTML = '';
                 
-                // Convert to array and sort manually if needed
                 const transactions = [];
                 querySnapshot.forEach((doc) => {
                     transactions.push({
@@ -2981,7 +2880,6 @@
                     });
                 });
                 
-                // Sort by timestamp manually
                 transactions.sort((a, b) => {
                     const timeA = a.timestamp?.toDate?.() || new Date(0);
                     const timeB = b.timestamp?.toDate?.() || new Date(0);
@@ -3041,7 +2939,6 @@
                     container.appendChild(card);
                 });
                 
-                // Add summary card at the top
                 const summaryCard = document.createElement('div');
                 summaryCard.className = 'card';
                 summaryCard.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
@@ -3090,12 +2987,7 @@
                 `;
             }
         }
-        
 
-        // ============================================
-        // KYC FUNCTIONS
-        // ============================================
-        
         async function initKYCPage() {
             if (userData.kycStatus === 'under_review' || userData.kycStatus === 'pending') {
                 document.getElementById('kyc-form-container').style.display = 'none';
@@ -3136,7 +3028,6 @@
             }
         });
 
-        // File uploads
         document.getElementById('front-upload-area').addEventListener('click', () => {
             document.getElementById('front-id-input').click();
         });
@@ -3183,7 +3074,6 @@
             }
         }
 
-        // Camera functions
         document.getElementById('start-camera-btn').addEventListener('click', async () => {
             try {
                 mediaStream = await navigator.mediaDevices.getUserMedia({ 
@@ -3246,7 +3136,6 @@
                 document.getElementById('submit-kyc-btn').disabled = true;
                 document.getElementById('submit-kyc-btn').textContent = 'Uploading...';
 
-                // In production, upload to Firebase Storage
                 await addDoc(collection(db, 'kyc_submissions'), {
                     userId: currentUser.uid,
                     idType: document.getElementById('id-type').value,
@@ -3276,11 +3165,6 @@
             }
         });
 
-      
-        // ============================================
-        // PAYMENT METHODS FUNCTIONS
-        // ============================================
-        
         async function loadPaymentMethods() {
             renderMobileMoneyAccounts();
             renderCryptoWallets();
@@ -3441,10 +3325,6 @@
             }
         });
 
-        // ============================================
-        // SETTINGS FUNCTIONS
-        // ============================================
-        
         function loadSettings() {
             document.getElementById('edit-first-name').value = userData.firstName || '';
             document.getElementById('edit-surname').value = userData.surname || '';
@@ -3471,7 +3351,6 @@
                 document.getElementById('setup-biometric-btn').textContent = 'Setup';
             }
             
-           
             if (userData.authenticatorEnabled) {
                 authenticatorStatus.textContent = 'Enabled ✓';
                 authenticatorStatus.style.color = '#48bb78';
@@ -3483,7 +3362,6 @@
             }
         }
 
-        // Profile update
         document.getElementById('profile-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -3506,31 +3384,6 @@
             }
         });
 
-       
-        // Profile update
-        document.getElementById('profile-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const firstName = document.getElementById('edit-first-name').value;
-            const surname = document.getElementById('edit-surname').value;
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    firstName,
-                    surname
-                });
-                
-                userData.firstName = firstName;
-                userData.surname = surname;
-                
-                showAlert('Profile updated successfully!', 'success');
-                showDashboard();
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        });
-
-        // Withdrawal password
         document.getElementById('withdrawal-password-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -3560,7 +3413,6 @@
             }
         });
 
-        // Account password
         document.getElementById('account-password-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -3585,7 +3437,6 @@
             }
         });
 
-        // Biometric setup
         document.getElementById('setup-biometric-btn').addEventListener('click', () => {
             if (userData.biometricEnabled) {
                 disableBiometric();
@@ -3620,7 +3471,6 @@
 
         document.getElementById('enable-biometric-btn').addEventListener('click', async () => {
             try {
-                // Create WebAuthn credential
                 const challenge = new Uint8Array(32);
                 crypto.getRandomValues(challenge);
                 
@@ -3685,7 +3535,6 @@
             document.getElementById('biometric-modal').style.display = 'none';
         });
 
-        // Authenticator setup
         document.getElementById('setup-authenticator-btn').addEventListener('click', () => {
             if (userData.authenticatorEnabled) {
                 disableAuthenticator();
@@ -3715,8 +3564,6 @@
             }
             
             try {
-                // In production, verify TOTP code against the secret
-                // For demo purposes, we'll accept the code
                 await updateDoc(doc(db, 'users', currentUser.uid), {
                     authenticatorEnabled: true,
                     authenticatorSecret: window.tempAuthSecret
@@ -3755,7 +3602,6 @@
             document.getElementById('authenticator-modal').style.display = 'none';
         });
 
-        // Notification preferences
         document.getElementById('save-notifications-btn').addEventListener('click', async () => {
             const emailNotifications = document.getElementById('email-notifications').checked;
             const smsNotifications = document.getElementById('sms-notifications').checked;
@@ -3780,10 +3626,6 @@
             }
         });
 
-        // ============================================
-        // REPORT A PROBLEM
-        // ============================================
-        
         document.getElementById('report-problem-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -3818,10 +3660,6 @@
             }
         });
 
-        // ============================================
-        // MODAL CLOSE HANDLERS
-        // ============================================
-        
         window.addEventListener('click', (e) => {
             const modals = document.querySelectorAll('.modal');
             modals.forEach(modal => {
@@ -3831,17 +3669,12 @@
             });
         });
 
-        // Clean up camera on page unload
         window.addEventListener('beforeunload', () => {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
             }
         });
 
-        // ============================================
-        // INITIALIZE APP
-        // ============================================
-        
         console.log('SusuPay Dashboard Initialized');
     </script>
 </body>
