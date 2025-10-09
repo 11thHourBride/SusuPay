@@ -18,7 +18,7 @@
             --secondary-gradient: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             --accent-color: #667eea;
             --text-primary: #333;
-            --text-secondary: #1b3255;
+            --text-secondary: #748aac;
             --bg-light: rgba(255, 255, 255, 0.98);
             --shadow-soft: 0 5px 15px rgb(0, 0, 0);
             --shadow-deep: 0 15px 40px rgb(0, 0, 0);
@@ -42,9 +42,9 @@
 
         body.dark-mode {
             --primary-gradient: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
-            --accent-color: #4ca1af;
-            --text-primary: #f4f4f4;
-            --text-secondary: #a0aec0;
+            --accent-color: #4c4eaf;
+            --text-primary: #b91515;
+            --text-secondary: #2a5894;
             --bg-light: rgba(45, 55, 72, 0.98);
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
@@ -2945,53 +2945,84 @@
         // ============================================
         // TRANSACTIONS FUNCTIONS
         // ============================================
-        
+
         async function loadTransactions() {
             const container = document.getElementById('transactions-list');
             container.innerHTML = '<div class="spinner"></div>';
             
             try {
+                // Use simple query without orderBy to avoid index requirement
                 const q = query(
                     collection(db, 'transactions'),
-                    where('userId', '==', currentUser.uid),
-                    orderBy('timestamp', 'desc')
+                    where('userId', '==', currentUser.uid)
                 );
                 
                 const querySnapshot = await getDocs(q);
                 
                 if (querySnapshot.empty) {
-                    container.innerHTML = '<p style="text-align: center; color: #718096; padding: 40px;">No transactions yet.</p>';
+                    container.innerHTML = `
+                        <div class="card" style="text-align: center; padding: 60px 20px;">
+                            <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📜</div>
+                            <h3 style="color: #4a5568; margin-bottom: 10px;">No Transactions Yet</h3>
+                            <p style="color: #718096;">Your transaction history will appear here once you make your first contribution or withdrawal.</p>
+                        </div>
+                    `;
                     return;
                 }
                 
                 container.innerHTML = '';
                 
+                // Convert to array and sort manually if needed
+                const transactions = [];
                 querySnapshot.forEach((doc) => {
-                    const transaction = doc.data();
+                    transactions.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                // Sort by timestamp manually
+                transactions.sort((a, b) => {
+                    const timeA = a.timestamp?.toDate?.() || new Date(0);
+                    const timeB = b.timestamp?.toDate?.() || new Date(0);
+                    return timeB - timeA;
+                });
+                
+                transactions.forEach((transaction) => {
                     const card = document.createElement('div');
                     card.className = `transaction-card ${transaction.type}`;
                     
                     const isPaid = transaction.status === 'approved' && transaction.type === 'withdrawal';
-                    const timestamp = transaction.timestamp?.toDate() || new Date();
+                    const timestamp = transaction.timestamp?.toDate?.() || new Date();
+                    
+                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                    let monthDisplay = '';
+                    if (transaction.month) {
+                        const [year, month] = transaction.month.split('-');
+                        monthDisplay = `${monthNames[parseInt(month)]} ${year}`;
+                    }
                     
                     card.innerHTML = `
                         <div class="transaction-header">
                             <div>
                                 <div class="transaction-type">${transaction.type === 'contribution' ? '💰 Contribution' : '💸 Withdrawal'}</div>
                                 ${transaction.withdrawalType ? `<div style="font-size: 0.8rem; color: #718096; margin-top: 4px;">${transaction.withdrawalType === 'advance' ? 'Advance Payment' : 'Final Withdrawal'}</div>` : ''}
+                                ${transaction.days?.length ? `<div style="font-size: 0.8rem; color: #667eea; margin-top: 4px; font-weight: 600;">${transaction.days.length} day${transaction.days.length > 1 ? 's' : ''}</div>` : ''}
                             </div>
                             <div class="transaction-amount ${transaction.type === 'contribution' ? 'positive' : 'negative'}">
                                 ${transaction.type === 'contribution' ? '+' : '-'}${formatCurrency(transaction.amount)}
                             </div>
                         </div>
-                        <div style="font-size: 0.9rem; color: #718096; margin-top: 8px;">
-                            ${transaction.month ? `Month: ${transaction.month}` : ''}
-                            ${transaction.commission ? `<br>Commission: ${formatCurrency(transaction.commission)}` : ''}
-                            ${transaction.paymentMethod ? `<br>Payment: ${transaction.paymentMethod}` : ''}
-                            <br>Date: ${timestamp.toLocaleDateString()}
+                        <div style="font-size: 0.9rem; color: #718096; margin-top: 8px; line-height: 1.6;">
+                            ${monthDisplay ? `<strong>Month:</strong> ${monthDisplay}<br>` : ''}
+                            ${transaction.commission ? `<strong>Commission:</strong> ${formatCurrency(transaction.commission)}<br>` : ''}
+                            ${transaction.totalAmount ? `<strong>Total Deducted:</strong> ${formatCurrency(transaction.totalAmount)}<br>` : ''}
+                            ${transaction.paymentMethod ? `<strong>Payment Method:</strong> ${transaction.paymentMethod}<br>` : ''}
+                            ${transaction.transactionId ? `<strong>Transaction ID:</strong> ${transaction.transactionId}<br>` : ''}
+                            <strong>Date:</strong> ${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}
                         </div>
-                        <div class="transaction-status status-${transaction.status}">
-                            ${transaction.status.toUpperCase()}
+                        <div class="transaction-status status-${transaction.status}" style="margin-top: 12px;">
+                            ${transaction.status === 'pending' ? '⏳ PENDING' : transaction.status === 'approved' ? '✅ APPROVED' : transaction.status === 'rejected' ? '❌ REJECTED' : transaction.status.toUpperCase()}
                         </div>
                         ${isPaid ? `
                             <div class="paid-stamp">
@@ -3009,10 +3040,57 @@
                     
                     container.appendChild(card);
                 });
+                
+                // Add summary card at the top
+                const summaryCard = document.createElement('div');
+                summaryCard.className = 'card';
+                summaryCard.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                summaryCard.style.color = 'white';
+                summaryCard.style.marginBottom = '30px';
+                
+                const totalContributions = transactions.filter(t => t.type === 'contribution' && t.status === 'approved').reduce((sum, t) => sum + (t.amount || 0), 0);
+                const totalWithdrawals = transactions.filter(t => t.type === 'withdrawal' && t.status === 'approved').reduce((sum, t) => sum + (t.amount || 0), 0);
+                const pendingCount = transactions.filter(t => t.status === 'pending').length;
+                
+                summaryCard.innerHTML = `
+                    <h3 style="margin-bottom: 20px; color: white;">Transaction Summary</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Contributions</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${formatCurrency(totalContributions)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Withdrawals</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${formatCurrency(totalWithdrawals)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Pending</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${pendingCount}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Transactions</div>
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${transactions.length}</div>
+                        </div>
+                    </div>
+                `;
+                
+                container.insertBefore(summaryCard, container.firstChild);
+                
             } catch (error) {
-                container.innerHTML = `<p style="text-align: center; color: #e53e3e; padding: 40px;">Error: ${error.message}</p>`;
+                console.error('Transaction loading error:', error);
+                container.innerHTML = `
+                    <div class="card" style="text-align: center; padding: 40px 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+                        <h3 style="color: #e53e3e; margin-bottom: 10px;">Error Loading Transactions</h3>
+                        <p style="color: #718096; margin-bottom: 20px;">${error.message}</p>
+                        <button class="btn" onclick="loadTransactions()" style="width: auto; padding: 10px 25px;">
+                            Retry
+                        </button>
+                    </div>
+                `;
             }
         }
+        
 
         // ============================================
         // KYC FUNCTIONS
