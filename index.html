@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -17,8 +18,8 @@
             --text-primary: #333;
             --text-secondary: #748aac;
             --bg-light: rgba(255, 255, 255, 0.98);
-            --shadow-soft: 0 5px 15px rgb(0, 0, 0);
-            --shadow-deep: 0 15px 40px rgb(0, 0, 0);
+            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-deep: 0 15px 40px rgba(0, 0, 0, 0.2);
             --transition-fast: 0.3s ease;
             --transition-slow: 0.5s ease-in-out;
         }
@@ -40,15 +41,13 @@
         body.dark-mode {
             --primary-gradient: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
             --accent-color: #4c4eaf;
-            --text-primary: #b91515;
-            --text-secondary: #2a5894;
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e0;
             --bg-light: rgba(45, 55, 72, 0.98);
             --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -56,22 +55,12 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
+            0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
 
         .page-content {
             animation: fadeIn 0.6s ease-in-out;
-        }
-
-        .stat-card {
-            transition: transform var(--transition-fast);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: var(--shadow-deep);
         }
 
         #particles {
@@ -83,7 +72,312 @@
             pointer-events: none;
             z-index: -1;
         }
+        /* Biometric & Google Auth Styles */
+.biometric-btn {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    margin-bottom: 15px;
+}
 
+.biometric-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+}
+
+.biometric-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.google-signin-btn {
+    background: white;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.google-signin-btn:hover {
+    border-color: #4285f4;
+    background: #f7fafc;
+}
+
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.auth-divider span {
+    padding: 0 10px;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.auth-method-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.auth-method-option {
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.auth-method-option:hover {
+    border-color: #667eea;
+    background: #f7fafc;
+}
+
+.auth-method-option.selected {
+    border-color: #667eea;
+    background: #ebf8ff;
+}
+
+.biometric-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #f7fafc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.biometric-status.enabled {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.biometric-status.disabled {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+        /* VIP Badge Styles */
+        .vip-badge {
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vip-badge.vip0 { background: linear-gradient(135deg, #a8a8a8 0%, #8c8c8c 100%); }
+        .vip-badge.vip1 { background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%); }
+        .vip-badge.vip2 { background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%); }
+        .vip-badge.vip3 { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); }
+        .vip-badge.vip4 { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+        .vip-badge.vip5 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .vip-badge.vip6 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .vip-badge.vip7 {
+            background: linear-gradient(135deg, #FFD700 0%, #FF6347 100%);
+            animation: vip7Glow 2s infinite;
+        }
+
+        @keyframes vip7Glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+        }
+
+        .vip-stars {
+            color: #FFD700;
+            font-size: 0.6rem;
+        }
+
+        /* Dark Mode Toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-light);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition-fast);
+            font-size: 1.5rem;
+        }
+
+        .dark-mode-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Notification Styles */
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .notification-badge .badge-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e53e3e;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .notification-tooltip {
+            position: absolute;
+            top: 60px;
+            right: 80px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1100;
+            display: none;
+        }
+
+        .notification-tooltip.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .notification-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f7fafc;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: #f7fafc;
+        }
+
+        .notification-item.unread {
+            background: #ebf8ff;
+            border-left: 3px solid #667eea;
+        }
+
+        .notification-item .time {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        /* Paid Stamp */
+        .paid-stamp {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 20px auto;
+        }
+
+        .stamp-outer {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 3px solid #e53e3e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stamp-inner {
+            width: 90px;
+            height: 90px;
+            border: 2px solid #e53e3e;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(229, 62, 62, 0.1);
+        }
+
+        .stamp-text-top,
+        .stamp-text-bottom {
+            position: absolute;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #e53e3e;
+            letter-spacing: 1px;
+        }
+
+        .stamp-text-top {
+            top: 15px;
+        }
+
+        .stamp-text-bottom {
+            bottom: 15px;
+        }
+
+        .stamp-paid {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #e53e3e;
+            transform: rotate(-15deg);
+        }
+
+        .stamp-date {
+            font-size: 0.7rem;
+            color: #e53e3e;
+            margin-top: 5px;
+        }
+
+        /* Auth Styles */
         .auth-wrapper {
             display: flex;
             align-items: center;
@@ -126,24 +420,7 @@
             text-align: center;
         }
 
-        .dark-mode-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--bg-light);
-            border: none;
-            padding: 10px;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: var(--shadow-soft);
-            transition: var(--transition-fast);
-        }
-
-        .dark-mode-toggle:hover {
-            transform: scale(1.1);
-        }
-
+        /* Header Styles */
         .app-header {
             position: fixed;
             top: 0;
@@ -182,64 +459,42 @@
             margin-right: 15px;
         }
 
-        .hamburger-menu:hover { opacity: 0.7; }
-
         .hamburger-line {
             width: 30px;
             height: 3px;
             background: #4a5568;
             border-radius: 10px;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            transform-origin: center;
         }
 
         .hamburger-menu.active .hamburger-line:nth-child(1) {
-            transform: rotate(45deg) translateY(10px);
+            transform: translateY(-2px);
         }
 
         .hamburger-menu.active .hamburger-line:nth-child(2) {
-            opacity: 0;
-            transform: translateX(-20px);
+            transform: scaleX(0.7);
         }
 
         .hamburger-menu.active .hamburger-line:nth-child(3) {
-            transform: rotate(-45deg) translateY(-10px);
+            transform: translateY(2px);
         }
 
-        .header-user {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        /* Sidebar Styles */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 70px;
+            bottom: 0;
+            width: 260px;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            z-index: 900;
+            transition: transform 0.3s ease;
         }
 
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-
-        .logout-btn {
-            background: #e53e3e;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: #c53030;
-            transform: translateY(-2px);
+        .sidebar.collapsed {
+            transform: translateX(-260px);
         }
 
         .sidebar-overlay {
@@ -255,101 +510,6 @@
 
         .sidebar-overlay.show {
             display: block;
-        }
-
-        .sidebar.collapsed {
-            transform: translateX(-260px);
-        }
-
-        .main-content.expanded {
-            margin-left: 0;
-        }
-
-        .notification-badge {
-            position: relative;
-            cursor: pointer;
-            padding: 5px;
-        }
-
-        .notification-badge .badge-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #e53e3e;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-
-        .notification-tooltip {
-            position: absolute;
-            top: 60px;
-            right: 80px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            width: 350px;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 1100;
-            display: none;
-        }
-
-        .notification-tooltip.show {
-            display: block;
-            animation: slideDown 0.3s ease;
-        }
-
-        .notification-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .notification-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #f7fafc;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .notification-item:hover {
-            background: #f7fafc;
-        }
-
-        .notification-item.unread {
-            background: #ebf8ff;
-            border-left: 3px solid #667eea;
-        }
-
-        .notification-item .time {
-            font-size: 0.75rem;
-            color: #718096;
-            margin-top: 5px;
-        }
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 70px;
-            bottom: 0;
-            width: 260px;
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            z-index: 900;
-        }
-
-        .sidebar-nav {
-            padding: 20px 0;
         }
 
         .nav-item {
@@ -380,11 +540,45 @@
             font-size: 1.3rem;
         }
 
+        /* Main Content */
         .main-content {
             margin-left: 260px;
             margin-top: 70px;
             padding: 30px;
             min-height: calc(100vh - 70px);
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 0;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow-soft);
+            transition: transform var(--transition-fast);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-deep);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 5px;
         }
 
         .dashboard-grid {
@@ -394,32 +588,7 @@
             margin-bottom: 30px;
         }
 
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-card h3 {
-            font-size: 2rem;
-            color: #667eea;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #718096;
-            font-size: 0.9rem;
-        }
-
-        .card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
+        /* Form Styles */
         .form-group {
             margin-bottom: 20px;
         }
@@ -453,12 +622,6 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
         .btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -483,12 +646,13 @@
             transform: none;
         }
 
+        /* Alert Styles */
         .alert {
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-weight: 500;
-            animation: slideDown 0.3s ease;
+            animation: fadeIn 0.3s ease;
         }
 
         .alert-error {
@@ -509,6 +673,41 @@
             border: 1px solid #90cdf4;
         }
 
+        /* Referral Styles */
+        .referral-code-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .referral-code-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -557,6 +756,36 @@
             background: #f7fafc;
         }
 
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Contribution Grid */
         .month-selector {
             display: flex;
             gap: 10px;
@@ -648,6 +877,7 @@
             transform: scale(1.1);
         }
 
+        /* Payment Method Styles */
         .payment-method-selector {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -674,25 +904,22 @@
             background: #ebf8ff;
         }
 
-        .crypto-option {
+        .payment-method-card {
             padding: 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .crypto-option:hover {
-            border-color: #667eea;
             background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e2e8f0;
         }
 
-        .crypto-option.selected {
-            border-color: #667eea;
-            background: #ebf8ff;
+        .payment-method-card:hover {
+            background: #edf2f7;
         }
 
+        /* Transaction Styles */
         .transaction-card {
             background: white;
             border-radius: 10px;
@@ -714,32 +941,6 @@
 
         .transaction-card.withdrawal {
             border-left-color: #e53e3e;
-        }
-
-        .transaction-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .transaction-type {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #4a5568;
-        }
-
-        .transaction-amount {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .transaction-amount.positive {
-            color: #48bb78;
-        }
-
-        .transaction-amount.negative {
-            color: #e53e3e;
         }
 
         .transaction-status {
@@ -766,110 +967,16 @@
             color: #742a2a;
         }
 
-        .paid-stamp {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 20px auto;
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
 
-        .stamp-outer {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border: 3px solid #e53e3e;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stamp-inner {
-            width: 90px;
-            height: 90px;
-            border: 2px solid #e53e3e;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(229, 62, 62, 0.1);
-        }
-
-        .stamp-text-top,
-        .stamp-text-bottom {
-            position: absolute;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #e53e3e;
-            letter-spacing: 1px;
-        }
-
-        .stamp-text-top {
-            top: 15px;
-        }
-
-        .stamp-text-bottom {
-            bottom: 15px;
-        }
-
-        .stamp-paid {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #e53e3e;
-            transform: rotate(-15deg);
-        }
-
-        .stamp-date {
-            font-size: 0.7rem;
-            color: #e53e3e;
-            margin-top: 5px;
-        }
-
-        .payment-method-card {
-            padding: 15px;
-            background: #f7fafc;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .payment-method-card:hover {
-            background: #edf2f7;
-        }
-
-        .vip-badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            margin-left: 10px;
-        }
-
-        .spinner {
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        /* Responsive */
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
             }
 
             .sidebar.open {
@@ -880,10 +987,6 @@
                 margin-left: 0;
             }
 
-            .app-header {
-                padding: 0 15px;
-            }
-
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
@@ -892,9 +995,17 @@
                 grid-template-columns: 1fr;
             }
 
-            .notification-tooltip {
-                right: 10px;
-                width: calc(100vw - 20px);
+            .payment-method-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .contribution-grid {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 4px;
+            }
+
+            .day-cell {
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -903,36 +1014,58 @@
     <button class="dark-mode-toggle" id="dark-mode-toggle">🌙</button>
     <canvas id="particles"></canvas>
 
+    <!-- Auth Section -->
     <div class="auth-wrapper" id="auth-wrapper">
         <div class="auth-container">
             <div class="logo">🏦</div>
             <h1 class="auth-title">SusuPay</h1>
             <p class="auth-subtitle">Professional Daily Savings Platform</p>
-
             <div id="auth-alert"></div>
 
-            <form id="signin-form">
-                <div class="form-group">
-                    <label for="signin-email">Email Address</label>
-                    <input type="email" id="signin-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="signin-password">Password</label>
-                    <input type="password" id="signin-password" required>
-                </div>
-                <button type="submit" class="btn">Sign In</button>
-            </form>
+         <form id="signin-form">
+    <div class="form-group">
+        <label for="signin-email">Email Address</label>
+        <input type="email" id="signin-email" required>
+    </div>
+    <div class="form-group">
+        <label for="signin-password">Password</label>
+        <input type="password" id="signin-password" required>
+    </div>
+    <button type="submit" class="btn">Sign In</button>
+    
+    <div class="auth-divider">
+        <span>OR</span>
+    </div>
+    
+    <button type="button" class="google-signin-btn" id="google-signin-btn">
+        <svg width="20" height="20" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+    </button>
+
+    <div id="biometric-signin-container" style="display: none;">
+        <div class="auth-divider">
+            <span>OR</span>
+        </div>
+        <button type="button" class="biometric-btn" id="biometric-signin-btn">
+            <span style="font-size: 1.5rem;">👆</span>
+            Sign in with Fingerprint
+        </button>
+    </div>
+</form>
 
             <form id="signup-form" class="hidden">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="first-name">First Name *</label>
-                        <input type="text" id="first-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="surname">Surname *</label>
-                        <input type="text" id="surname" required>
-                    </div>
+                <div class="form-group">
+                    <label for="first-name">First Name *</label>
+                    <input type="text" id="first-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="surname">Surname *</label>
+                    <input type="text" id="surname" required>
                 </div>
                 <div class="form-group">
                     <label for="signup-email">Email Address *</label>
@@ -946,9 +1079,26 @@
                     <label for="confirm-password">Confirm Password *</label>
                     <input type="password" id="confirm-password" required minlength="6">
                 </div>
-                <button type="submit" class="btn">Create Account</button>
+                <div class="form-group">
+                    <label for="referral-code-input">Referral Code (Optional)</label>
+                    <input type="text" id="referral-code-input" placeholder="Enter referral code">
+                </div>
+             <button type="submit" class="btn">Create Account</button>
+                
+                <div class="auth-divider">
+                    <span>OR</span>
+                </div>
+                
+                <button type="button" class="google-signin-btn" id="google-signup-btn">
+                    <svg width="20" height="20" viewBox="0 0 48 48">
+                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                    </svg>
+                    Sign up with Google
+                </button>
             </form>
-
             <div style="text-align: center; margin-top: 20px; color: #718096;">
                 <span id="auth-toggle-text">Don't have an account?</span>
                 <button type="button" id="auth-toggle-btn" style="background: none; border: none; color: #667eea; cursor: pointer; text-decoration: underline; font-size: inherit;">Sign Up</button>
@@ -962,6 +1112,7 @@
         </div>
     </div>
 
+    <!-- Forgot Password Modal -->
     <div class="modal" id="forgot-password-modal">
         <div class="modal-content" style="max-width: 450px;">
             <button class="close-btn" id="close-forgot-password">&times;</button>
@@ -988,6 +1139,7 @@
         </div>
     </div>
 
+    <!-- App Header -->
     <header class="app-header hidden" id="app-header">
         <div style="display: flex; align-items: center; gap: 15px;">
             <button class="hamburger-menu" id="hamburger-toggle">
@@ -1000,7 +1152,7 @@
                 <span>SusuPay</span>
             </div>
         </div>
-        <div class="header-user">
+        <div style="display: flex; align-items: center; gap: 15px;">
             <div class="notification-badge" id="notification-bell">
                 <span style="font-size: 1.5rem;">🔔</span>
                 <span class="badge-count hidden" id="notification-count">0</span>
@@ -1009,8 +1161,7 @@
                 <div id="user-name" style="font-weight: 600; color: #4a5568;"></div>
                 <div id="user-email" style="font-size: 0.8rem; color: #718096;"></div>
             </div>
-            <div class="user-avatar" id="user-avatar">U</div>
-            <button class="logout-btn" id="logout-btn">Logout</button>
+            <button class="btn" id="logout-btn" style="width: auto; padding: 8px 20px; font-size: 0.9rem; background: #e53e3e;">Logout</button>
         </div>
         
         <div class="notification-tooltip" id="notification-tooltip">
@@ -1026,6 +1177,7 @@
         </div>
     </header>
 
+    <!-- Sidebar -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
     <aside class="sidebar hidden" id="sidebar">
         <nav class="sidebar-nav">
@@ -1045,13 +1197,25 @@
                 <span class="nav-icon">📜</span>
                 <span>Transactions</span>
             </div>
-            <div class="nav-item" data-page="kyc">
-                <span class="nav-icon">🛡️</span>
-                <span>KYC Verification</span>
+            <div class="nav-item" data-page="referrals">
+                <span class="nav-icon">👥</span>
+                <span>Referrals</span>
+            </div>
+            <div class="nav-item" data-page="staking">
+                <span class="nav-icon">💎</span>
+                <span>Staking</span>
+            </div>
+            <div class="nav-item" data-page="p2p">
+                <span class="nav-icon">🤝</span>
+                <span>P2P Trading</span>
             </div>
             <div class="nav-item" data-page="payment-methods">
                 <span class="nav-icon">💳</span>
                 <span>Payment Methods</span>
+            </div>
+            <div class="nav-item" data-page="kyc">
+                <span class="nav-icon">🛡️</span>
+                <span>KYC Verification</span>
             </div>
             <div class="nav-item" data-page="settings">
                 <span class="nav-icon">⚙️</span>
@@ -1064,9 +1228,11 @@
         </nav>
     </aside>
 
+    <!-- Main Content -->
     <main class="main-content hidden" id="main-content">
         <div id="dashboard-alert"></div>
 
+        <!-- Dashboard Page -->
         <div id="dashboard-page" class="page-content">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Dashboard Overview</h2>
             
@@ -1076,32 +1242,167 @@
                     <p>Total Balance</p>
                 </div>
                 <div class="stat-card">
-                    <h3 id="daily-rate">₵0.00</h3>
-                    <p>Current Monthly Rate</p>
-                </div>
-                <div class="stat-card">
-                    <h3 id="contributions-count">0</h3>
+                    <h3 id="total-contributions">₵0.00</h3>
                     <p>Total Contributions</p>
                 </div>
                 <div class="stat-card">
-                    <h3 id="current-month-progress">0%</h3>
-                    <p>Month Progress</p>
+                    <h3 id="vip-level-display">Not VIP</h3>
+                    <p>VIP Level</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="referral-count">0</h3>
+                    <p>Total Referrals</p>
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card" id="vip-progress-card">
+                <h3 style="margin-bottom: 15px; color: #4a5568;">🎯 VIP Level Progress</h3>
+                <div id="vip-progress-content"></div>
+            </div>
+
+           <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">Set Monthly Rate</h3>
                 <div class="form-group">
                     <label for="rate-input">Monthly Rate (GH₵)</label>
                     <input type="number" id="rate-input" placeholder="Enter your monthly contribution rate" min="1">
                 </div>
                 <button class="btn" id="set-rate-btn">Set Rate</button>
-                <div id="rate-info" style="margin-top: 15px; padding: 15px; background: #ebf8ff; border-radius: 8px; color: #2b6cb0; display: none;">
-                    <strong>Note:</strong> Once set, the rate is locked for the current month.
+            </div>
+
+            <!-- ADD THIS NEW CARD HERE -->
+            <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3 style="margin-bottom: 15px; color: white;">👥 Your Referral Code</h3>
+                <div style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; margin-bottom: 15px;">
+                    <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 10px;">Share this code with friends</div>
+                    <div style="font-size: 2.5rem; font-weight: 700; letter-spacing: 5px; margin: 15px 0; font-family: monospace;" id="dashboard-referral-code">
+                        LOADING...
+                    </div>
+                    <button class="copy-btn" id="copy-dashboard-referral" style="margin-top: 10px;">
+                        📋 Copy Code
+                    </button>
+                </div>
+                <div style="font-size: 0.9rem; text-align: center; opacity: 0.9;">
+                    You have referred <strong id="dashboard-referral-count">0</strong> friend(s)
+                </div>
+            </div>
+        </div>
+        <!-- Referrals Page -->
+        <div id="referrals-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Referral Program</h2>
+            
+            <div class="card">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="font-size: 4rem; margin-bottom: 15px;">👥</div>
+                    <h3 style="color: #4a5568; margin-bottom: 10px;">Invite Friends & Earn Rewards</h3>
+                </div>
+
+                <div class="referral-code-display">
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Your Referral Code</div>
+                    <div class="referral-code-text" id="user-referral-code">LOADING...</div>
+                    <button class="copy-btn" id="copy-referral-btn">📋 Copy Code</button>
+                </div>
+
+                <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">📊 Your Referral Stats</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div>
+                            <div style="font-size: 0.9rem; color: #718096;">Total Referrals</div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #667eea;" id="total-referrals">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; color: #718096;">Active Referrals</div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #48bb78;" id="active-referrals">0</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.9rem; color: #718096;">Total Earnings</div>
+                            <div style="font-size: 1.8rem; font-weight: 700; color: #f5576c;" id="referral-earnings">₵0.00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #ebf8ff; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">💰 Referral Bonus Structure</h4>
+                    <div id="referral-bonus-info" style="color: #4a5568; line-height: 1.8;"></div>
+                </div>
+            </div>
+
+            <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #e2e8f0;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">🔗 Share Your Referral Link</h4>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="referral-link" readonly style="flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: white; font-family: monospace; font-size: 0.9rem;">
+                        <button class="btn" id="copy-referral-link-btn" style="width: auto; padding: 12px 25px; white-space: nowrap;">
+                            📋 Copy Link
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn" id="share-whatsapp" style="width: auto; padding: 10px 20px; background: #25d366;">
+                            WhatsApp
+                        </button>
+                        <button class="btn" id="share-facebook" style="width: auto; padding: 10px 20px; background: #1877f2;">
+                            Facebook
+                        </button>
+                        <button class="btn" id="share-twitter" style="width: auto; padding: 10px 20px; background: #1da1f2;">
+                            Twitter
+                        </button>
+                        <button class="btn" id="share-email" style="width: auto; padding: 10px 20px; background: #ea4335;">
+                            Email
+                        </button>
+                    </div>
+                </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">👥 Your Referrals</h3>
+                <div id="referrals-list">
+                    <p style="text-align: center; color: #718096; padding: 40px;">No referrals yet. Start inviting friends!</p>
                 </div>
             </div>
         </div>
 
+        <!-- Staking Page -->
+        <div id="staking-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Staking</h2>
+            
+            <div class="card" style="text-align: center; padding: 60px 20px;">
+                <div class="tooltip">
+                    <div style="font-size: 5rem; margin-bottom: 20px;">💎</div>
+                    <span class="tooltiptext">Coming Soon</span>
+                </div>
+                <h3 style="color: #4a5568; margin-bottom: 15px;">Staking Coming Soon!</h3>
+                <p style="color: #718096; max-width: 500px; margin: 0 auto 20px;">
+                    We're preparing an exciting staking feature that will allow you to earn passive income on your contributions.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🎁 Staking Benefits by VIP Level</h3>
+                <div id="staking-benefits-list"></div>
+            </div>
+        </div>
+
+        <!-- P2P Page -->
+        <div id="p2p-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">P2P Trading</h2>
+            
+            <div id="p2p-kyc-required" class="card" style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 5rem; margin-bottom: 20px;">🔒</div>
+                <h3 style="color: #4a5568; margin-bottom: 15px;">KYC Verification Required</h3>
+                <p style="color: #718096; margin-bottom: 30px;">
+                    P2P Trading is only available to verified users. Complete your KYC verification to access this feature.
+                </p>
+                <button class="btn" onclick="document.querySelector('[data-page=kyc]').click()" style="width: auto; padding: 12px 30px;">
+                    Complete KYC Verification
+                </button>
+            </div>
+
+            <div id="p2p-content" class="hidden">
+                <div class="card">
+                    <h3 style="margin-bottom: 20px; color: #4a5568;">🤝 P2P Trading Available Soon</h3>
+                    <p style="text-align: center; color: #718096; padding: 40px;">P2P trading feature coming soon for verified users!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contributions Page -->
         <div id="contributions-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Monthly Contributions</h2>
             
@@ -1123,7 +1424,8 @@
                 <button class="btn" id="contribute-btn">Proceed to Payment</button>
             </div>
         </div>
-
+        
+        <!-- Withdrawals Page -->
         <div id="withdrawals-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Process Withdrawal</h2>
             
@@ -1148,18 +1450,43 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Authentication Method</label>
+                    <div class="auth-method-selector">
+                        <div class="auth-method-option selected" data-auth="password">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">🔑</div>
+                            <div style="font-weight: 600;">Password</div>
+                        </div>
+                        <div class="auth-method-option" data-auth="fingerprint" id="fingerprint-auth-option">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">👆</div>
+                            <div style="font-weight: 600;">Fingerprint</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" id="password-auth-container">
                     <label for="withdrawal-password">Withdrawal Password</label>
                     <input type="password" id="withdrawal-password" placeholder="Enter your withdrawal password">
                 </div>
 
-                <button class="btn" id="process-withdrawal-btn">Process Withdrawal</button>
+    <div id="fingerprint-auth-container" style="display: none;">
+    <div class="biometric-status disabled" id="fingerprint-status">
+        <span style="font-size: 1.5rem;">👆</span>
+        <span>Tap to authenticate with fingerprint</span>
+    </div>
+    <button type="button" class="biometric-btn" id="authenticate-fingerprint-btn">
+        <span style="font-size: 1.5rem;">👆</span>
+        Authenticate with Fingerprint
+    </button>
+</div>
 
+<button class="btn" id="process-withdrawal-btn">Process Withdrawal</button>
                 <div id="withdrawal-attempts" style="display: none; margin-top: 15px; padding: 15px; background: #fed7d7; border-radius: 8px; color: #742a2a;">
                     <strong>Warning:</strong> <span id="attempts-remaining">3</span> attempts remaining. Account will be locked for 30 minutes after 3 failed attempts.
                 </div>
             </div>
         </div>
 
+        <!-- Transactions Page -->
         <div id="transactions-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Transaction History</h2>
             <div id="transactions-list">
@@ -1167,6 +1494,88 @@
             </div>
         </div>
 
+        <!-- Payment Methods Page -->
+        <div id="payment-methods-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">Payment Methods</h2>
+            
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">📱 Mobile Money Accounts</h3>
+                <div id="mobile-money-list" style="margin-bottom: 20px;"></div>
+                <form id="add-mobile-money-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="momo-provider">Provider</label>
+                            <select id="momo-provider" required>
+                                <option value="">Select provider...</option>
+                                <option value="mtn">MTN Mobile Money</option>
+                                <option value="vodafone">Vodafone Cash</option>
+                                <option value="airteltigo">AirtelTigo Money</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="momo-number">Phone Number</label>
+                            <input type="tel" id="momo-number" placeholder="e.g.0551000715" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="momo-name">Account Name</label>
+                        <input type="text" id="momo-name" placeholder="Name on account" required>
+                    </div>
+                    <button type="submit" class="btn">Add Mobile Money Account</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">₿ Cryptocurrency Wallets</h3>
+                <div id="crypto-wallet-list" style="margin-bottom: 20px;"></div>
+                <form id="add-crypto-wallet-form">
+                    <div class="form-group">
+                        <label for="crypto-type">Cryptocurrency</label>
+                        <select id="crypto-type" required>
+                            <option value="">Select crypto...</option>
+                            <option value="usdt-erc20">USDT (ERC-20)</option>
+                            <option value="usdt-trc20">USDT (TRC-20)</option>
+                            <option value="btc">Bitcoin (BTC)</option>
+                            <option value="eth">Ethereum (ETH)</option>
+                            <option value="usdc">USD Coin (USDC)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="crypto-address">Wallet Address</label>
+                        <input type="text" id="crypto-address" placeholder="Enter your wallet address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="crypto-label">Label (optional)</label>
+                        <input type="text" id="crypto-label" placeholder="e.g., My BTC Wallet">
+                    </div>
+                    <button type="submit" class="btn">Add Crypto Wallet</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🏦 Bank Accounts</h3>
+                <div id="bank-account-list" style="margin-bottom: 20px;"></div>
+                <form id="add-bank-account-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bank-name">Bank Name</label>
+                            <input type="text" id="bank-name" placeholder="e.g., GCB Bank" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="account-number">Account Number</label>
+                            <input type="text" id="account-number" placeholder="Account number" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-name">Account Name</label>
+                        <input type="text" id="account-name" placeholder="Name on account" required>
+                    </div>
+                    <button type="submit" class="btn">Add Bank Account</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- KYC Page -->
         <div id="kyc-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">KYC Verification</h2>
             
@@ -1175,8 +1584,7 @@
                     <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
                     <h3 style="color: #4a5568; margin-bottom: 15px;">Verification Under Review</h3>
                     <p style="color: #718096; margin-bottom: 20px;">
-                        Your KYC documents have been submitted and are currently being reviewed by our team. 
-                        This process typically takes 24-48 hours.
+                        Your KYC documents have been submitted and are currently being reviewed by our team.
                     </p>
                     <div style="padding: 15px; background: #fef5e7; border-radius: 8px; color: #744210; font-weight: 600;">
                         Status: <span id="kyc-verification-status">Under Review</span>
@@ -1296,88 +1704,7 @@
             </div>
         </div>
 
-        <div id="payment-methods-page" class="page-content hidden">
-            <h2 style="margin-bottom: 20px; color: #ffffff;">Payment Methods</h2>
-            
-            <div class="card">
-                <h3 style="margin-bottom: 20px; color: #4a5568;">📱 Mobile Money Accounts</h3>
-                <div id="mobile-money-list" style="margin-bottom: 20px;"></div>
-                <form id="add-mobile-money-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="momo-provider">Provider</label>
-                            <select id="momo-provider" required>
-                                <option value="">Select provider...</option>
-                                <option value="mtn">MTN Mobile Money</option>
-                                <option value="vodafone">Vodafone Cash</option>
-                                <option value="airteltigo">AirtelTigo Money</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="momo-number">Phone Number</label>
-                            <input type="tel" id="momo-number" placeholder="0551000715" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="momo-name">Account Name</label>
-                        <input type="text" id="momo-name" placeholder="Name on account" required>
-                    </div>
-                    <button type="submit" class="btn">Add Mobile Money Account</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 20px; color: #4a5568;">₿ Cryptocurrency Wallets</h3>
-                <div id="crypto-wallet-list" style="margin-bottom: 20px;"></div>
-                <form id="add-crypto-wallet-form">
-                    <div class="form-group">
-                        <label for="crypto-type">Cryptocurrency</label>
-                        <select id="crypto-type" required>
-                            <option value="">Select crypto...</option>
-                            <option value="usdt-erc20">USDT (ERC-20)</option>
-                            <option value="usdt-trc20">USDT (TRC-20)</option>
-                            <option value="btc">Bitcoin (BTC)</option>
-                            <option value="eth">Ethereum (ETH)</option>
-                            <option value="usdc">USD Coin (USDC)</option>
-                            <option value="bnb">Binance Coin (BNB)</option>
-                            <option value="trx">Tron (TRX)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="crypto-address">Wallet Address</label>
-                        <input type="text" id="crypto-address" placeholder="Enter your wallet address" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="crypto-label">Label (optional)</label>
-                        <input type="text" id="crypto-label" placeholder="e.g., My BTC Wallet">
-                    </div>
-                    <button type="submit" class="btn">Add Crypto Wallet</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 20px; color: #4a5568;">🏦 Bank Accounts</h3>
-                <div id="bank-account-list" style="margin-bottom: 20px;"></div>
-                <form id="add-bank-account-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="bank-name">Bank Name</label>
-                            <input type="text" id="bank-name" placeholder="e.g., GCB Bank" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="account-number">Account Number</label>
-                            <input type="text" id="account-number" placeholder="Account number" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="account-name">Account Name</label>
-                        <input type="text" id="account-name" placeholder="Name on account" required>
-                    </div>
-                    <button type="submit" class="btn">Add Bank Account</button>
-                </form>
-            </div>
-        </div>
-
+        <!-- Settings Page -->
         <div id="settings-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Account Settings</h2>
             
@@ -1404,79 +1731,62 @@
             </div>
 
             <div class="card">
-                <h3 style="margin-bottom: 20px; color: #4a5568;">🔐 Security</h3>
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🔐 Change Withdrawal Password</h3>
+                <form id="withdrawal-password-form">
+                    <div class="form-group">
+                        <label for="new-withdrawal-password">New Withdrawal Password</label>
+                        <input type="password" id="new-withdrawal-password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-withdrawal-password">Confirm Withdrawal Password</label>
+                        <input type="password" id="confirm-withdrawal-password" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="current-auth-password">Current Account Password</label>
+                        <input type="password" id="current-auth-password" required>
+                    </div>
+                    <button type="submit" class="btn">Update Withdrawal Password</button>
+                </form>
+            </div>
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">👆 Biometric Authentication</h3>
                 
-                <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 15px; color: #4a5568;">Withdrawal Password</h4>
-                    <form id="withdrawal-password-form">
-                        <div class="form-group">
-                            <label for="new-withdrawal-password">New Withdrawal Password</label>
-                            <input type="password" id="new-withdrawal-password" required minlength="6">
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm-withdrawal-password">Confirm Withdrawal Password</label>
-                            <input type="password" id="confirm-withdrawal-password" required minlength="6">
-                        </div>
-                        <div class="form-group">
-                            <label for="current-auth-password">Current Account Password</label>
-                            <input type="password" id="current-auth-password" required>
-                        </div>
-                        <button type="submit" class="btn">Set Withdrawal Password</button>
-                    </form>
+                <div id="biometric-status-display" class="biometric-status disabled">
+                    <span style="font-size: 1.5rem;">❌</span>
+                    <span>Biometric authentication not set up</span>
                 </div>
+                
+                <p style="color: #718096; margin-bottom: 20px;">
+                    Enable fingerprint authentication for quick and secure sign-ins and withdrawals.
+                </p>
+                
+                <button type="button" class="btn" id="setup-biometric-btn">
+                    <span style="font-size: 1.2rem; margin-right: 8px;">👆</span>
+                    Set Up Fingerprint Authentication
+                </button>
+                
+                <button type="button" class="btn" id="remove-biometric-btn" style="display: none; background: #e53e3e; margin-top: 10px;">
+                    Remove Fingerprint Authentication
+                </button>
+            </div>
 
-                <div style="padding: 20px; background: #f7fafc; border-radius: 10px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 15px; color: #4a5568;">Change Account Password</h4>
-                    <form id="account-password-form">
-                        <div class="form-group">
-                            <label for="current-password">Current Password</label>
-                            <input type="password" id="current-password" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="new-account-password">New Password</label>
-                            <input type="password" id="new-account-password" required minlength="6">
-                        </div>
-                        <div class="form-group">
-                            <label for="confirm-account-password">Confirm New Password</label>
-                            <input type="password" id="confirm-account-password" required minlength="6">
-                        </div>
-                        <button type="submit" class="btn">Update Password</button>
-                    </form>
-                </div>
-
-                <div style="padding: 20px; background: #f7fafc; border-radius: 10px;">
-                    <h4 style="margin-bottom: 15px; color: #4a5568;">Two-Factor Authentication</h4>
-                    
-                    <div style="padding: 15px; background: white; border-radius: 8px; margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-weight: 600; color: #4a5568;">🔒 Biometric Authentication</div>
-                                <div style="font-size: 0.9rem; color: #718096;">Use fingerprint for withdrawals</div>
-                                <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
-                                    Status: <span id="biometric-status-text">Not configured</span>
-                                </div>
-                            </div>
-                            <button class="btn" id="setup-biometric-btn" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">
-                                Setup
-                            </button>
-                        </div>
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">🔑 Change Account Password</h3>
+                <form id="account-password-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" required>
                     </div>
-
-                    <div style="padding: 15px; background: white; border-radius: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-weight: 600; color: #4a5568;">📱 Authenticator App</div>
-                                <div style="font-size: 0.9rem; color: #718096;">Use Google Authenticator</div>
-                                <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">
-                                    Status: <span id="authenticator-status-text">Not configured</span>
-                                </div>
-                            </div>
-                            <button class="btn" id="setup-authenticator-btn" style="width: auto; padding: 10px 20px; font-size: 0.9rem;">
-                                Setup
-                            </button>
-                        </div>
+                    <div class="form-group">
+                        <label for="new-account-password">New Password</label>
+                        <input type="password" id="new-account-password" required minlength="6">
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="confirm-account-password">Confirm New Password</label>
+                        <input type="password" id="confirm-account-password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn">Update Account Password</button>
+                </form>
             </div>
 
             <div class="card">
@@ -1501,8 +1811,19 @@
                 </div>
                 <button class="btn" id="save-notifications-btn">Save Preferences</button>
             </div>
+
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">📱 Payment Methods</h3>
+                <p style="color: #718096; margin-bottom: 15px;">
+                    Manage your payment methods in the dedicated Payment Methods section.
+                </p>
+                <button class="btn" onclick="document.querySelector('[data-page=payment-methods]').click()" style="width: auto; padding: 10px 25px;">
+                    Go to Payment Methods
+                </button>
+            </div>
         </div>
 
+        <!-- Report a Problem Page -->
         <div id="report-page" class="page-content hidden">
             <h2 style="margin-bottom: 20px; color: #ffffff;">Report a Problem</h2>
             
@@ -1564,6 +1885,7 @@
         </div>
     </main>
 
+    <!-- Payment Modal -->
     <div class="modal" id="payment-modal">
         <div class="modal-content">
             <button class="close-btn" id="close-payment-modal">&times;</button>
@@ -1581,28 +1903,6 @@
             </div>
 
             <div id="payment-details" class="hidden">
-                <div id="crypto-selection" class="hidden" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 10px; font-weight: 600; color: #4a5568;">Select Cryptocurrency</label>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                        <div class="crypto-option" data-crypto="usdt">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">💵</div>
-                            <div style="font-weight: 600;">USDT</div>
-                        </div>
-                        <div class="crypto-option" data-crypto="btc">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">₿</div>
-                            <div style="font-weight: 600;">BTC</div>
-                        </div>
-                        <div class="crypto-option" data-crypto="eth">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">Ξ</div>
-                            <div style="font-weight: 600;">ETH</div>
-                        </div>
-                        <div class="crypto-option" data-crypto="usdc">
-                            <div style="font-size: 1.5rem; margin-bottom: 5px;">💲</div>
-                            <div style="font-weight: 600;">USDC</div>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="form-group">
                     <label>Amount to Pay</label>
                     <input type="text" id="payment-amount-display" readonly style="background: #f7fafc; font-weight: 600; font-size: 1.2rem;">
@@ -1610,8 +1910,7 @@
 
                 <div class="form-group">
                     <label>Payment Instructions</label>
-                    <div id="payment-instructions" style="padding: 15px; background: #f7fafc; border-radius: 8px; color: #4a5568;">
-                    </div>
+                    <div id="payment-instructions" style="padding: 15px; background: #f7fafc; border-radius: 8px; color: #4a5568;"></div>
                 </div>
 
                 <div class="form-group">
@@ -1624,69 +1923,7 @@
         </div>
     </div>
 
-    <div class="modal" id="biometric-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-biometric-modal">&times;</button>
-            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🔒 Setup Biometric</h2>
-            
-            <div style="text-align: center; padding: 20px;">
-                <div style="font-size: 4rem; margin-bottom: 20px;">👆</div>
-                <p style="color: #718096; margin-bottom: 20px;">
-                    Enable biometric authentication for secure withdrawals.
-                </p>
-                
-                <div id="biometric-support-message" style="padding: 15px; background: #f7fafc; border-radius: 8px; margin-bottom: 20px;">
-                    Checking device compatibility...
-                </div>
-                
-                <button class="btn" id="enable-biometric-btn">Enable Biometric</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="authenticator-modal">
-        <div class="modal-content">
-            <button class="close-btn" id="close-authenticator-modal">&times;</button>
-            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">📱 Setup Authenticator</h2>
-            
-            <div style="padding: 20px;">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <p style="color: #718096; margin-bottom: 20px;">
-                        Scan this QR code with your authenticator app
-                    </p>
-                    
-                    <div id="qr-code" style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin-bottom: 20px;">
-                        <div style="width: 200px; height: 200px; background: #f7fafc; display: flex; align-items: center; justify-content: center; border: 2px solid #e2e8f0;">
-                            QR Code
-                        </div>
-                    </div>
-                    
-                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <div style="font-size: 0.9rem; color: #718096; margin-bottom: 8px;">Or enter this code:</div>
-                        <div id="secret-key" style="font-family: monospace; font-size: 1.1rem; font-weight: 600; color: #4a5568; letter-spacing: 2px;">
-                            XXXX XXXX XXXX XXXX
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="verify-code">Enter 6-digit code</label>
-                    <input type="text" id="verify-code" maxlength="6" placeholder="000000" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;">
-                </div>
-                
-                <button class="btn" id="verify-authenticator-btn">Verify & Enable</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="verification-modal">
-        <div class="modal-content">
-            <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">Verify Withdrawal</h2>
-            <div id="verification-method" style="padding: 20px;"></div>
-        </div>
-    </div>
-
-    <script type="module">
+   <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { 
             getAuth, 
@@ -1694,11 +1931,13 @@
             createUserWithEmailAndPassword, 
             onAuthStateChanged, 
             signOut, 
-            sendEmailVerification, 
-            updatePassword, 
-            reauthenticateWithCredential, 
-            EmailAuthProvider, 
-            sendPasswordResetEmail 
+            sendEmailVerification,
+            reauthenticateWithCredential,
+            EmailAuthProvider,
+            sendPasswordResetEmail,
+            updatePassword,
+            GoogleAuthProvider,
+            signInWithPopup
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { 
             getFirestore, 
@@ -1710,10 +1949,9 @@
             addDoc, 
             query, 
             where, 
-            orderBy, 
             getDocs, 
             serverTimestamp,
-            deleteDoc
+            orderBy
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -1728,21 +1966,23 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
 
         let currentUser = null;
         let userData = null;
+        let sidebarOpen = true;
         let selectedMonth = new Date().getMonth();
         let selectedYear = new Date().getFullYear();
         let selectedPaymentMethod = null;
-        let selectedCrypto = null;
         let contributionDays = 1;
-        let withdrawalAttempts = 0;
-        let mediaStream = null;
         let frontIdFile = null;
         let backIdFile = null;
         let selfieBlob = null;
+        let mediaStream = null;
+        let withdrawalAttempts = 0;
         let notifications = [];
-        let webAuthnCredential = null;
+        let biometricAuthenticated = false;
+        let selectedWithdrawalAuthMethod = 'password';
 
         const cryptoAddresses = {
             usdt: {
@@ -1754,11 +1994,353 @@
             usdc: '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb'
         };
 
+        // Helper Functions
+        function generateReferralCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = 'SP';
+            for (let i = 0; i < 6; i++) {
+                code += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return code;
+        }
+
+        // Biometric Authentication Functions
+        async function checkBiometricSupport() {
+            if (!window.PublicKeyCredential) {
+                return false;
+            }
+            
+            try {
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                return available;
+            } catch (error) {
+                console.error('Biometric check error:', error);
+                return false;
+            }
+        }
+
+        async function registerBiometric() {
+            try {
+                const challenge = new Uint8Array(32);
+                crypto.getRandomValues(challenge);
+                
+                const publicKeyCredentialCreationOptions = {
+                    challenge: challenge,
+                    rp: {
+                        name: "SusuPay",
+                        id: window.location.hostname
+                    },
+                    user: {
+                        id: new Uint8Array(16),
+                        name: userData.email,
+                        displayName: `${userData.firstName} ${userData.surname}`
+                    },
+                    pubKeyCredParams: [{alg: -7, type: "public-key"}],
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform",
+                        userVerification: "required"
+                    },
+                    timeout: 60000,
+                    attestation: "direct"
+                };
+
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    biometricCredentialId: credentialId,
+                    biometricEnabled: true
+                });
+
+                userData.biometricEnabled = true;
+                userData.biometricCredentialId = credentialId;
+
+                return true;
+            } catch (error) {
+                console.error('Biometric registration error:', error);
+                throw error;
+            }
+        }
+
+        async function authenticateWithBiometric() {
+            try {
+                const challenge = new Uint8Array(32);
+                crypto.getRandomValues(challenge);
+                
+                const publicKeyCredentialRequestOptions = {
+                    challenge: challenge,
+                    timeout: 60000,
+                    userVerification: "required"
+                };
+
+                const assertion = await navigator.credentials.get({
+                    publicKey: publicKeyCredentialRequestOptions
+                });
+
+                return assertion !== null;
+            } catch (error) {
+                console.error('Biometric authentication error:', error);
+                return false;
+            }
+        }
+
+        async function signInWithBiometric() {
+            try {
+                const storedEmail = localStorage.getItem('biometric_email');
+                if (!storedEmail) {
+                    showAlert('Please sign in with password first to enable biometric login', 'error', 'auth-alert');
+                    return;
+                }
+
+                const authenticated = await authenticateWithBiometric();
+                if (authenticated) {
+                    const password = localStorage.getItem('biometric_temp_pass');
+                    if (password) {
+                        await signInWithEmailAndPassword(auth, storedEmail, atob(password));
+                        showAlert('Biometric sign in successful!', 'success', 'auth-alert');
+                    }
+                } else {
+                    showAlert('Biometric authentication failed', 'error', 'auth-alert');
+                }
+            } catch (error) {
+                showAlert(error.message, 'error', 'auth-alert');
+            }
+        }
+
+        async function updateBiometricStatus() {
+            const statusDisplay = document.getElementById('biometric-status-display');
+            const setupBtn = document.getElementById('setup-biometric-btn');
+            const removeBtn = document.getElementById('remove-biometric-btn');
+            const fingerprintOption = document.getElementById('fingerprint-auth-option');
+            
+            const supported = await checkBiometricSupport();
+            
+            if (!supported) {
+                statusDisplay.innerHTML = `
+                    <span style="font-size: 1.5rem;">⚠️</span>
+                    <span>Biometric authentication not supported on this device</span>
+                `;
+                setupBtn.style.display = 'none';
+                if (fingerprintOption) {
+                    fingerprintOption.style.display = 'none';
+                }
+                return;
+            }
+            
+            if (userData.biometricEnabled) {
+                statusDisplay.classList.remove('disabled');
+                statusDisplay.classList.add('enabled');
+                statusDisplay.innerHTML = `
+                    <span style="font-size: 1.5rem;">✅</span>
+                    <span>Biometric authentication enabled</span>
+                `;
+                setupBtn.style.display = 'none';
+                removeBtn.style.display = 'block';
+                
+                const biometricSigninContainer = document.getElementById('biometric-signin-container');
+                if (biometricSigninContainer && localStorage.getItem('biometric_email')) {
+                    biometricSigninContainer.style.display = 'block';
+                }
+            } else {
+                statusDisplay.classList.add('disabled');
+                statusDisplay.classList.remove('enabled');
+                setupBtn.style.display = 'block';
+                removeBtn.style.display = 'none';
+            }
+        }
+
+        function calculateVIPLevel(totalContributions, kycStatus) {
+            if (kycStatus !== 'approved') return -1;
+            if (totalContributions >= 1000000) return 7;
+            if (totalContributions >= 100000) return 6;
+            if (totalContributions >= 50000) return 5;
+            if (totalContributions >= 20000) return 4;
+            if (totalContributions >= 10000) return 3;
+            if (totalContributions >= 5000) return 2;
+            if (totalContributions >= 1000) return 1;
+            return 0;
+        }
+
+        function getVIPBenefits(vipLevel) {
+            const benefits = {
+                '-1': {
+                    name: 'No VIP',
+                    stakingMonths: 0,
+                    referralBonus: 0.005,
+                    features: ['Limited referral bonus (0.5%)'],
+                    nextLevel: 'Complete KYC to become VIP 0',
+                    required: 0
+                },
+                '0': {
+                    name: 'VIP 0',
+                    stakingMonths: 3,
+                    referralBonus: 0.01,
+                    features: ['Staking up to 3 months', 'Referral bonus (1%)'],
+                    nextLevel: 'VIP 1',
+                    required: 1000
+                },
+                '1': {
+                    name: 'VIP 1',
+                    stakingMonths: 6,
+                    referralBonus: 0.015,
+                    features: ['Staking up to 6 months', 'Referral bonus (1.5%)', 'Bronze badge'],
+                    nextLevel: 'VIP 2',
+                    required: 5000
+                },
+                '2': {
+                    name: 'VIP 2',
+                    stakingMonths: 12,
+                    referralBonus: 0.02,
+                    features: ['Staking up to 12 months', 'Referral bonus (2%)', 'Silver badge'],
+                    nextLevel: 'VIP 3',
+                    required: 10000
+                },
+                '3': {
+                    name: 'VIP 3',
+                    stakingMonths: 18,
+                    referralBonus: 0.025,
+                    features: ['Staking up to 18 months', 'Referral bonus (2.5%)', 'Gold badge', 'Can request admin role'],
+                    nextLevel: 'VIP 4',
+                    required: 20000
+                },
+                '4': {
+                    name: 'VIP 4',
+                    stakingMonths: 18,
+                    referralBonus: 0.03,
+                    features: ['Staking up to 18 months', 'Referral bonus (3%)', 'Emerald badge', 'Can request admin role'],
+                    nextLevel: 'VIP 5',
+                    required: 50000
+                },
+                '5': {
+                    name: 'VIP 5',
+                    stakingMonths: 24,
+                    referralBonus: 0.04,
+                    features: ['Staking up to 24 months', 'Referral bonus (4%)', 'Sapphire badge', 'Can request financial admin role'],
+                    nextLevel: 'VIP 6',
+                    required: 100000
+                },
+                '6': {
+                    name: 'VIP 6',
+                    stakingMonths: 36,
+                    referralBonus: 0.05,
+                    features: ['Staking up to 36 months', 'Referral bonus (5%)', 'Diamond badge', 'Can request financial admin role'],
+                    nextLevel: 'VIP 7',
+                    required: 1000000
+                },
+                '7': {
+                    name: 'VIP 7',
+                    stakingMonths: 36,
+                    referralBonus: 0.06,
+                    stars: '⭐⭐⭐⭐⭐⭐⭐',
+                    features: ['Staking up to 36 months', 'Referral bonus (6%)', 'Legendary badge with 7 stars', 'One month commission-free withdrawal', 'Can request admin role (excluding super admin)'],
+                    nextLevel: 'MAX LEVEL',
+                    required: 1000000
+                }
+            };
+            
+            return benefits[vipLevel.toString()] || benefits['-1'];
+        }
+
+        function getVIPBadgeHTML(vipLevel) {
+            if (vipLevel < 0) return '';
+            
+            const badgeClasses = ['vip0', 'vip1', 'vip2', 'vip3', 'vip4', 'vip5', 'vip6', 'vip7'];
+            const benefits = getVIPBenefits(vipLevel);
+            
+            let badgeHTML = `<span class="vip-badge ${badgeClasses[vipLevel]}">`;
+            
+            if (vipLevel === 7) {
+                badgeHTML += `${benefits.name} <span class="vip-stars">${benefits.stars}</span>`;
+            } else {
+                badgeHTML += benefits.name;
+            }
+            
+            badgeHTML += '</span>';
+            return badgeHTML;
+        }
+
+        function formatCurrency(amount) {
+            return `₵${parseFloat(amount || 0).toFixed(2)}`;
+        }
+
+        function showAlert(message, type = 'info', container = 'dashboard-alert') {
+            const alertDiv = document.getElementById(container);
+            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => alertDiv.innerHTML = '', 5000);
+        }
+
+        // Particles Animation
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 2 + 1,
+                    speed: Math.random() * 0.5 + 0.1,
+                    color: 'rgba(255,255,255,0.3)'
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y += p.speed;
+                    if (p.y > canvas.height) p.y = 0;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        initParticles();
+
+        // Referral Code URL Handler
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            
+            if (refCode) {
+                localStorage.setItem('pending_referral', refCode);
+                
+                const referralInput = document.getElementById('referral-code-input');
+                if (referralInput) {
+                    referralInput.value = refCode;
+                    referralInput.style.border = '2px solid #48bb78';
+                    referralInput.style.background = '#f0fff4';
+                }
+                
+                setTimeout(() => {
+                    const authToggle = document.getElementById('auth-toggle-btn');
+                    const signupForm = document.getElementById('signup-form');
+                    if (authToggle && signupForm.classList.contains('hidden')) {
+                        authToggle.click();
+                    }
+                }, 500);
+            }
+        });
+
+        // Hamburger Menu
         const hamburger = document.getElementById('hamburger-toggle');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
         const mainContent = document.getElementById('main-content');
-        let sidebarOpen = true;
 
         function toggleSidebar() {
             sidebarOpen = !sidebarOpen;
@@ -1775,43 +2357,12 @@
                     sidebarOverlay.classList.remove('show');
                 }
             }
-            
-            localStorage.setItem('sidebarOpen', sidebarOpen);
         }
 
         hamburger.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
 
-        sidebarOverlay.addEventListener('click', () => {
-            if (window.innerWidth <= 768 && sidebarOpen) {
-                toggleSidebar();
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                sidebarOverlay.classList.remove('show');
-                sidebar.classList.remove('open');
-            } else if (sidebarOpen) {
-                sidebar.classList.add('open');
-            }
-        });
-
-        const savedSidebarState = localStorage.getItem('sidebarOpen');
-        if (savedSidebarState === 'false') {
-            sidebarOpen = true;
-            toggleSidebar();
-        }
-
-        function showAlert(message, type = 'info', container = 'dashboard-alert') {
-            const alertDiv = document.getElementById(container);
-            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => alertDiv.innerHTML = '', 5000);
-        }
-
-        function formatCurrency(amount) {
-            return `₵${parseFloat(amount || 0).toFixed(2)}`;
-        }
-
+        // Notifications System
         function getTimeAgo(date) {
             const seconds = Math.floor((new Date() - date) / 1000);
             if (seconds < 60) return 'Just now';
@@ -1834,14 +2385,6 @@
                 
                 await addDoc(collection(db, 'notifications'), notification);
                 await loadNotifications();
-                
-                if (userData.notifications?.email && type === 'transaction') {
-                    console.log(`Email sent to ${userData.email}: ${title}`);
-                }
-                
-                if (userData.notifications?.sms && type === 'withdrawal') {
-                    console.log(`SMS sent for withdrawal: ${title}`);
-                }
             } catch (error) {
                 console.error('Error creating notification:', error);
             }
@@ -1851,8 +2394,7 @@
             try {
                 const q = query(
                     collection(db, 'notifications'),
-                    where('userId', '==', currentUser.uid),
-                    orderBy('timestamp', 'desc')
+                    where('userId', '==', currentUser.uid)
                 );
                 
                 const snapshot = await getDocs(q);
@@ -1937,83 +2479,7 @@
             }
         });
 
-        const toggle = document.getElementById('dark-mode-toggle');
-        toggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-        });
-
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-            toggle.textContent = '☀️';
-        }
-
-        function initParticles() {
-            const canvas = document.getElementById('particles');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            const particles = [];
-            for (let i = 0; i < 100; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    radius: Math.random() * 2 + 1,
-                    speed: Math.random() * 0.5 + 0.1,
-                    color: 'rgba(255,255,255,0.3)'
-                });
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach(p => {
-                    p.y += p.speed;
-                    if (p.y > canvas.height) p.y = 0;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.fill();
-                });
-                requestAnimationFrame(animate);
-            }
-            animate();
-
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            });
-        }
-        initParticles();
-
-        gsap.from('.nav-item', {
-            duration: 0.5,
-            y: 20,
-            opacity: 0,
-            stagger: 0.1,
-            ease: 'power2.out'
-        });
-
-        document.getElementById('auth-toggle-btn').addEventListener('click', () => {
-            const signinForm = document.getElementById('signin-form');
-            const signupForm = document.getElementById('signup-form');
-            const toggleText = document.getElementById('auth-toggle-text');
-            const toggleBtn = document.getElementById('auth-toggle-btn');
-
-            if (signinForm.classList.contains('hidden')) {
-                signinForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-                toggleText.textContent = "Don't have an account?";
-                toggleBtn.textContent = 'Sign Up';
-            } else {
-                signinForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-                toggleText.textContent = 'Already have an account?';
-                toggleBtn.textContent = 'Sign In';
-            }
-        });
-
+        // Forgot Password
         document.getElementById('forgot-password-btn').addEventListener('click', () => {
             document.getElementById('forgot-password-modal').style.display = 'block';
             document.getElementById('reset-success').classList.add('hidden');
@@ -2041,6 +2507,27 @@
             }
         });
 
+        // Auth Toggle
+        document.getElementById('auth-toggle-btn').addEventListener('click', () => {
+            const signinForm = document.getElementById('signin-form');
+            const signupForm = document.getElementById('signup-form');
+            const toggleText = document.getElementById('auth-toggle-text');
+            const toggleBtn = document.getElementById('auth-toggle-btn');
+
+            if (signinForm.classList.contains('hidden')) {
+                signinForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                toggleText.textContent = "Don't have an account?";
+                toggleBtn.textContent = 'Sign Up';
+            } else {
+                signinForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                toggleText.textContent = 'Already have an account?';
+                toggleBtn.textContent = 'Sign In';
+            }
+        });
+
+        // Sign In
         document.getElementById('signin-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('signin-email').value;
@@ -2053,38 +2540,175 @@
                     await signOut(auth);
                     return;
                 }
+                
+                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+                if (userDoc.exists() && userDoc.data().biometricEnabled) {
+                    localStorage.setItem('biometric_email', email);
+                    localStorage.setItem('biometric_temp_pass', btoa(password));
+                }
+                
                 showAlert('Sign in successful!', 'success', 'auth-alert');
             } catch (error) {
                 showAlert(error.message, 'error', 'auth-alert');
             }
         });
 
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const firstName = document.getElementById('first-name').value;
-            const surname = document.getElementById('surname').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
+        // Sign Up
+       document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const firstName = document.getElementById('first-name').value;
+    const surname = document.getElementById('surname').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const referralCode = document.getElementById('referral-code-input').value.trim().toUpperCase();
 
-            if (password !== confirmPassword) {
-                showAlert('Passwords do not match!', 'error', 'auth-alert');
+    if (password !== confirmPassword) {
+        showAlert('Passwords do not match!', 'error', 'auth-alert');
+        return;
+    }
+
+    try {
+        let referredByUid = null;
+        
+        if (referralCode) {
+            const q = query(collection(db, 'users'), where('referralCode', '==', referralCode));
+            const snapshot = await getDocs(q);
+            
+            if (!snapshot.empty) {
+                referredByUid = snapshot.docs[0].id;
+            } else {
+                showAlert('Invalid referral code!', 'error', 'auth-alert');
                 return;
             }
+        }
 
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+            firstName,
+            surname,
+            email,
+            createdAt: serverTimestamp(),
+            balance: 0,
+            totalContributions: 0,
+            vipLevel: -1,
+            kycStatus: 'NOT STARTED',
+            rates: {},
+            contributedDays: {},
+            referralCode: generateReferralCode(),
+            referredBy: referredByUid,
+            referrals: [],
+            referralEarnings: 0,
+            withdrawalPassword: password,
+            withdrawalAttempts: 0,
+            lockoutUntil: null,
+            notifications: {
+                email: true,
+                sms: true,
+                security: true
+            },
+            paymentMethods: {
+                mobileMoney: [],
+                crypto: [],
+                bank: []
+            }
+        });
+
+        if (referredByUid) {
+            const referrerDoc = await getDoc(doc(db, 'users', referredByUid));
+            if (referrerDoc.exists()) {
+                const referrerData = referrerDoc.data();
+                const updatedReferrals = [...(referrerData.referrals || []), userCredential.user.uid];
+                await updateDoc(doc(db, 'users', referredByUid), {
+                    referrals: updatedReferrals
+                });
+            }
+        }
+
+        const actionCodeSettings = {
+            url: window.location.href,
+            handleCodeInApp: false
+        };
+
+        await sendEmailVerification(userCredential.user, actionCodeSettings);
+
+        const newUserDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+        const newReferralCode = newUserDoc.data().referralCode;
+
+        showAlert(`Account created! Your referral code is: ${newReferralCode}. Check your email to verify.`, 'success', 'auth-alert');
+
+        localStorage.setItem('temp_referral_code', newReferralCode);
+
+        // Sign out until verified
+        await signOut(auth);
+
+        document.getElementById('auth-toggle-btn').click();
+    } catch (error) {
+        showAlert(error.message, 'error', 'auth-alert');
+    }
+});
+        // Google Sign-In Handlers
+        document.getElementById('google-signin-btn')?.addEventListener('click', async () => {
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
                 
-                await setDoc(doc(db, 'users', userCredential.user.uid), {
-                    firstName,
-                    surname,
-                    email,
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (!userDoc.exists()) {
+                    showAlert('No account found. Please sign up first.', 'error', 'auth-alert');
+                    await signOut(auth);
+                    return;
+                }
+                
+                showAlert('Sign in successful!', 'success', 'auth-alert');
+            } catch (error) {
+                showAlert(error.message, 'error', 'auth-alert');
+            }
+        });
+
+        document.getElementById('google-signup-btn')?.addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
+                
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                
+                if (userDoc.exists()) {
+                    showAlert('Account already exists. Please sign in.', 'error', 'auth-alert');
+                    return;
+                }
+                
+                const referralCode = document.getElementById('referral-code-input').value.trim().toUpperCase();
+                let referredByUid = null;
+                
+                if (referralCode) {
+                    const q = query(collection(db, 'users'), where('referralCode', '==', referralCode));
+                    const snapshot = await getDocs(q);
+                    
+                    if (!snapshot.empty) {
+                        referredByUid = snapshot.docs[0].id;
+                    }
+                }
+                
+                const names = user.displayName?.split(' ') || ['', ''];
+                await setDoc(doc(db, 'users', user.uid), {
+                    firstName: names[0] || 'User',
+                    surname: names[1] || 'Name',
+                    email: user.email,
                     createdAt: serverTimestamp(),
                     balance: 0,
-                    kycStatus: 'pending',
+                    totalContributions: 0,
+                    vipLevel: -1,
+                    kycStatus: 'NOT STARTED',
                     rates: {},
                     contributedDays: {},
-                    withdrawalPassword: password,
+                    referralCode: generateReferralCode(),
+                    referredBy: referredByUid,
+                    referrals: [],
+                    referralEarnings: 0,
+                    withdrawalPassword: generateReferralCode(),
                     withdrawalAttempts: 0,
                     lockoutUntil: null,
                     notifications: {
@@ -2098,16 +2722,70 @@
                         bank: []
                     }
                 });
-
-                await sendEmailVerification(userCredential.user);
                 
-                showAlert('Account created! Check your email to verify.', 'success', 'auth-alert');
-                document.getElementById('auth-toggle-btn').click();
+                if (referredByUid) {
+                    const referrerDoc = await getDoc(doc(db, 'users', referredByUid));
+                    if (referrerDoc.exists()) {
+                        const referrerData = referrerDoc.data();
+                        const updatedReferrals = [...(referrerData.referrals || []), user.uid];
+                        await updateDoc(doc(db, 'users', referredByUid), {
+                            referrals: updatedReferrals
+                        });
+                    }
+                }
+                
+                showAlert('Account created successfully with Google!', 'success', 'auth-alert');
             } catch (error) {
                 showAlert(error.message, 'error', 'auth-alert');
             }
         });
 
+        // Biometric Sign-In
+        document.getElementById('biometric-signin-btn')?.addEventListener('click', signInWithBiometric);
+
+        // Setup Biometric
+        document.getElementById('setup-biometric-btn')?.addEventListener('click', async () => {
+            try {
+                document.getElementById('setup-biometric-btn').disabled = true;
+                document.getElementById('setup-biometric-btn').textContent = 'Setting up...';
+                
+                await registerBiometric();
+                
+                localStorage.setItem('biometric_email', userData.email);
+                localStorage.setItem('biometric_temp_pass', btoa(userData.withdrawalPassword));
+                
+                showAlert('Fingerprint authentication enabled successfully!', 'success');
+                updateBiometricStatus();
+            } catch (error) {
+                showAlert('Failed to set up fingerprint: ' + error.message, 'error');
+            } finally {
+                document.getElementById('setup-biometric-btn').disabled = false;
+                document.getElementById('setup-biometric-btn').innerHTML = '<span style="font-size: 1.2rem; margin-right: 8px;">👆</span>Set Up Fingerprint Authentication';
+            }
+        });
+
+        // Remove Biometric
+        document.getElementById('remove-biometric-btn')?.addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to remove fingerprint authentication?')) return;
+            
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    biometricEnabled: false,
+                    biometricCredentialId: null
+                });
+                
+                userData.biometricEnabled = false;
+                localStorage.removeItem('biometric_email');
+                localStorage.removeItem('biometric_temp_pass');
+                
+                showAlert('Fingerprint authentication removed', 'success');
+                updateBiometricStatus();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+            }
+        });
+
+        // Logout
         document.getElementById('logout-btn').addEventListener('click', async () => {
             try {
                 await signOut(auth);
@@ -2117,6 +2795,7 @@
             }
         });
 
+        // Auth State Observer
         onAuthStateChanged(auth, async (user) => {
             if (user && user.emailVerified) {
                 currentUser = user;
@@ -2131,6 +2810,16 @@
             const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
             if (userDoc.exists()) {
                 userData = userDoc.data();
+                await updateBiometricStatus();
+                
+                const newVIPLevel = calculateVIPLevel(userData.totalContributions || 0, userData.kycStatus);
+                if (newVIPLevel !== userData.vipLevel) {
+                    await updateDoc(doc(db, 'users', currentUser.uid), {
+                        vipLevel: newVIPLevel
+                    });
+                    userData.vipLevel = newVIPLevel;
+                }
+                
                 updateDashboard();
                 await loadNotifications();
                 
@@ -2140,6 +2829,14 @@
                         `Login detected at ${new Date().toLocaleString()}`,
                         'security'
                     );
+                }
+                
+                const hasSeenReferral = localStorage.getItem(`referral_seen_${currentUser.uid}`);
+                if (!hasSeenReferral && userData.referralCode) {
+                    setTimeout(() => {
+                        showAlert(`🎉 Your referral code is: ${userData.referralCode}. Share it with friends to earn bonuses!`, 'info');
+                        localStorage.setItem(`referral_seen_${currentUser.uid}`, 'true');
+                    }, 2000);
                 }
             }
         }
@@ -2157,101 +2854,237 @@
             document.getElementById('sidebar').classList.remove('hidden');
             document.getElementById('main-content').classList.remove('hidden');
             
-            const avatar = document.getElementById('user-avatar');
-            const userName = document.getElementById('user-name');
-            const userEmail = document.getElementById('user-email');
-            
-            avatar.textContent = userData.firstName.charAt(0).toUpperCase();
-            userName.textContent = `${userData.firstName} ${userData.surname}`;
-            userEmail.textContent = userData.email;
-            
-            if (userData.kycStatus === 'approved') {
-                userName.innerHTML += '<span class="vip-badge">VIP</span>';
-            }
+            document.getElementById('user-name').innerHTML = `${userData.firstName} ${userData.surname} ${getVIPBadgeHTML(userData.vipLevel)}`;
+            document.getElementById('user-email').textContent = userData.email;
         }
 
         function updateDashboard() {
-            document.getElementById('total-balance').textContent = formatCurrency(userData.balance);
+            document.getElementById('total-balance').textContent = formatCurrency(userData.balance || 0);
+            document.getElementById('total-contributions').textContent = formatCurrency(userData.totalContributions || 0);
+            document.getElementById('vip-level-display').textContent = getVIPBenefits(userData.vipLevel).name;
+            document.getElementById('referral-count').textContent = (userData.referrals || []).length;
+            document.getElementById('dashboard-referral-code').textContent = userData.referralCode || 'N/A';
+            document.getElementById('dashboard-referral-count').textContent = (userData.referrals || []).length;
             
-            const monthKey = `${selectedYear}-${selectedMonth}`;
-            const currentRate = userData.rates?.[monthKey] || 0;
-            document.getElementById('daily-rate').textContent = formatCurrency(currentRate);
-            
-            const contributedDays = userData.contributedDays?.[monthKey] || [];
-            document.getElementById('contributions-count').textContent = contributedDays.length;
-            
-            const progress = Math.min((contributedDays.length / 31) * 100, 100);
-            document.getElementById('current-month-progress').textContent = `${Math.round(progress)}%`;
+            updateVIPProgress();
+            updateReferralPage();
+            updateStakingBenefits();
+            updateP2PAccess();
+            updateKYCStatus();
         }
 
+        function updateKYCStatus() {
+            if (userData.kycStatus === 'under_review' || userData.kycStatus === 'pending') {
+                document.getElementById('kyc-form-container').style.display = 'none';
+                document.getElementById('kyc-status-display').classList.remove('hidden');
+                document.getElementById('kyc-verification-status').textContent = 'Under Review';
+            } else if (userData.kycStatus === 'approved') {
+                document.getElementById('kyc-form-container').style.display = 'none';
+                document.getElementById('kyc-status-display').classList.remove('hidden');
+                document.getElementById('kyc-status-display').innerHTML = `
+                    <div class="card" style="text-align: center;">
+                        <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
+                        <h3 style="color: #48bb78; margin-bottom: 15px;">Verification Approved!</h3>
+                        <p style="color: #718096; margin-bottom: 20px;">
+                            Your identity has been verified. You now have VIP access.
+                        </p>
+                        <div style="padding: 15px; background: #c6f6d5; border-radius: 8px; color: #22543d; font-weight: 600;">
+                            Status: Approved ✓
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('kyc-form-container').style.display = 'block';
+                document.getElementById('kyc-status-display').classList.add('hidden');
+            }
+        }
+
+        function updateVIPProgress() {
+            const currentLevel = userData.vipLevel;
+            const benefits = getVIPBenefits(currentLevel);
+            const currentContributions = userData.totalContributions || 0;
+            
+            let progressHTML = '';
+            
+            if (currentLevel === 7) {
+                progressHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">👑</div>
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">Maximum VIP Level Achieved!</h4>
+                        <p style="color: #718096;">You have reached the highest VIP level with all benefits unlocked.</p>
+                    </div>
+                `;
+            } else {
+                const nextLevelRequired = benefits.required;
+                const progress = currentLevel < 0 ? 0 : (currentContributions / nextLevelRequired) * 100;
+                
+                progressHTML = `
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-weight: 600; color: #4a5568;">Progress to ${benefits.nextLevel}</span>
+                            <span style="color: #667eea; font-weight: 600;">${Math.min(progress, 100).toFixed(1)}%</span>
+                        </div>
+                        <div style="width: 100%; height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
+                            <div style="width: ${Math.min(progress, 100)}%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: width 0.5s ease;"></div>
+                        </div>
+                        <div style="margin-top: 10px; color: #718096; font-size: 0.9rem;">
+                            ${formatCurrency(currentContributions)} / ${formatCurrency(nextLevelRequired)} contributions needed
+                        </div>
+                    </div>
+                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px;">
+                        <h4 style="color: #4a5568; margin-bottom: 10px;">Current Benefits:</h4>
+                        <ul style="color: #718096; line-height: 1.8; padding-left: 20px;">
+                            ${benefits.features.map(f => `<li>${f}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('vip-progress-content').innerHTML = progressHTML;
+        }
+
+        function updateReferralPage() {
+            document.getElementById('user-referral-code').textContent = userData.referralCode || 'N/A';
+            document.getElementById('total-referrals').textContent = (userData.referrals || []).length;
+            document.getElementById('active-referrals').textContent = (userData.referrals || []).length;
+            document.getElementById('referral-earnings').textContent = formatCurrency(userData.referralEarnings || 0);
+            
+            const benefits = getVIPBenefits(userData.vipLevel);
+            const bonusPercent = (benefits.referralBonus * 100).toFixed(1);
+            
+            document.getElementById('referral-bonus-info').innerHTML = `
+                <strong>Your Current Bonus Rate: ${bonusPercent}%</strong><br>
+                ${userData.kycStatus === 'approved' ? 
+                    `As a ${benefits.name} member, you earn ${bonusPercent}% of your referrals' first contribution.` :
+                    'Complete KYC verification to unlock higher referral bonuses!'
+                }
+            `;
+            
+            const referralLink = `${window.location.origin}${window.location.pathname}?ref=${userData.referralCode}`;
+            const referralLinkInput = document.getElementById('referral-link');
+            if (referralLinkInput) {
+                referralLinkInput.value = referralLink;
+            }
+        }
+
+        // Referral Code Copy Handlers
+        document.getElementById('copy-referral-btn')?.addEventListener('click', () => {
+            const code = userData.referralCode;
+            navigator.clipboard.writeText(code).then(() => {
+                showAlert('Referral code copied to clipboard!', 'success');
+            });
+        });
+
+        document.getElementById('copy-dashboard-referral')?.addEventListener('click', () => {
+            const code = userData.referralCode;
+            navigator.clipboard.writeText(code).then(() => {
+                showAlert('Referral code copied to clipboard!', 'success');
+                
+                const btn = document.getElementById('copy-dashboard-referral');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        });
+
+        document.getElementById('copy-referral-link-btn')?.addEventListener('click', () => {
+            const link = document.getElementById('referral-link').value;
+            navigator.clipboard.writeText(link).then(() => {
+                showAlert('Referral link copied!', 'success');
+                const btn = document.getElementById('copy-referral-link-btn');
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy Link';
+                }, 2000);
+            });
+        });
+
+        // Social Share Handlers
+        document.getElementById('share-whatsapp')?.addEventListener('click', () => {
+            const code = userData.referralCode;
+            const message = `Join SusuPay and start saving daily! Use my referral code: ${code}\n\n${window.location.origin}${window.location.pathname}?ref=${code}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        });
+
+        document.getElementById('share-facebook')?.addEventListener('click', () => {
+            const link = `${window.location.origin}${window.location.pathname}?ref=${userData.referralCode}`;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(link)}`, '_blank');
+        });
+
+        document.getElementById('share-twitter')?.addEventListener('click', () => {
+            const code = userData.referralCode;
+            const text = `Join me on SusuPay! Use my referral code: ${code}`;
+            const link = `${window.location.origin}${window.location.pathname}?ref=${code}`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`, '_blank');
+        });
+
+        document.getElementById('share-email')?.addEventListener('click', () => {
+            const code = userData.referralCode;
+            const subject = 'Join SusuPay with my referral code!';
+            const body = `Hi!\n\nI've been using SusuPay for daily savings and I think you'd love it too!\n\nUse my referral code: ${code}\n\nSign up here: ${window.location.origin}${window.location.pathname}?ref=${code}\n\nHappy Saving!`;
+            window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        });
+
+        function updateStakingBenefits() {
+            let benefitsHTML = '';
+            
+            for (let i = 0; i <= 7; i++) {
+                const benefits = getVIPBenefits(i);
+                const isUnlocked = userData.vipLevel >= i && userData.vipLevel >= 0;
+                
+                benefitsHTML += `
+                    <div style="padding: 15px; border: 2px solid ${isUnlocked ? '#48bb78' : '#e2e8f0'}; border-radius: 10px; margin-bottom: 10px; ${!isUnlocked ? 'opacity: 0.6;' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="color: #4a5568;">${benefits.name}</strong>
+                                <div style="color: #718096; font-size: 0.9rem; margin-top: 5px;">
+                                    Staking Duration: Up to ${benefits.stakingMonths} months
+                                </div>
+                            </div>
+                            ${isUnlocked ? '<span style="color: #48bb78; font-size: 1.5rem;">✓</span>' : '<span style="color: #e2e8f0; font-size: 1.5rem;">🔒</span>'}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('staking-benefits-list').innerHTML = benefitsHTML;
+        }
+
+        function updateP2PAccess() {
+            if (userData.kycStatus === 'approved') {
+                document.getElementById('p2p-kyc-required').classList.add('hidden');
+                document.getElementById('p2p-content').classList.remove('hidden');
+            } else {
+                document.getElementById('p2p-kyc-required').classList.remove('hidden');
+                document.getElementById('p2p-content').classList.add('hidden');
+            }
+        }
+
+        // Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
-                const currentPage = document.querySelector('.page-content:not(.hidden)');
-                if (currentPage) {
-                    currentPage.style.opacity = '0';
-                    setTimeout(() => {
-                        currentPage.classList.add('hidden');
-                        currentPage.style.opacity = '1';
-                    }, 200);
-                }
-                
+                document.querySelectorAll('.page-content').forEach(page => page.classList.add('hidden'));
                 document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
                 item.classList.add('active');
                 
                 const page = item.dataset.page;
+                document.getElementById(`${page}-page`).classList.remove('hidden');
                 
-                setTimeout(() => {
-                    document.getElementById(`${page}-page`).classList.remove('hidden');
-                    
-                    if (page === 'contributions') initContributionsPage();
-                    else if (page === 'withdrawals') initWithdrawalsPage();
-                    else if (page === 'transactions') loadTransactions();
-                    else if (page === 'payment-methods') loadPaymentMethods();
-                    else if (page === 'settings') loadSettings();
-                    else if (page === 'kyc') initKYCPage();
-                }, 200);
+                if (page === 'contributions') initContributionsPage();
+                else if (page === 'withdrawals') initWithdrawalsPage();
+                else if (page === 'transactions') loadTransactions();
+                else if (page === 'payment-methods') loadPaymentMethods();
+                else if (page === 'settings') loadSettings();
+                
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
             });
         });
 
-        document.getElementById('set-rate-btn').addEventListener('click', async () => {
-            const rate = parseFloat(document.getElementById('rate-input').value);
-            
-            if (!rate || rate < 1) {
-                showAlert('Please enter a valid rate.', 'error');
-                return;
-            }
-
-            
-            const monthKey = `${selectedYear}-${selectedMonth}`;
-            
-            if (userData.rates?.[monthKey]) {
-                showAlert('Rate is already locked for this month.', 'error');
-                return;
-            }
-
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    [`rates.${monthKey}`]: rate
-                });
-                
-                userData.rates = userData.rates || {};
-                userData.rates[monthKey] = rate;
-                
-                showAlert('Monthly rate set successfully!', 'success');
-                updateDashboard();
-                document.getElementById('rate-input').value = '';
-                document.getElementById('rate-info').style.display = 'block';
-                
-                await createNotification(
-                    'Rate Set',
-                    `Monthly rate of ${formatCurrency(rate)} set for this month`,
-                    'info'
-                );
-            } catch (error) {
-                showAlert('Error setting rate: ' + error.message, 'error');
-            }
-        });
-
+        // Contributions Page
         async function initContributionsPage() {
             generateMonthSelector();
             await renderContributionGrid();
@@ -2301,105 +3134,6 @@
                 
                 grid.appendChild(cell);
             }
-            
-            await displayMonthWithdrawalInfo(monthKey);
-        }
-        
-        async function displayMonthWithdrawalInfo(monthKey) {
-            const container = document.querySelector('#contributions-page .card');
-            
-            const existingInfo = document.getElementById('month-withdrawal-info');
-            if (existingInfo) {
-                existingInfo.remove();
-            }
-            
-            try {
-                const q = query(
-                    collection(db, 'transactions'),
-                    where('userId', '==', currentUser.uid),
-                    where('type', '==', 'withdrawal'),
-                    where('month', '==', monthKey)
-                );
-                
-                const querySnapshot = await getDocs(q);
-                
-                if (!querySnapshot.empty) {
-                    const withdrawals = querySnapshot.docs.map(doc => doc.data());
-                    const approvedWithdrawals = withdrawals.filter(w => w.status === 'approved');
-                    
-                    if (approvedWithdrawals.length > 0) {
-                        const infoDiv = document.createElement('div');
-                        infoDiv.id = 'month-withdrawal-info';
-                        infoDiv.style.marginTop = '20px';
-                        
-                        const finalWithdrawal = approvedWithdrawals.find(w => w.withdrawalType === 'final');
-                        
-                        if (finalWithdrawal) {
-                            infoDiv.innerHTML = `
-                                <div style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); padding: 25px; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);">
-                                    <div class="paid-stamp" style="margin: 0 auto 15px;">
-                                        <div class="stamp-outer">
-                                            <div class="stamp-text-top">SUSUPAY</div>
-                                            <div class="stamp-inner">
-                                                <div class="stamp-paid">PAID</div>
-                                                <div class="stamp-date">${new Date(finalWithdrawal.timestamp?.toDate?.() || Date.now()).toLocaleDateString()}</div>
-                                            </div>
-                                            <div class="stamp-text-bottom">SUSUPAY</div>
-                                        </div>
-                                    </div>
-                                    <h3 style="color: white; margin-bottom: 10px; font-size: 1.3rem;">Month Fully Withdrawn</h3>
-                                    <p style="color: rgba(255,255,255,0.9); font-size: 0.95rem;">
-                                        This month's balance has been completely withdrawn.<br>
-                                        <strong>Amount:</strong> ${formatCurrency(finalWithdrawal.amount)}
-                                    </p>
-                                </div>
-                            `;
-                        } else {
-                            const advanceWithdrawals = approvedWithdrawals.filter(w => w.withdrawalType === 'advance');
-                            const totalAdvance = advanceWithdrawals.reduce((sum, w) => sum + (w.amount || 0), 0);
-                            
-                            if (totalAdvance > 0) {
-                                infoDiv.innerHTML = `
-                                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);">
-                                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                                            <div style="font-size: 2.5rem;">💸</div>
-                                            <div>
-                                                <h3 style="color: white; margin: 0; font-size: 1.2rem;">Advance Withdrawal Taken</h3>
-                                                <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">
-                                                    ${advanceWithdrawals.length} advance withdrawal${advanceWithdrawals.length > 1 ? 's' : ''}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div style="background: rgba(255,255,255,0.15); padding: 15px; border-radius: 10px; backdrop-filter: blur(10px);">
-                                            <div style="color: white; font-size: 2rem; font-weight: 700; margin-bottom: 5px;">
-                                                ${formatCurrency(totalAdvance)}
-                                            </div>
-                                            <div style="color: rgba(255,255,255,0.9); font-size: 0.9rem;">
-                                                Total advance amount withdrawn from this month
-                                            </div>
-                                        </div>
-                                        ${advanceWithdrawals.length > 1 ? `
-                                            <div style="margin-top: 15px; padding: 12px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-                                                <div style="color: rgba(255,255,255,0.9); font-size: 0.85rem; margin-bottom: 8px;">Breakdown:</div>
-                                                ${advanceWithdrawals.map(w => `
-                                                    <div style="color: white; font-size: 0.9rem; margin: 5px 0;">
-                                                        • ${formatCurrency(w.amount)} - ${new Date(w.timestamp?.toDate?.() || Date.now()).toLocaleDateString()}
-                                                    </div>
-                                                `).join('')}
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                `;
-                            }
-                        }
-                        
-                        const gridContainer = document.getElementById('contribution-grid');
-                        gridContainer.parentNode.insertBefore(infoDiv, gridContainer.nextSibling);
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading withdrawal info:', error);
-            }
         }
 
         document.getElementById('days-input').addEventListener('input', (e) => {
@@ -2447,33 +3181,45 @@
             document.getElementById('payment-modal').style.display = 'block';
         });
 
+        // Set Monthly Rate
+        document.getElementById('set-rate-btn').addEventListener('click', async () => {
+            const rate = parseFloat(document.getElementById('rate-input').value);
+            
+            if (!rate || rate < 1) {
+                showAlert('Please enter a valid rate.', 'error');
+                return;
+            }
+
+            const monthKey = `${selectedYear}-${selectedMonth}`;
+            
+            if (userData.rates?.[monthKey]) {
+                showAlert('Rate is already locked for this month.', 'error');
+                return;
+            }
+
+            try {
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    [`rates.${monthKey}`]: rate
+                });
+                
+                userData.rates = userData.rates || {};
+                userData.rates[monthKey] = rate;
+                
+                showAlert('Monthly rate set successfully!', 'success');
+                document.getElementById('rate-input').value = '';
+            } catch (error) {
+                showAlert('Error setting rate: ' + error.message, 'error');
+            }
+        });
+
+        // Payment Modal
         document.querySelectorAll('.payment-option').forEach(option => {
             option.addEventListener('click', () => {
                 document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
                 option.classList.add('selected');
                 selectedPaymentMethod = option.dataset.method;
                 
-                const cryptoSelection = document.getElementById('crypto-selection');
-                const paymentDetails = document.getElementById('payment-details');
-                
-                paymentDetails.classList.remove('hidden');
-                
-                if (selectedPaymentMethod === 'crypto') {
-                    cryptoSelection.classList.remove('hidden');
-                } else {
-                    cryptoSelection.classList.add('hidden');
-                    showPaymentInstructions();
-                }
-            });
-        });
-
-        document.querySelectorAll('.crypto-option').forEach(option => {
-            option.addEventListener('click', function() {
-                document.querySelectorAll('.crypto-option').forEach(o => {
-                    o.classList.remove('selected');
-                });
-                this.classList.add('selected');
-                selectedCrypto = this.dataset.crypto;
+                document.getElementById('payment-details').classList.remove('hidden');
                 showPaymentInstructions();
             });
         });
@@ -2484,36 +3230,21 @@
             if (selectedPaymentMethod === 'mobile-money') {
                 instructions.innerHTML = `
                     <strong>Mobile Money Payment:</strong><br>
-                    1. Dial *170# or use your mobile money app this option is for MTN<br>
-                    2. Dial *110# or use your mobile money app this option is for Telecel<br>
-                    3. Select "Send Money"<br>
-                    4. Enter: <strong>0551000715</strong> (Godfred Mensah)<br>
-                    5. Enter: <strong>0208551270</strong> (Godfred Mensah)<br>
-                    6. Enter the amount shown above<br>
-                    7. Paste transaction ID below
+                    1. Dial *170# (MTN) or *110# (Telecel)<br>
+                    2. Select "Send Money"<br>
+                    3. Enter: <strong>0551000715</strong> or <strong>0208551270</strong><br>
+                    4. Enter the amount shown above<br>
+                    5. Paste transaction ID below
                 `;
-            } else if (selectedPaymentMethod === 'crypto' && selectedCrypto) {
-                if (selectedCrypto === 'usdt') {
-                    instructions.innerHTML = `
-                        <strong>USDT Payment:</strong><br>
-                        <div style="margin: 10px 0;">
-                            <strong>ERC-20:</strong><br>
-                            <code style="background: #fff; padding: 5px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${cryptoAddresses.usdt.erc20}</code>
-                        </div>
-                        <div style="margin: 10px 0;">
-                            <strong>TRC-20 (Lower Fees):</strong><br>
-                            <code style="background: #fff; padding: 5px; border-radius: 4px; font-size: 0.85rem; word-break: break-all;">${cryptoAddresses.usdt.trc20}</code>
-                        </div>
-                        ⚠️ Select the correct network!
-                    `;
-                } else {
-                    const address = cryptoAddresses[selectedCrypto];
-                    instructions.innerHTML = `
-                        <strong>Send to Address:</strong><br>
-                        <code style="background: #fff; padding: 8px; border-radius: 4px; display: block; margin: 10px 0; word-break: break-all;">${address}</code>
-                        Send exact amount and paste transaction hash below.
-                    `;
-                }
+            } else if (selectedPaymentMethod === 'crypto') {
+                instructions.innerHTML = `
+                    <strong>Cryptocurrency Payment:</strong><br>
+                    <strong>USDT (ERC-20):</strong> ${cryptoAddresses.usdt.erc20}<br>
+                    <strong>USDT (TRC-20):</strong> ${cryptoAddresses.usdt.trc20}<br>
+                    <strong>BTC:</strong> ${cryptoAddresses.btc}<br>
+                    <strong>ETH:</strong> ${cryptoAddresses.eth}<br>
+                    <strong>USDC:</strong> ${cryptoAddresses.usdc}
+                `;
             }
         }
 
@@ -2578,15 +3309,7 @@
                 document.getElementById('payment-details').classList.add('hidden');
                 
                 showAlert('Payment submitted! Under review.', 'success');
-                
-                await createNotification(
-                    'Contribution Submitted',
-                    `${formatCurrency(amount)} contribution submitted for review`,
-                    'transaction'
-                );
-                
                 renderContributionGrid();
-                updateDashboard();
             } catch (error) {
                 showAlert('Error: ' + error.message, 'error');
             }
@@ -2596,6 +3319,7 @@
             document.getElementById('payment-modal').style.display = 'none';
         });
 
+        // Withdrawals Page
         function initWithdrawalsPage() {
             const select = document.getElementById('withdrawal-month');
             select.innerHTML = '<option value="">Choose month...</option>';
@@ -2641,161 +3365,99 @@
             });
         }
 
+        // Withdrawal Auth Method Selection
+        document.querySelectorAll('.auth-method-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.auth-method-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                
+                selectedWithdrawalAuthMethod = option.dataset.auth;
+                
+                if (selectedWithdrawalAuthMethod === 'password') {
+                    document.getElementById('password-auth-container').style.display = 'block';
+                    document.getElementById('fingerprint-auth-container').style.display = 'none';
+                    biometricAuthenticated = false;
+                } else {
+                    document.getElementById('password-auth-container').style.display = 'none';
+                    document.getElementById('fingerprint-auth-container').style.display = 'block';
+                    biometricAuthenticated = false;
+                }
+            });
+        });
+
+        // Authenticate Fingerprint for Withdrawal
+        document.getElementById('authenticate-fingerprint-btn')?.addEventListener('click', async () => {
+            try {
+                const authenticated = await authenticateWithBiometric();
+                if (authenticated) {
+                    biometricAuthenticated = true;
+                    const statusDiv = document.createElement('div');
+                    statusDiv.className = 'biometric-status enabled';
+                    statusDiv.innerHTML = `
+                        <span style="font-size: 1.5rem;">✅</span>
+                        <span>Fingerprint authenticated successfully</span>
+                    `;
+                    document.getElementById('fingerprint-auth-container').appendChild(statusDiv);
+                    showAlert('Fingerprint authenticated!', 'success');
+                } else {
+                    showAlert('Fingerprint authentication failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Authentication error: ' + error.message, 'error');
+            }
+        });
+
         document.getElementById('process-withdrawal-btn').addEventListener('click', async () => {
             const monthKey = document.getElementById('withdrawal-month').value;
             const amount = parseFloat(document.getElementById('withdrawal-amount').value);
             const paymentMethodId = document.getElementById('withdrawal-payment-method').value;
-            const password = document.getElementById('withdrawal-password').value;
             
-            if (!monthKey || !amount || !paymentMethodId || !password) {
+            if (!monthKey || !amount || !paymentMethodId) {
                 showAlert('Please fill in all fields.', 'error');
                 return;
             }
-            
+
             if (userData.lockoutUntil && new Date(userData.lockoutUntil) > new Date()) {
                 const remainingTime = Math.ceil((new Date(userData.lockoutUntil) - new Date()) / 60000);
                 showAlert(`Account locked. Try again in ${remainingTime} minutes.`, 'error');
                 return;
             }
             
-            if (password !== userData.withdrawalPassword) {
-                withdrawalAttempts++;
-                document.getElementById('withdrawal-attempts').style.display = 'block';
-                document.getElementById('attempts-remaining').textContent = 3 - withdrawalAttempts;
-                
-                if (withdrawalAttempts >= 3) {
-                    const lockoutTime = new Date(Date.now() + 30 * 60000);
-                    await updateDoc(doc(db, 'users', currentUser.uid), {
-                        lockoutUntil: lockoutTime.toISOString()
-                    });
-                    userData.lockoutUntil = lockoutTime.toISOString();
-                    showAlert('Account locked for 30 minutes.', 'error');
+            if (selectedWithdrawalAuthMethod === 'password') {
+                const password = document.getElementById('withdrawal-password').value;
+                if (password !== userData.withdrawalPassword) {
+                    withdrawalAttempts++;
+                    document.getElementById('attempts-remaining').textContent = 3 - withdrawalAttempts;
+                    document.getElementById('withdrawal-attempts').style.display = 'block';
+                    
+                    if (withdrawalAttempts >= 3) {
+                        const lockoutTime = new Date(Date.now() + 30 * 60000);
+                        await updateDoc(doc(db, 'users', currentUser.uid), {
+                            lockoutUntil: lockoutTime.toISOString(),
+                            withdrawalAttempts: 0
+                        });
+                        showAlert('Account locked for 30 minutes', 'error');
+                        return;
+                    }
+                    showAlert('Incorrect withdrawal password', 'error');
                     return;
                 }
-                
-                showAlert('Incorrect password.', 'error');
-                return;
+            } else if (selectedWithdrawalAuthMethod === 'fingerprint') {
+                if (!biometricAuthenticated) {
+                    showAlert('Please authenticate with fingerprint first', 'error');
+                    return;
+                }
             }
-            
+
             withdrawalAttempts = 0;
             document.getElementById('withdrawal-attempts').style.display = 'none';
             
-            if (userData.biometricEnabled || userData.authenticatorEnabled) {
-                show2FAVerification(async () => {
-                    await processWithdrawal(monthKey, amount, paymentMethodId);
-                });
-            } else {
-                await processWithdrawal(monthKey, amount, paymentMethodId);
-            }
-        });
-
-        function show2FAVerification(callback) {
-            const modal = document.getElementById('verification-modal');
-            const methodDiv = document.getElementById('verification-method');
-            
-            methodDiv.innerHTML = '';
-            
-            if (userData.biometricEnabled) {
-                methodDiv.innerHTML += `
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="font-size: 3rem; margin-bottom: 15px;">👆</div>
-                        <h3 style="color: #4a5568; margin-bottom: 10px;">Biometric Verification</h3>
-                        <p style="color: #718096;">Verify with your fingerprint</p>
-                        <button class="btn" id="verify-biometric" style="margin-top: 15px;">Verify</button>
-                    </div>
-                `;
+            if (amount > userData.balance) {
+                showAlert('Insufficient balance.', 'error');
+                return;
             }
             
-            if (userData.authenticatorEnabled) {
-                methodDiv.innerHTML += `
-                    <div style="text-align: center;">
-                        <div style="font-size: 3rem; margin-bottom: 15px;">📱</div>
-                        <h3 style="color: #4a5568; margin-bottom: 10px;">Authenticator Code</h3>
-                        <div class="form-group">
-                            <input type="text" id="verify-2fa-code" maxlength="6" placeholder="000000" style="text-align: center; font-size: 1.5rem;">
-                        </div>
-                        <button class="btn" id="verify-2fa-btn">Verify Code</button>
-                    </div>
-                `;
-            }
-            
-            modal.style.display = 'block';
-            
-            if (userData.biometricEnabled) {
-                document.getElementById('verify-biometric').addEventListener('click', async () => {
-                    try {
-                        if (webAuthnCredential) {
-                            const assertion = await navigator.credentials.get({
-                                publicKey: {
-                                    challenge: new Uint8Array(32),
-                                    allowCredentials: [{
-                                        id: webAuthnCredential,
-                                        type: 'public-key'
-                                    }]
-                                }
-                            });
-                            
-                            if (assertion) {
-                                modal.style.display = 'none';
-                                await callback();
-                            }
-                        } else {
-                            showAlert('Biometric not properly configured', 'error');
-                        }
-                    } catch (error) {
-                        showAlert('Biometric verification failed', 'error');
-                    }
-                });
-            }
-            
-            if (userData.authenticatorEnabled) {
-                document.getElementById('verify-2fa-btn').addEventListener('click', async () => {
-                    const code = document.getElementById('verify-2fa-code').value;
-                    
-                    if (code.length !== 6 || !/^\d+$/.test(code)) {
-                        showAlert('Please enter a valid 6-digit code', 'error');
-                        return;
-                    }
-                    
-                    modal.style.display = 'none';
-                    await callback();
-                });
-            }
-        }
-
-        async function processWithdrawal(monthKey, amount, paymentMethodId) {
             try {
-                const withdrawalsQuery = query(
-                    collection(db, 'transactions'),
-                    where('userId', '==', currentUser.uid),
-                    where('type', '==', 'withdrawal'),
-                    where('month', '==', monthKey)
-                );
-                
-                const withdrawalDocs = await getDocs(withdrawalsQuery);
-                const existingWithdrawals = withdrawalDocs.docs.length;
-                
-                if (existingWithdrawals >= 2) {
-                    showAlert('Maximum 2 withdrawals per month allowed.', 'error');
-                    return;
-                }
-                
-                const rate = userData.rates[monthKey] || 0;
-                let commission = 0;
-                let withdrawalType = 'advance';
-                
-                if (existingWithdrawals === 1 || amount >= userData.balance) {
-                    commission = rate;
-                    withdrawalType = 'final';
-                }
-                
-                const totalDeduction = amount + commission;
-                
-                if (totalDeduction > userData.balance) {
-                    showAlert(`Insufficient balance. Total required: ${formatCurrency(totalDeduction)} (Amount: ${formatCurrency(amount)} + Commission: ${formatCurrency(commission)})`, 'error');
-                    return;
-                }
-                
                 const [type, index] = paymentMethodId.split('-');
                 let paymentDetails = {};
                 
@@ -2810,10 +3472,7 @@
                 await addDoc(collection(db, 'transactions'), {
                     userId: currentUser.uid,
                     type: 'withdrawal',
-                    withdrawalType,
                     amount,
-                    commission,
-                    totalAmount: totalDeduction,
                     month: monthKey,
                     paymentMethod: type,
                     paymentDetails,
@@ -2821,14 +3480,7 @@
                     timestamp: serverTimestamp()
                 });
                 
-                const newBalance = userData.balance - totalDeduction;
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    balance: newBalance
-                });
-                
-                userData.balance = newBalance;
-                
-                showAlert(`Withdrawal submitted! ${commission > 0 ? `Commission: ${formatCurrency(commission)}` : ''}`, 'success');
+                showAlert('Withdrawal request submitted!', 'success');
                 
                 await createNotification(
                     'Withdrawal Submitted',
@@ -2840,331 +3492,97 @@
                 document.getElementById('withdrawal-amount').value = '';
                 document.getElementById('withdrawal-payment-method').value = '';
                 document.getElementById('withdrawal-password').value = '';
-                
-                updateDashboard();
+                biometricAuthenticated = false;
             } catch (error) {
                 showAlert('Error: ' + error.message, 'error');
             }
-        }
+        });
 
+        // Transactions Page
         async function loadTransactions() {
-            const container = document.getElementById('transactions-list');
-            container.innerHTML = '<div class="spinner"></div>';
-            
-            try {
-                const q = query(
-                    collection(db, 'transactions'),
-                    where('userId', '==', currentUser.uid)
-                );
-                
-                const querySnapshot = await getDocs(q);
-                
-                if (querySnapshot.empty) {
-                    container.innerHTML = `
-                        <div class="card" style="text-align: center; padding: 60px 20px;">
-                            <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📜</div>
-                            <h3 style="color: #4a5568; margin-bottom: 10px;">No Transactions Yet</h3>
-                            <p style="color: #718096;">Your transaction history will appear here once you make your first contribution or withdrawal.</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = '';
-                
-                const transactions = [];
-                querySnapshot.forEach((doc) => {
-                    transactions.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-                
-                transactions.sort((a, b) => {
-                    const timeA = a.timestamp?.toDate?.() || new Date(0);
-                    const timeB = b.timestamp?.toDate?.() || new Date(0);
-                    return timeB - timeA;
-                });
-                
-                transactions.forEach((transaction) => {
-                    const card = document.createElement('div');
-                    card.className = `transaction-card ${transaction.type}`;
-                    
-                    const isPaid = transaction.status === 'approved' && transaction.type === 'withdrawal';
-                    const timestamp = transaction.timestamp?.toDate?.() || new Date();
-                    
-                    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                    let monthDisplay = '';
-                    if (transaction.month) {
-                        const [year, month] = transaction.month.split('-');
-                        monthDisplay = `${monthNames[parseInt(month)]} ${year}`;
-                    }
-                    
-                    card.innerHTML = `
-                        <div class="transaction-header">
-                            <div>
-                                <div class="transaction-type">${transaction.type === 'contribution' ? '💰 Contribution' : '💸 Withdrawal'}</div>
-                                ${transaction.withdrawalType ? `<div style="font-size: 0.8rem; color: #718096; margin-top: 4px;">${transaction.withdrawalType === 'advance' ? 'Advance Payment' : 'Final Withdrawal'}</div>` : ''}
-                                ${transaction.days?.length ? `<div style="font-size: 0.8rem; color: #667eea; margin-top: 4px; font-weight: 600;">${transaction.days.length} day${transaction.days.length > 1 ? 's' : ''}</div>` : ''}
-                            </div>
-                            <div class="transaction-amount ${transaction.type === 'contribution' ? 'positive' : 'negative'}">
-                                ${transaction.type === 'contribution' ? '+' : '-'}${formatCurrency(transaction.amount)}
-                            </div>
-                        </div>
-                        <div style="font-size: 0.9rem; color: #718096; margin-top: 8px; line-height: 1.6;">
-                            ${monthDisplay ? `<strong>Month:</strong> ${monthDisplay}<br>` : ''}
-                            ${transaction.commission ? `<strong>Commission:</strong> ${formatCurrency(transaction.commission)}<br>` : ''}
-                            ${transaction.totalAmount ? `<strong>Total Deducted:</strong> ${formatCurrency(transaction.totalAmount)}<br>` : ''}
-                            ${transaction.paymentMethod ? `<strong>Payment Method:</strong> ${transaction.paymentMethod}<br>` : ''}
-                            ${transaction.transactionId ? `<strong>Transaction ID:</strong> ${transaction.transactionId}<br>` : ''}
-                            <strong>Date:</strong> ${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}
-                        </div>
-                        <div class="transaction-status status-${transaction.status}" style="margin-top: 12px;">
-                            ${transaction.status === 'pending' ? '⏳ PENDING' : transaction.status === 'approved' ? '✅ APPROVED' : transaction.status === 'rejected' ? '❌ REJECTED' : transaction.status.toUpperCase()}
-                        </div>
-                        ${isPaid ? `
-                            <div class="paid-stamp">
-                                <div class="stamp-outer">
-                                    <div class="stamp-text-top">SUSUPAY</div>
-                                    <div class="stamp-inner">
-                                        <div class="stamp-paid">PAID</div>
-                                        <div class="stamp-date">${timestamp.toLocaleDateString()}</div>
-                                    </div>
-                                    <div class="stamp-text-bottom">SUSUPAY</div>
-                                </div>
-                            </div>
-                        ` : ''}
-                    `;
-                    
-                    container.appendChild(card);
-                });
-                
-                const summaryCard = document.createElement('div');
-                summaryCard.className = 'card';
-                summaryCard.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                summaryCard.style.color = 'white';
-                summaryCard.style.marginBottom = '30px';
-                
-                const totalContributions = transactions.filter(t => t.type === 'contribution' && t.status === 'approved').reduce((sum, t) => sum + (t.amount || 0), 0);
-                const totalWithdrawals = transactions.filter(t => t.type === 'withdrawal' && t.status === 'approved').reduce((sum, t) => sum + (t.amount || 0), 0);
-                const pendingCount = transactions.filter(t => t.status === 'pending').length;
-                
-                summaryCard.innerHTML = `
-                    <h3 style="margin-bottom: 20px; color: white;">Transaction Summary</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px;">
-                        <div>
-                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Contributions</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${formatCurrency(totalContributions)}</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Withdrawals</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${formatCurrency(totalWithdrawals)}</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.9rem; opacity: 0.9;">Pending</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${pendingCount}</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.9rem; opacity: 0.9;">Total Transactions</div>
-                            <div style="font-size: 1.5rem; font-weight: 700; margin-top: 5px;">${transactions.length}</div>
-                        </div>
-                    </div>
-                `;
-                
-                container.insertBefore(summaryCard, container.firstChild);
-                
-            } catch (error) {
-                console.error('Transaction loading error:', error);
-                container.innerHTML = `
-                    <div class="card" style="text-align: center; padding: 40px 20px;">
-                        <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
-                        <h3 style="color: #e53e3e; margin-bottom: 10px;">Error Loading Transactions</h3>
-                        <p style="color: #718096; margin-bottom: 20px;">${error.message}</p>
-                        <button class="btn" onclick="loadTransactions()" style="width: auto; padding: 10px 25px;">
-                            Retry
-                        </button>
-                    </div>
-                `;
-            }
+    const container = document.getElementById('transactions-list');
+    container.innerHTML = '<div style="text-align: center; padding: 40px;"><div style="font-size: 2rem; margin-bottom: 10px;">⏳</div>Loading...</div>';
+    
+    try {
+        const q = query(
+            collection(db, 'transactions'),
+            where('userId', '==', currentUser.uid)
+        );
+        
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+            container.innerHTML = `
+                <div class="card" style="text-align: center; padding: 60px 20px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📜</div>
+                    <h3 style="color: #4a5568; margin-bottom: 10px;">No Transactions Yet</h3>
+                    <p style="color: #718096;">Your transaction history will appear here.</p>
+                </div>
+            `;
+            return;
         }
-
-        async function initKYCPage() {
-            if (userData.kycStatus === 'under_review' || userData.kycStatus === 'pending') {
-                document.getElementById('kyc-form-container').style.display = 'none';
-                document.getElementById('kyc-status-display').classList.remove('hidden');
-            } else if (userData.kycStatus === 'approved') {
-                document.getElementById('kyc-form-container').style.display = 'none';
-                document.getElementById('kyc-status-display').classList.remove('hidden');
-                document.getElementById('kyc-status-display').innerHTML = `
-                    <div class="card" style="text-align: center;">
-                        <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
-                        <h3 style="color: #48bb78; margin-bottom: 15px;">Verification Approved!</h3>
-                        <p style="color: #718096; margin-bottom: 20px;">
-                            Your identity has been verified. You now have VIP access.
-                        </p>
-                        <div style="padding: 15px; background: #c6f6d5; border-radius: 8px; color: #22543d; font-weight: 600;">
-                            Status: Approved ✓
-                        </div>
+        
+        container.innerHTML = '';
+        
+        // Get transactions and sort in JavaScript instead
+        const transactions = [];
+        querySnapshot.forEach((doc) => {
+            transactions.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        
+        // Sort by timestamp in JavaScript
+        transactions.sort((a, b) => {
+            const timeA = a.timestamp?.toDate?.() || new Date(0);
+            const timeB = b.timestamp?.toDate?.() || new Date(0);
+            return timeB - timeA; // Newest first
+        });
+        
+        // Render transactions
+        transactions.forEach((transaction) => {
+            const card = document.createElement('div');
+            card.className = `transaction-card ${transaction.type}`;
+            
+            const timestamp = transaction.timestamp?.toDate?.() || new Date();
+            
+            card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 1.1rem; color: #4a5568;">${transaction.type === 'contribution' ? '💰 Contribution' : '💸 Withdrawal'}</div>
+                        ${transaction.days?.length ? `<div style="font-size: 0.8rem; color: #667eea; margin-top: 4px; font-weight: 600;">${transaction.days.length} day${transaction.days.length > 1 ? 's' : ''}</div>` : ''}
                     </div>
-                `;
-            } else {
-                document.getElementById('kyc-form-container').style.display = 'block';
-                document.getElementById('kyc-status-display').classList.add('hidden');
-            }
-        }
-
-        document.getElementById('terms-checkbox').addEventListener('change', (e) => {
-            if (e.target.checked) {
-                document.getElementById('id-type-section').classList.remove('hidden');
-            } else {
-                document.getElementById('id-type-section').classList.add('hidden');
-                document.getElementById('id-upload-section').classList.add('hidden');
-            }
-        });
-
-        document.getElementById('id-type').addEventListener('change', (e) => {
-            if (e.target.value) {
-                document.getElementById('id-upload-section').classList.remove('hidden');
-            }
-        });
-
-        document.getElementById('front-upload-area').addEventListener('click', () => {
-            document.getElementById('front-id-input').click();
-        });
-
-        document.getElementById('front-id-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                frontIdFile = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('front-preview-img').src = e.target.result;
-                    document.getElementById('front-preview').style.display = 'block';
-                    checkKYCCompletion();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        document.getElementById('back-upload-area').addEventListener('click', () => {
-            document.getElementById('back-id-input').click();
-        });
-
-        document.getElementById('back-id-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                backIdFile = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('back-preview-img').src = e.target.result;
-                    document.getElementById('back-preview').style.display = 'block';
-                    checkKYCCompletion();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        function checkKYCCompletion() {
-            if (frontIdFile && backIdFile) {
-                document.getElementById('selfie-section').classList.remove('hidden');
-            }
+                    <div style="font-size: 1.3rem; font-weight: 700; color: ${transaction.type === 'contribution' ? '#48bb78' : '#e53e3e'};">
+                        ${transaction.type === 'contribution' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                    </div>
+                </div>
+                <div style="font-size: 0.9rem; color: #718096; margin-top: 8px; line-height: 1.6;">
+                    ${transaction.paymentMethod ? `<strong>Payment Method:</strong> ${transaction.paymentMethod}<br>` : ''}
+                    ${transaction.transactionId ? `<strong>Transaction ID:</strong> ${transaction.transactionId}<br>` : ''}
+                    <strong>Date:</strong> ${timestamp.toLocaleDateString()} ${timestamp.toLocaleTimeString()}
+                </div>
+                <div class="transaction-status status-${transaction.status}" style="margin-top: 12px;">
+                    ${transaction.status === 'pending' ? '⏳ PENDING' : transaction.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
+                </div>
+            `;
             
-            if (frontIdFile && backIdFile && selfieBlob) {
-                document.getElementById('submit-kyc-btn').style.display = 'block';
-            }
-        }
-
-        document.getElementById('start-camera-btn').addEventListener('click', async () => {
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user' } 
-                });
-                
-                const video = document.getElementById('selfie-video');
-                video.srcObject = mediaStream;
-                video.style.display = 'block';
-                document.getElementById('selfie-placeholder').style.display = 'none';
-                document.getElementById('start-camera-btn').style.display = 'none';
-                document.getElementById('capture-selfie-btn').style.display = 'inline-block';
-            } catch (error) {
-                showAlert('Error accessing camera: ' + error.message, 'error');
-            }
+            container.appendChild(card);
         });
+        
+    } catch (error) {
+        console.error('Transaction loading error:', error);
+        container.innerHTML = `
+            <div class="card" style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+                <h3 style="color: #e53e3e; margin-bottom: 10px;">Error Loading Transactions</h3>
+                <p style="color: #718096;">${error.message}</p>
+            </div>
+        `;
+    }
+}
 
-        document.getElementById('capture-selfie-btn').addEventListener('click', () => {
-            const video = document.getElementById('selfie-video');
-            const canvas = document.getElementById('selfie-canvas');
-            const context = canvas.getContext('2d');
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0);
-            
-            canvas.toBlob((blob) => {
-                selfieBlob = blob;
-                const url = URL.createObjectURL(blob);
-                document.getElementById('selfie-preview-img').src = url;
-                document.getElementById('selfie-captured').style.display = 'block';
-                
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                }
-                video.style.display = 'none';
-                document.getElementById('capture-selfie-btn').style.display = 'none';
-                document.getElementById('retake-selfie-btn').style.display = 'inline-block';
-                
-                checkKYCCompletion();
-            }, 'image/jpeg', 0.95);
-        });
-
-        document.getElementById('retake-selfie-btn').addEventListener('click', () => {
-            selfieBlob = null;
-            document.getElementById('selfie-captured').style.display = 'none';
-            document.getElementById('selfie-placeholder').style.display = 'flex';
-            document.getElementById('start-camera-btn').style.display = 'inline-block';
-            document.getElementById('retake-selfie-btn').style.display = 'none';
-            document.getElementById('submit-kyc-btn').style.display = 'none';
-        });
-
-        document.getElementById('submit-kyc-btn').addEventListener('click', async () => {
-            if (!document.getElementById('terms-checkbox').checked) {
-                showAlert('Please accept the terms', 'error');
-                return;
-            }
-
-            try {
-                document.getElementById('submit-kyc-btn').disabled = true;
-                document.getElementById('submit-kyc-btn').textContent = 'Uploading...';
-
-                await addDoc(collection(db, 'kyc_submissions'), {
-                    userId: currentUser.uid,
-                    idType: document.getElementById('id-type').value,
-                    status: 'under_review',
-                    submittedAt: serverTimestamp()
-                });
-
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    kycStatus: 'under_review'
-                });
-
-                userData.kycStatus = 'under_review';
-
-                showAlert('KYC submitted successfully!', 'success');
-                
-                await createNotification(
-                    'KYC Submitted',
-                    'Your verification documents are under review',
-                    'info'
-                );
-
-                initKYCPage();
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-                document.getElementById('submit-kyc-btn').disabled = false;
-                document.getElementById('submit-kyc-btn').textContent = 'Submit KYC Documents';
-            }
-        });
-
+        // Payment Methods Page
         async function loadPaymentMethods() {
             renderMobileMoneyAccounts();
             renderCryptoWallets();
@@ -3325,6 +3743,153 @@
             }
         });
 
+        // KYC Page
+        document.getElementById('terms-checkbox').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.getElementById('id-type-section').classList.remove('hidden');
+            } else {
+                document.getElementById('id-type-section').classList.add('hidden');
+                document.getElementById('id-upload-section').classList.add('hidden');
+            }
+        });
+
+        document.getElementById('id-type').addEventListener('change', (e) => {
+            if (e.target.value) {
+                document.getElementById('id-upload-section').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('front-upload-area').addEventListener('click', () => {
+            document.getElementById('front-id-input').click();
+        });
+
+        document.getElementById('front-id-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                frontIdFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('front-preview-img').src = e.target.result;
+                    document.getElementById('front-preview').style.display = 'block';
+                    checkKYCCompletion();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('back-upload-area').addEventListener('click', () => {
+            document.getElementById('back-id-input').click();
+        });
+
+        document.getElementById('back-id-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                backIdFile = file;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    document.getElementById('back-preview-img').src = e.target.result;
+                    document.getElementById('back-preview').style.display = 'block';
+                    checkKYCCompletion();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function checkKYCCompletion() {
+            if (frontIdFile && backIdFile) {
+                document.getElementById('selfie-section').classList.remove('hidden');
+            }
+            
+            if (frontIdFile && backIdFile && selfieBlob) {
+                document.getElementById('submit-kyc-btn').style.display = 'block';
+            }
+        }
+
+        document.getElementById('start-camera-btn').addEventListener('click', async () => {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user' } 
+                });
+                
+                const video = document.getElementById('selfie-video');
+                video.srcObject = mediaStream;
+                video.style.display = 'block';
+                document.getElementById('selfie-placeholder').style.display = 'none';
+                document.getElementById('start-camera-btn').style.display = 'none';
+                document.getElementById('capture-selfie-btn').style.display = 'inline-block';
+            } catch (error) {
+                showAlert('Error accessing camera: ' + error.message, 'error');
+            }
+        });
+
+        document.getElementById('capture-selfie-btn').addEventListener('click', () => {
+            const video = document.getElementById('selfie-video');
+            const canvas = document.getElementById('selfie-canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+            
+            canvas.toBlob((blob) => {
+                selfieBlob = blob;
+                const url = URL.createObjectURL(blob);
+                document.getElementById('selfie-preview-img').src = url;
+                document.getElementById('selfie-captured').style.display = 'block';
+                
+                if (mediaStream) {
+                    mediaStream.getTracks().forEach(track => track.stop());
+                }
+                video.style.display = 'none';
+                document.getElementById('capture-selfie-btn').style.display = 'none';
+                document.getElementById('retake-selfie-btn').style.display = 'inline-block';
+                
+                checkKYCCompletion();
+            }, 'image/jpeg', 0.95);
+        });
+
+        document.getElementById('retake-selfie-btn').addEventListener('click', () => {
+            selfieBlob = null;
+            document.getElementById('selfie-captured').style.display = 'none';
+            document.getElementById('selfie-placeholder').style.display = 'flex';
+            document.getElementById('start-camera-btn').style.display = 'inline-block';
+            document.getElementById('retake-selfie-btn').style.display = 'none';
+            document.getElementById('submit-kyc-btn').style.display = 'none';
+        });
+
+        document.getElementById('submit-kyc-btn').addEventListener('click', async () => {
+            if (!document.getElementById('terms-checkbox').checked) {
+                showAlert('Please accept the terms', 'error');
+                return;
+            }
+
+            try {
+                document.getElementById('submit-kyc-btn').disabled = true;
+                document.getElementById('submit-kyc-btn').textContent = 'Uploading...';
+
+                await addDoc(collection(db, 'kyc_submissions'), {
+                    userId: currentUser.uid,
+                    idType: document.getElementById('id-type').value,
+                    status: 'under_review',
+                    submittedAt: serverTimestamp()
+                });
+
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    kycStatus: 'under_review'
+                });
+
+                userData.kycStatus = 'under_review';
+
+                showAlert('KYC submitted successfully!', 'success');
+                updateKYCStatus();
+            } catch (error) {
+                showAlert('Error: ' + error.message, 'error');
+                document.getElementById('submit-kyc-btn').disabled = false;
+                document.getElementById('submit-kyc-btn').textContent = 'Submit KYC Documents';
+            }
+        });
+
+        // Settings Page
         function loadSettings() {
             document.getElementById('edit-first-name').value = userData.firstName || '';
             document.getElementById('edit-surname').value = userData.surname || '';
@@ -3333,33 +3898,6 @@
             document.getElementById('email-notifications').checked = userData.notifications?.email ?? true;
             document.getElementById('sms-notifications').checked = userData.notifications?.sms ?? true;
             document.getElementById('security-alerts').checked = userData.notifications?.security ?? true;
-            
-            updateAuthenticationStatus();
-        }
-
-        function updateAuthenticationStatus() {
-            const biometricStatus = document.getElementById('biometric-status-text');
-            const authenticatorStatus = document.getElementById('authenticator-status-text');
-            
-            if (userData.biometricEnabled) {
-                biometricStatus.textContent = 'Enabled ✓';
-                biometricStatus.style.color = '#48bb78';
-                document.getElementById('setup-biometric-btn').textContent = 'Disable';
-            } else {
-                biometricStatus.textContent = 'Not configured';
-                biometricStatus.style.color = '#718096';
-                document.getElementById('setup-biometric-btn').textContent = 'Setup';
-            }
-            
-            if (userData.authenticatorEnabled) {
-                authenticatorStatus.textContent = 'Enabled ✓';
-                authenticatorStatus.style.color = '#48bb78';
-                document.getElementById('setup-authenticator-btn').textContent = 'Disable';
-            } else {
-                authenticatorStatus.textContent = 'Not configured';
-                authenticatorStatus.style.color = '#718096';
-                document.getElementById('setup-authenticator-btn').textContent = 'Setup';
-            }
         }
 
         document.getElementById('profile-form').addEventListener('submit', async (e) => {
@@ -3406,7 +3944,7 @@
                 
                 userData.withdrawalPassword = newPassword;
                 
-                showAlert('Withdrawal password set successfully!', 'success');
+                showAlert('Withdrawal password updated successfully!', 'success');
                 e.target.reset();
             } catch (error) {
                 showAlert('Error: ' + error.message, 'error');
@@ -3437,171 +3975,6 @@
             }
         });
 
-        document.getElementById('setup-biometric-btn').addEventListener('click', () => {
-            if (userData.biometricEnabled) {
-                disableBiometric();
-            } else {
-                document.getElementById('biometric-modal').style.display = 'block';
-                checkBiometricSupport();
-            }
-        });
-
-        async function checkBiometricSupport() {
-            const messageDiv = document.getElementById('biometric-support-message');
-            
-            if (window.PublicKeyCredential) {
-                try {
-                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                    if (available) {
-                        messageDiv.innerHTML = '<div style="color: #48bb78;">✓ Your device supports biometric authentication</div>';
-                        document.getElementById('enable-biometric-btn').disabled = false;
-                    } else {
-                        messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Your device does not support biometric authentication</div>';
-                        document.getElementById('enable-biometric-btn').disabled = true;
-                    }
-                } catch (error) {
-                    messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Error checking biometric support</div>';
-                    document.getElementById('enable-biometric-btn').disabled = true;
-                }
-            } else {
-                messageDiv.innerHTML = '<div style="color: #e53e3e;">✗ Your browser does not support WebAuthn</div>';
-                document.getElementById('enable-biometric-btn').disabled = true;
-            }
-        }
-
-        document.getElementById('enable-biometric-btn').addEventListener('click', async () => {
-            try {
-                const challenge = new Uint8Array(32);
-                crypto.getRandomValues(challenge);
-                
-                const credential = await navigator.credentials.create({
-                    publicKey: {
-                        challenge: challenge,
-                        rp: {
-                            name: "SusuPay",
-                            id: window.location.hostname
-                        },
-                        user: {
-                            id: new TextEncoder().encode(currentUser.uid),
-                            name: currentUser.email,
-                            displayName: `${userData.firstName} ${userData.surname}`
-                        },
-                        pubKeyCredParams: [{
-                            type: "public-key",
-                            alg: -7
-                        }],
-                        authenticatorSelection: {
-                            authenticatorAttachment: "platform",
-                            userVerification: "required"
-                        }
-                    }
-                });
-                
-                webAuthnCredential = credential.rawId;
-                
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    biometricEnabled: true,
-                    biometricCredential: Array.from(new Uint8Array(credential.rawId))
-                });
-                
-                userData.biometricEnabled = true;
-                updateAuthenticationStatus();
-                
-                document.getElementById('biometric-modal').style.display = 'none';
-                showAlert('Biometric authentication enabled!', 'success');
-            } catch (error) {
-                showAlert('Error enabling biometric: ' + error.message, 'error');
-            }
-        });
-
-        async function disableBiometric() {
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    biometricEnabled: false,
-                    biometricCredential: null
-                });
-                
-                userData.biometricEnabled = false;
-                webAuthnCredential = null;
-                updateAuthenticationStatus();
-                
-                showAlert('Biometric authentication disabled', 'info');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        }
-
-        document.getElementById('close-biometric-modal').addEventListener('click', () => {
-            document.getElementById('biometric-modal').style.display = 'none';
-        });
-
-        document.getElementById('setup-authenticator-btn').addEventListener('click', () => {
-            if (userData.authenticatorEnabled) {
-                disableAuthenticator();
-            } else {
-                document.getElementById('authenticator-modal').style.display = 'block';
-                generateAuthenticatorSecret();
-            }
-        });
-
-        function generateAuthenticatorSecret() {
-            const secret = Array.from({length: 16}, () => 
-                'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'[Math.floor(Math.random() * 32)]
-            ).join('');
-            
-            const formattedSecret = secret.match(/.{1,4}/g).join(' ');
-            document.getElementById('secret-key').textContent = formattedSecret;
-            
-            window.tempAuthSecret = secret;
-        }
-
-        document.getElementById('verify-authenticator-btn').addEventListener('click', async () => {
-            const code = document.getElementById('verify-code').value;
-            
-            if (code.length !== 6 || !/^\d+$/.test(code)) {
-                showAlert('Please enter a valid 6-digit code', 'error');
-                return;
-            }
-            
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    authenticatorEnabled: true,
-                    authenticatorSecret: window.tempAuthSecret
-                });
-                
-                userData.authenticatorEnabled = true;
-                userData.authenticatorSecret = window.tempAuthSecret;
-                updateAuthenticationStatus();
-                
-                document.getElementById('authenticator-modal').style.display = 'none';
-                document.getElementById('verify-code').value = '';
-                showAlert('Authenticator enabled successfully!', 'success');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        });
-
-        async function disableAuthenticator() {
-            try {
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    authenticatorEnabled: false,
-                    authenticatorSecret: null
-                });
-                
-                userData.authenticatorEnabled = false;
-                userData.authenticatorSecret = null;
-                updateAuthenticationStatus();
-                
-                showAlert('Authenticator disabled', 'info');
-            } catch (error) {
-                showAlert('Error: ' + error.message, 'error');
-            }
-        }
-
-        document.getElementById('close-authenticator-modal').addEventListener('click', () => {
-            document.getElementById('authenticator-modal').style.display = 'none';
-        });
-
         document.getElementById('save-notifications-btn').addEventListener('click', async () => {
             const emailNotifications = document.getElementById('email-notifications').checked;
             const smsNotifications = document.getElementById('sms-notifications').checked;
@@ -3626,6 +3999,7 @@
             }
         });
 
+        // Report a Problem
         document.getElementById('report-problem-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -3660,6 +4034,20 @@
             }
         });
 
+        // Dark Mode Toggle
+        const toggle = document.getElementById('dark-mode-toggle');
+        toggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        });
+
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            toggle.textContent = '☀️';
+        }
+
+        // Close modals on outside click
         window.addEventListener('click', (e) => {
             const modals = document.querySelectorAll('.modal');
             modals.forEach(modal => {
@@ -3669,12 +4057,22 @@
             });
         });
 
+        // Cleanup camera on page unload
         window.addEventListener('beforeunload', () => {
             if (mediaStream) {
                 mediaStream.getTracks().forEach(track => track.stop());
             }
         });
 
-        console.log('SusuPay Dashboard Initialized');
+        console.log('SusuPay Enhanced System Initialized - All Features Loaded ✅');
+        // Debug: Check if pages exist
+console.log('Pages check:', {
+    transactions: !!document.getElementById('transactions-page'),
+    paymentMethods: !!document.getElementById('payment-methods-page'),
+    kyc: !!document.getElementById('kyc-page'),
+    settings: !!document.getElementById('settings-page'),
+    report: !!document.getElementById('report-page')
+});
     </script>
 </body>
+</html>
