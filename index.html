@@ -2554,7 +2554,7 @@
         });
 
         // Sign Up
-       document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const firstName = document.getElementById('first-name').value;
     const surname = document.getElementById('surname').value;
@@ -2570,22 +2570,28 @@
 
     try {
         let referredByUid = null;
+        let referrerData = null;
         
+        // Validate referral code BEFORE creating account
         if (referralCode) {
             const q = query(collection(db, 'users'), where('referralCode', '==', referralCode));
             const snapshot = await getDocs(q);
             
             if (!snapshot.empty) {
                 referredByUid = snapshot.docs[0].id;
+                referrerData = snapshot.docs[0].data();
             } else {
                 showAlert('Invalid referral code!', 'error', 'auth-alert');
                 return;
             }
         }
 
+        // Create the user account
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newUserId = userCredential.user.uid;
         
-        await setDoc(doc(db, 'users', userCredential.user.uid), {
+        // Create new user document
+        await setDoc(doc(db, 'users', newUserId), {
             firstName,
             surname,
             email,
@@ -2615,28 +2621,32 @@
             }
         });
 
-        if (referredByUid) {
-            const referrerDoc = await getDoc(doc(db, 'users', referredByUid));
-            if (referrerDoc.exists()) {
-                const referrerData = referrerDoc.data();
-                const updatedReferrals = [...(referrerData.referrals || []), userCredential.user.uid];
+        // Update referrer's referrals array if there was a referral
+        if (referredByUid && referrerData) {
+            try {
+                const updatedReferrals = [...(referrerData.referrals || []), newUserId];
                 await updateDoc(doc(db, 'users', referredByUid), {
                     referrals: updatedReferrals
                 });
+                console.log('✅ Referral updated successfully');
+            } catch (referralError) {
+                console.error('⚠️ Could not update referrer, but account created:', referralError);
             }
         }
 
-        const actionCodeSettings = {
-            url: window.location.href,
-            handleCodeInApp: false
-        };
+        // Send verification email (NO Dynamic Links - uses default Firebase template)
+        try {
+            await sendEmailVerification(userCredential.user);
+            console.log('✅ Verification email sent');
+        } catch (emailError) {
+            console.error('⚠️ Email send failed:', emailError);
+        }
 
-        await sendEmailVerification(userCredential.user, actionCodeSettings);
-
-        const newUserDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+        // Get the newly created referral code
+        const newUserDoc = await getDoc(doc(db, 'users', newUserId));
         const newReferralCode = newUserDoc.data().referralCode;
 
-        showAlert(`Account created! Your referral code is: ${newReferralCode}. Check your email to verify.`, 'success', 'auth-alert');
+        showAlert(`✅ Account created! Your referral code: ${newReferralCode}. Check email to verify.`, 'success', 'auth-alert');
 
         localStorage.setItem('temp_referral_code', newReferralCode);
 
@@ -2644,10 +2654,13 @@
         await signOut(auth);
 
         document.getElementById('auth-toggle-btn').click();
+        
     } catch (error) {
+        console.error('Signup error:', error);
         showAlert(error.message, 'error', 'auth-alert');
     }
 });
+
         // Google Sign-In Handlers
         document.getElementById('google-signin-btn')?.addEventListener('click', async () => {
             try {
@@ -2668,77 +2681,85 @@
             }
         });
 
-        document.getElementById('google-signup-btn')?.addEventListener('click', async () => {
-            try {
-                const result = await signInWithPopup(auth, googleProvider);
-                const user = result.user;
-                
-                const userDoc = await getDoc(doc(db, 'users', user.uid));
-                
-                if (userDoc.exists()) {
-                    showAlert('Account already exists. Please sign in.', 'error', 'auth-alert');
-                    return;
-                }
-                
-                const referralCode = document.getElementById('referral-code-input').value.trim().toUpperCase();
-                let referredByUid = null;
-                
-                if (referralCode) {
-                    const q = query(collection(db, 'users'), where('referralCode', '==', referralCode));
-                    const snapshot = await getDocs(q);
-                    
-                    if (!snapshot.empty) {
-                        referredByUid = snapshot.docs[0].id;
-                    }
-                }
-                
-                const names = user.displayName?.split(' ') || ['', ''];
-                await setDoc(doc(db, 'users', user.uid), {
-                    firstName: names[0] || 'User',
-                    surname: names[1] || 'Name',
-                    email: user.email,
-                    createdAt: serverTimestamp(),
-                    balance: 0,
-                    totalContributions: 0,
-                    vipLevel: -1,
-                    kycStatus: 'NOT STARTED',
-                    rates: {},
-                    contributedDays: {},
-                    referralCode: generateReferralCode(),
-                    referredBy: referredByUid,
-                    referrals: [],
-                    referralEarnings: 0,
-                    withdrawalPassword: generateReferralCode(),
-                    withdrawalAttempts: 0,
-                    lockoutUntil: null,
-                    notifications: {
-                        email: true,
-                        sms: true,
-                        security: true
-                    },
-                    paymentMethods: {
-                        mobileMoney: [],
-                        crypto: [],
-                        bank: []
-                    }
-                });
-                
-                if (referredByUid) {
-                    const referrerDoc = await getDoc(doc(db, 'users', referredByUid));
-                    if (referrerDoc.exists()) {
-                        const referrerData = referrerDoc.data();
-                        const updatedReferrals = [...(referrerData.referrals || []), user.uid];
-                        await updateDoc(doc(db, 'users', referredByUid), {
-                            referrals: updatedReferrals
-                        });
-                    }
-                }
-                
-                showAlert('Account created successfully with Google!', 'success', 'auth-alert');
-            } catch (error) {
-                showAlert(error.message, 'error', 'auth-alert');
+    document.getElementById('google-signup-btn')?.addEventListener('click', async () => {
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        
+        // Check if user already exists
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        
+        if (userDoc.exists()) {
+            showAlert('Account already exists. Please sign in.', 'error', 'auth-alert');
+            return;
+        }
+        
+        // Get referral code from input
+        const referralCode = document.getElementById('referral-code-input').value.trim().toUpperCase();
+        let referredByUid = null;
+        let referrerData = null;
+        
+        if (referralCode) {
+            const q = query(collection(db, 'users'), where('referralCode', '==', referralCode));
+            const snapshot = await getDocs(q);
+            
+            if (!snapshot.empty) {
+                referredByUid = snapshot.docs[0].id;
+                referrerData = snapshot.docs[0].data();
+            }
+        }
+        
+        // Create user document
+        const names = user.displayName?.split(' ') || ['', ''];
+        await setDoc(doc(db, 'users', user.uid), {
+            firstName: names[0] || 'User',
+            surname: names[1] || 'Name',
+            email: user.email,
+            createdAt: serverTimestamp(),
+            balance: 0,
+            totalContributions: 0,
+            vipLevel: -1,
+            kycStatus: 'NOT STARTED',
+            rates: {},
+            contributedDays: {},
+            referralCode: generateReferralCode(),
+            referredBy: referredByUid,
+            referrals: [],
+            referralEarnings: 0,
+            withdrawalPassword: generateReferralCode(),
+            withdrawalAttempts: 0,
+            lockoutUntil: null,
+            notifications: {
+                email: true,
+                sms: true,
+                security: true
+            },
+            paymentMethods: {
+                mobileMoney: [],
+                crypto: [],
+                bank: []
             }
         });
+        
+        // Update referrer if exists
+        if (referredByUid && referrerData) {
+            try {
+                const updatedReferrals = [...(referrerData.referrals || []), user.uid];
+                await updateDoc(doc(db, 'users', referredByUid), {
+                    referrals: updatedReferrals
+                });
+                console.log('✅ Referral updated successfully');
+            } catch (referralError) {
+                console.error('⚠️ Could not update referrer:', referralError);
+            }
+        }
+        
+        showAlert('Account created successfully with Google!', 'success', 'auth-alert');
+    } catch (error) {
+        console.error('Google signup error:', error);
+        showAlert(error.message, 'error', 'auth-alert');
+    }
+});
 
         // Biometric Sign-In
         document.getElementById('biometric-signin-btn')?.addEventListener('click', signInWithBiometric);
@@ -2806,40 +2827,80 @@
             }
         });
 
-        async function loadUserData() {
-            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-            if (userDoc.exists()) {
-                userData = userDoc.data();
-                await updateBiometricStatus();
-                
-                const newVIPLevel = calculateVIPLevel(userData.totalContributions || 0, userData.kycStatus);
-                if (newVIPLevel !== userData.vipLevel) {
-                    await updateDoc(doc(db, 'users', currentUser.uid), {
-                        vipLevel: newVIPLevel
-                    });
-                    userData.vipLevel = newVIPLevel;
-                }
-                
-                updateDashboard();
-                await loadNotifications();
-                
-                if (userData.notifications?.security) {
-                    await createNotification(
-                        'New Login',
-                        `Login detected at ${new Date().toLocaleString()}`,
-                        'security'
-                    );
-                }
-                
-                const hasSeenReferral = localStorage.getItem(`referral_seen_${currentUser.uid}`);
-                if (!hasSeenReferral && userData.referralCode) {
-                    setTimeout(() => {
-                        showAlert(`🎉 Your referral code is: ${userData.referralCode}. Share it with friends to earn bonuses!`, 'info');
-                        localStorage.setItem(`referral_seen_${currentUser.uid}`, 'true');
-                    }, 2000);
-                }
-            }
+    async function loadUserData() {
+    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+    if (userDoc.exists()) {
+        userData = userDoc.data();
+        
+        // MIGRATION: Ensure referral code exists
+        await ensureReferralCode();
+        
+        await updateBiometricStatus();
+        
+        const newVIPLevel = calculateVIPLevel(userData.totalContributions || 0, userData.kycStatus);
+        if (newVIPLevel !== userData.vipLevel) {
+            await updateDoc(doc(db, 'users', currentUser.uid), {
+                vipLevel: newVIPLevel
+            });
+            userData.vipLevel = newVIPLevel;
         }
+        
+        updateDashboard();
+        await loadNotifications();
+        
+        if (userData.notifications?.security) {
+            await createNotification(
+                'New Login',
+                `Login detected at ${new Date().toLocaleString()}`,
+                'security'
+            );
+        }
+        
+        const hasSeenReferral = localStorage.getItem(`referral_seen_${currentUser.uid}`);
+        if (!hasSeenReferral && userData.referralCode) {
+            setTimeout(() => {
+                showAlert(`🎉 Your referral code is: ${userData.referralCode}. Share it with friends to earn bonuses!`, 'info');
+                localStorage.setItem(`referral_seen_${currentUser.uid}`, 'true');
+            }, 2000);
+        }
+    }
+}
+        // Migration function to add referral codes to existing users
+async function ensureReferralCode() {
+    if (!userData.referralCode) {
+        console.log('No referral code found, generating one...');
+        
+        const newReferralCode = generateReferralCode();
+        
+        try {
+            // Check if code already exists (very unlikely but safe)
+            const q = query(collection(db, 'users'), where('referralCode', '==', newReferralCode));
+            const snapshot = await getDocs(q);
+            
+            if (!snapshot.empty) {
+                // If by chance it exists, generate another
+                return ensureReferralCode();
+            }
+            
+            // Update user with new referral code
+            await updateDoc(doc(db, 'users', currentUser.uid), {
+                referralCode: newReferralCode
+            });
+            
+            userData.referralCode = newReferralCode;
+            
+            // Show notification
+            showAlert(`Your referral code has been generated: ${newReferralCode}`, 'success');
+            
+            // Update dashboard display
+            updateDashboard();
+            
+            console.log('Referral code generated:', newReferralCode);
+        } catch (error) {
+            console.error('Error generating referral code:', error);
+        }
+    }
+}
 
         function showAuth() {
             document.getElementById('auth-wrapper').classList.remove('hidden');
