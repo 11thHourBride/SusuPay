@@ -1138,6 +1138,99 @@
             </div>
         </div>
     </div>
+    <!-- Delete Account Modal -->
+<div class="modal" id="delete-account-modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="close-btn" id="close-delete-account">&times;</button>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 4rem; margin-bottom: 15px; color: #e53e3e;">⚠️</div>
+            <h2 style="color: #c53030; margin-bottom: 10px;">Delete Account</h2>
+            <p style="color: #742a2a; font-weight: 600;">This action cannot be undone!</p>
+        </div>
+        
+        <div id="delete-account-step-1">
+            <div style="background: #fff5f5; border-left: 4px solid #e53e3e; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="color: #742a2a; line-height: 1.6;">
+                    You are about to <strong>permanently delete</strong> your account and all associated data. 
+                    This includes your balance, transaction history, and all personal information.
+                </p>
+            </div>
+            
+            <form id="delete-account-form">
+                <div class="form-group">
+                    <label for="delete-confirm-email" style="color: #4a5568;">
+                        Confirm your email address
+                    </label>
+                    <input type="email" id="delete-confirm-email" 
+                           placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delete-confirm-password" style="color: #4a5568;">
+                        Enter your password
+                    </label>
+                    <input type="password" id="delete-confirm-password" 
+                           placeholder="Enter your password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delete-reason" style="color: #4a5568;">
+                        Reason for leaving (optional)
+                    </label>
+                    <select id="delete-reason">
+                        <option value="">Select a reason...</option>
+                        <option value="not-using">Not using the service</option>
+                        <option value="privacy">Privacy concerns</option>
+                        <option value="switching">Switching to another service</option>
+                        <option value="dissatisfied">Dissatisfied with service</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; 
+                                  background: #fff5f5; padding: 15px; border-radius: 8px; 
+                                  border: 2px solid #feb2b2;">
+                        <input type="checkbox" id="delete-confirm-checkbox" 
+                               style="width: 20px; height: 20px;" required>
+                        <span style="color: #742a2a; font-weight: 600;">
+                            I understand this action is permanent and cannot be undone
+                        </span>
+                    </label>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn" id="cancel-delete-btn" 
+                            style="background: #718096; flex: 1;">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn" 
+                            style="background: #c53030; flex: 1;">
+                        Delete Account
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="delete-account-step-2" style="display: none; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">⏳</div>
+            <h3 style="color: #4a5568; margin-bottom: 10px;">Deleting Account...</h3>
+            <p style="color: #718096;">Please wait while we process your request.</p>
+        </div>
+        
+        <div id="delete-account-step-3" style="display: none; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 20px;">✅</div>
+            <h3 style="color: #48bb78; margin-bottom: 10px;">Account Deleted</h3>
+            <p style="color: #718096; margin-bottom: 20px;">
+                Your account has been permanently deleted. We're sorry to see you go.
+            </p>
+            <p style="color: #718096; font-size: 0.9rem;">
+                Redirecting to homepage...
+            </p>
+        </div>
+    </div>
+</div>
 
     <!-- App Header -->
     <header class="app-header hidden" id="app-header">
@@ -1803,6 +1896,7 @@
                         <span>SMS notifications for withdrawals</span>
                     </label>
                 </div>
+                
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
                         <input type="checkbox" id="security-alerts" checked>
@@ -1811,6 +1905,33 @@
                 </div>
                 <button class="btn" id="save-notifications-btn">Save Preferences</button>
             </div>
+            <div class="card">
+    <h3 style="margin-bottom: 20px; color: #4a5568;">⚠️ Danger Zone</h3>
+    
+    <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 20px; margin-bottom: 15px;">
+        <h4 style="color: #c53030; margin-bottom: 10px;">Delete My Account</h4>
+        <p style="color: #742a2a; line-height: 1.6; margin-bottom: 15px;">
+            ⚠️ <strong>Warning:</strong> This action is <strong>permanent and cannot be undone</strong>. 
+            Deleting your account will:
+        </p>
+        <ul style="color: #742a2a; line-height: 1.8; margin-left: 20px; margin-bottom: 15px;">
+            <li>Permanently delete all your personal information</li>
+            <li>Remove all transaction history</li>
+            <li>Cancel any pending withdrawals</li>
+            <li>Forfeit any remaining balance</li>
+            <li>Disable your referral code</li>
+            <li>Remove all saved payment methods</li>
+        </ul>
+        <p style="color: #742a2a; font-weight: 600; margin-bottom: 20px;">
+            💡 If you have concerns, please contact support before deleting your account.
+        </p>
+        
+        <button type="button" class="btn" id="delete-account-btn" 
+                style="background: #c53030; width: auto; padding: 12px 25px;">
+            🗑️ Delete My Account
+        </button>
+    </div>
+</div>
 
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">📱 Payment Methods</h3>
@@ -1822,6 +1943,7 @@
                 </button>
             </div>
         </div>
+        
 
         <!-- Report a Problem Page -->
         <div id="report-page" class="page-content hidden">
@@ -4094,6 +4216,106 @@ async function ensureReferralCode() {
                 showAlert('Error: ' + error.message, 'error');
             }
         });
+        // Delete Account Handlers
+document.getElementById('delete-account-btn')?.addEventListener('click', () => {
+    document.getElementById('delete-account-modal').style.display = 'block';
+    document.getElementById('delete-account-step-1').style.display = 'block';
+    document.getElementById('delete-account-step-2').style.display = 'none';
+    document.getElementById('delete-account-step-3').style.display = 'none';
+    document.getElementById('delete-account-form').reset();
+});
+
+document.getElementById('close-delete-account')?.addEventListener('click', () => {
+    document.getElementById('delete-account-modal').style.display = 'none';
+});
+
+document.getElementById('cancel-delete-btn')?.addEventListener('click', () => {
+    document.getElementById('delete-account-modal').style.display = 'none';
+});
+
+document.getElementById('delete-account-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const confirmEmail = document.getElementById('delete-confirm-email').value;
+    const confirmPassword = document.getElementById('delete-confirm-password').value;
+    const reason = document.getElementById('delete-reason').value;
+    const checkbox = document.getElementById('delete-confirm-checkbox').checked;
+    
+    // Verify email matches
+    if (confirmEmail !== userData.email) {
+        showAlert('Email does not match your account email!', 'error');
+        return;
+    }
+    
+    // Verify checkbox is checked
+    if (!checkbox) {
+        showAlert('Please confirm you understand this action is permanent', 'error');
+        return;
+    }
+    
+    try {
+        // Show loading step
+        document.getElementById('delete-account-step-1').style.display = 'none';
+        document.getElementById('delete-account-step-2').style.display = 'block';
+        
+        // Reauthenticate user
+        const credential = EmailAuthProvider.credential(currentUser.email, confirmPassword);
+        await reauthenticateWithCredential(currentUser, credential);
+        
+        // Log deletion reason if provided
+        if (reason) {
+            await addDoc(collection(db, 'account_deletions'), {
+                userId: currentUser.uid,
+                userEmail: userData.email,
+                reason: reason,
+                deletedAt: serverTimestamp(),
+                userData: {
+                    firstName: userData.firstName,
+                    surname: userData.surname,
+                    totalContributions: userData.totalContributions,
+                    vipLevel: userData.vipLevel
+                }
+            });
+        }
+        
+        // Delete user document from Firestore
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+            deleted: true,
+            deletedAt: serverTimestamp(),
+            deletionReason: reason || 'Not specified'
+        });
+        
+        // Delete user authentication account
+        await currentUser.delete();
+        
+        // Show success step
+        document.getElementById('delete-account-step-2').style.display = 'none';
+        document.getElementById('delete-account-step-3').style.display = 'block';
+        
+        // Clear local storage
+        localStorage.clear();
+        
+        // Redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3000);
+        
+    } catch (error) {
+        // Reset modal on error
+        document.getElementById('delete-account-step-1').style.display = 'block';
+        document.getElementById('delete-account-step-2').style.display = 'none';
+        
+        if (error.code === 'auth/wrong-password') {
+            showAlert('Incorrect password. Please try again.', 'error');
+        } else if (error.code === 'auth/requires-recent-login') {
+            showAlert('Please sign out and sign in again before deleting your account.', 'error');
+        } else {
+            showAlert('Error deleting account: ' + error.message, 'error');
+        }
+        
+        console.error('Delete account error:', error);
+    }
+});
 
         // Dark Mode Toggle
         const toggle = document.getElementById('dark-mode-toggle');
