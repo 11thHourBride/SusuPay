@@ -4550,7 +4550,7 @@ async function ensureReferralCode() {
             const priority = document.getElementById('problem-priority').value;
             
             try {
-                await addDoc(collection(db, 'problem_reports'), {
+                await addDoc(collection(db, 'reports'), {
                     userId: currentUser.uid,
                     userName: `${userData.firstName} ${userData.surname}`,
                     userEmail: userData.email,
@@ -4558,7 +4558,7 @@ async function ensureReferralCode() {
                     subject,
                     description,
                     priority,
-                    status: 'open',
+                    status: 'pending',
                     submittedAt: serverTimestamp()
                 });
                 
