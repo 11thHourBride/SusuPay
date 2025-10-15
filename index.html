@@ -706,6 +706,132 @@
             background: white;
             color: #667eea;
         }
+        /* SusuPay Coin Styles */
+.coin-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-align: center;
+    padding: 50px 30px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+}
+
+.coin-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path fill="rgba(255,255,255,0.1)" d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"/></svg>');
+    background-size: cover;
+    opacity: 0.3;
+}
+
+.coin-hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.coin-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 15px 30px;
+    border-radius: 50px;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255,255,255,0.3);
+}
+
+.token-stat-card {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    border: none;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.token-stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.contract-info-box {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    background: #fef5e7;
+    color: #744210;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-badge.tba {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+.status-badge.progress {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.roadmap-timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.roadmap-line {
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+.roadmap-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.roadmap-dot {
+    position: absolute;
+    left: -33px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 4px solid white;
+    box-shadow: 0 0 0 2px #667eea;
+}
+
+.roadmap-dot.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.roadmap-dot.inactive {
+    background: #e2e8f0;
+    box-shadow: none;
+}
+
+.roadmap-content {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.roadmap-content.inactive {
+    border-left-color: #cbd5e0;
+}
 
         /* Modal Styles */
         .modal {
@@ -1302,6 +1428,10 @@
                 <span class="nav-icon">🤝</span>
                 <span>P2P Trading</span>
             </div>
+            <div class="nav-item" data-page="susupay-coin">
+    <span class="nav-icon">🪙</span>
+    <span>SusuPay Coin</span>
+</div>
             <div class="nav-item" data-page="payment-methods">
                 <span class="nav-icon">💳</span>
                 <span>Payment Methods</span>
@@ -1494,6 +1624,234 @@
                 </div>
             </div>
         </div>
+        <!-- SusuPay Coin Page -->
+<div id="susupay-coin-page" class="page-content hidden">
+    <h2 style="margin-bottom: 20px; color: #ffffff;">SusuPay Coin (SUSPY)</h2>
+    
+    <!-- Hero Section -->
+    <div class="card coin-hero">
+        <div class="coin-hero-content">
+            <div style="font-size: 5rem; margin-bottom: 20px; animation: pulse 2s infinite;">🪙</div>
+            <h1 style="font-size: 3rem; margin-bottom: 15px; font-weight: 800; text-shadow: 0 4px 6px rgba(0,0,0,0.3);">SusuPay Coin</h1>
+            <p style="font-size: 1.5rem; margin-bottom: 10px; font-weight: 600;">SUSPY</p>
+            <p style="font-size: 1.1rem; opacity: 0.95; max-width: 600px; margin: 0 auto 30px; line-height: 1.6;">
+                The Future of Decentralized Savings & Trading Platform
+            </p>
+            <div class="coin-badge">
+                <span style="font-size: 0.9rem; opacity: 0.9;">🚀 Coming Soon - Early Access for SusuPay Users!</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Token Stats Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; margin-top: 30px;">
+        <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 2.5rem;">💎</span>
+                <div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Total Supply</div>
+                    <h3 style="color: white; margin: 5px 0;">500,000,000</h3>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">SUSPY Tokens</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border: none;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 2.5rem;">📊</span>
+                <div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Market Cap</div>
+                    <h3 style="color: white; margin: 5px 0;">TBA</h3>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">To Be Announced</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; border: none;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 2.5rem;">🏦</span>
+                <div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Exchanges</div>
+                    <h3 style="color: white; margin: 5px 0;">TBA</h3>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Listing Soon</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contract & Network Info -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">📝</span>
+            Contract & Network Information
+        </h3>
+        
+        <div style="display: grid; gap: 15px;">
+            <div class="contract-info-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong style="color: #4a5568;">Contract Address:</strong>
+                    <span class="status-badge">🔜 Coming Soon</span>
+                </div>
+                <div style="background: white; padding: 15px; border-radius: 8px; font-family: monospace; color: #718096; text-align: center; border: 2px dashed #cbd5e0;">
+                    Contract will be published before launch
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #4299e1;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong style="color: #4a5568;">Testnet:</strong>
+                    <span class="status-badge tba">TBA</span>
+                </div>
+                <p style="color: #2c5282; font-size: 0.95rem; margin: 0;">
+                    Testnet deployment details will be announced
+                </p>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #f39c12;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong style="color: #4a5568;">Mainnet:</strong>
+                    <span class="status-badge tba">TBA</span>
+                </div>
+                <p style="color: #744210; font-size: 0.95rem; margin: 0;">
+                    Mainnet launch date to be announced
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Eligibility & Benefits -->
+    <div class="card" style="background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%); border: 2px solid #f6e05e;">
+        <h3 style="margin-bottom: 20px; color: #744210; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">🎯</span>
+            Eligibility Criteria
+        </h3>
+        
+        <div style="background: white; padding: 25px; border-radius: 12px; margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">⏳</div>
+                <h4 style="color: #744210; margin-bottom: 10px;">Criteria Coming Soon</h4>
+                <p style="color: #718096; line-height: 1.6;">
+                    We're finalizing the eligibility requirements for early access to SusuPay Coin. 
+                    Active SusuPay platform users will receive priority access!
+                </p>
+            </div>
+            
+            <div style="background: #fef5e7; padding: 20px; border-radius: 10px; border-left: 4px solid #f39c12;">
+                <p style="color: #744210; margin: 0; font-weight: 600; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">💡</span>
+                    <span>Stay active on the platform to qualify for early access benefits!</span>
+                </p>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); padding: 20px; border-radius: 12px;">
+            <h4 style="color: #2c5282; margin-bottom: 15px;">🌟 Potential Benefits for Early Users:</h4>
+            <ul style="color: #2c5282; line-height: 2; margin-left: 20px;">
+                <li>Exclusive early access to SUSPY token sale</li>
+                <li>Bonus tokens for active SusuPay users</li>
+                <li>Lower trading fees on the platform</li>
+                <li>VIP staking rewards</li>
+                <li>Governance voting rights</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Roadmap -->
+    <div class="card">
+        <h3 style="margin-bottom: 25px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 1.5rem;">🗺️</span>
+            Development Roadmap
+        </h3>
+        
+        <div class="roadmap-timeline">
+            <div class="roadmap-line"></div>
+            
+            <!-- Phase 1 -->
+            <div class="roadmap-item">
+                <div class="roadmap-dot active"></div>
+                <div class="roadmap-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="color: #667eea; margin: 0;">Phase 1: Planning & Development</h4>
+                        <span class="status-badge progress">In Progress</span>
+                    </div>
+                    <p style="color: #718096; margin: 10px 0 0 0; line-height: 1.6;">
+                        Smart contract development, security audits, and platform integration
+                    </p>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="roadmap-item">
+                <div class="roadmap-dot inactive"></div>
+                <div class="roadmap-content inactive">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="color: #4a5568; margin: 0;">Phase 2: Testnet Launch</h4>
+                        <span class="status-badge">Upcoming</span>
+                    </div>
+                    <p style="color: #718096; margin: 10px 0 0 0; line-height: 1.6;">
+                        Community testing, feedback collection, and platform optimization
+                    </p>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="roadmap-item">
+                <div class="roadmap-dot inactive"></div>
+                <div class="roadmap-content inactive">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="color: #4a5568; margin: 0;">Phase 3: Mainnet & Exchange Listing</h4>
+                        <span class="status-badge">Upcoming</span>
+                    </div>
+                    <p style="color: #718096; margin: 10px 0 0 0; line-height: 1.6;">
+                        Official mainnet launch and listing on major exchanges
+                    </p>
+                </div>
+            </div>
+
+            <!-- Phase 4 -->
+            <div class="roadmap-item">
+                <div class="roadmap-dot inactive"></div>
+                <div class="roadmap-content inactive">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="color: #4a5568; margin: 0;">Phase 4: Advanced Features</h4>
+                        <span class="status-badge">Upcoming</span>
+                    </div>
+                    <p style="color: #718096; margin: 10px 0 0 0; line-height: 1.6;">
+                        Staking pools, governance DAO, and DeFi integrations
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stay Updated -->
+    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 20px;">🔔</div>
+        <h3 style="color: white; margin-bottom: 15px;">Stay Updated!</h3>
+        <p style="opacity: 0.95; margin-bottom: 25px; line-height: 1.6;">
+            As a registered SusuPay user, you'll receive priority notifications about SUSPY token launch, 
+            eligibility criteria, and early access opportunities.
+        </p>
+        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+            <p style="font-weight: 600; margin-bottom: 10px;">🎁 Early Access Advantage</p>
+            <p style="opacity: 0.95; font-size: 0.95rem; line-height: 1.6;">
+                Active users will receive exclusive benefits including bonus tokens, 
+                reduced fees, and priority access to new features. Keep using SusuPay 
+                to maximize your eligibility!
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer Note -->
+    <div style="background: #f7fafc; padding: 20px; border-radius: 12px; border-left: 4px solid #4299e1; text-align: center;">
+        <p style="color: #2c5282; margin: 0; font-weight: 600;">
+            📧 Questions? Contact us at <a href="mailto:fullword17@gmail.com" style="color: #667eea; text-decoration: none;">fullword17@gmail.com</a>
+        </p>
+        <p style="color: #718096; margin: 10px 0 0 0; font-size: 0.9rem;">
+            Thank you for being part of the SusuPay revolution! 🚀
+        </p>
+    </div>
+</div>
 
         <!-- Contributions Page -->
         <div id="contributions-page" class="page-content hidden">
