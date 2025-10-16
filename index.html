@@ -1376,13 +1376,20 @@
                 <span style="font-size: 1.5rem;">🔔</span>
                 <span class="badge-count hidden" id="notification-count">0</span>
             </div>
+
             <div>
                 <div id="user-name" style="font-weight: 600; color: #4a5568;"></div>
                 <div id="user-email" style="font-size: 0.8rem; color: #718096;"></div>
             </div>
-            <button class="btn" id="logout-btn" style="width: auto; padding: 8px 20px; font-size: 0.9rem; background: #e53e3e;">Logout</button>
-        </div>
+            </div>
+          <div id="session-timer" style="display: none; color: #718096; font-size: 0.85rem; margin-right: 15px;">
+    <span style="margin-right: 5px;">⏱️</span>
+    <span id="timer-display">5:00</span>
+</div>
         
+            <button class="btn" id="logout-btn" style="width: auto; padding: 8px 20px; font-size: 0.9rem; background: #e53e3e;">Logout</button>
+           
+       
         <div class="notification-tooltip" id="notification-tooltip">
             <div class="notification-header">
                 <h3 style="color: #4a5568; font-size: 1rem; margin: 0;">Notifications</h3>
@@ -2839,6 +2846,120 @@ function base64ToArrayBuffer(base64) {
             });
         }
         initParticles();
+        // Automatic Logout Timer
+let inactivityTimer;
+let lastActivityTime = Date.now();
+const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+function resetInactivityTimer() {
+    lastActivityTime = Date.now();
+    
+    // Clear existing timer
+    if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+    }
+    
+    // Set new timer
+    inactivityTimer = setTimeout(() => {
+        handleInactivityLogout();
+    }, INACTIVITY_TIMEOUT);
+}
+
+async function handleInactivityLogout() {
+    if (!currentUser) return;
+    
+    try {
+        // Show warning notification
+        showAlert('You have been logged out due to inactivity', 'info', 'auth-alert');
+        
+        // Log the auto-logout event
+        await addDoc(collection(db, 'activity_logs'), {
+            userId: currentUser.uid,
+            action: 'auto_logout',
+            reason: 'inactivity',
+            timestamp: serverTimestamp()
+        });
+        
+        // Sign out the user
+        await signOut(auth);
+        
+        console.log('User logged out due to inactivity');
+    } catch (error) {
+        console.error('Auto-logout error:', error);
+    }
+}
+
+function startInactivityMonitoring() {
+    // List of events that indicate user activity
+    const activityEvents = [
+        'mousedown',
+        'mousemove',
+        'keypress',
+        'scroll',
+        'touchstart',
+        'click',
+        'keydown'
+    ];
+    
+    // Add event listeners for all activity events
+    activityEvents.forEach(event => {
+        document.addEventListener(event, resetInactivityTimer, true);
+    });
+    
+    // Start the initial timer
+    resetInactivityTimer();
+    
+    console.log('✅ Inactivity monitoring started (5 minute timeout)');
+}
+
+function stopInactivityMonitoring() {
+    // Clear the timer
+    if (inactivityTimer) {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = null;
+    }
+    
+    // Remove event listeners
+    const activityEvents = [
+        'mousedown',
+        'mousemove',
+        'keypress',
+        'scroll',
+        'touchstart',
+        'click',
+        'keydown'
+    ];
+    
+    activityEvents.forEach(event => {
+        document.removeEventListener(event, resetInactivityTimer, true);
+    });
+    
+    console.log('Inactivity monitoring stopped');
+}
+
+// Visual countdown warning (optional - shows warning 1 minute before logout)
+let warningShown = false;
+
+function checkInactivityWarning() {
+    if (!currentUser) return;
+    
+    const timeSinceLastActivity = Date.now() - lastActivityTime;
+    const timeRemaining = INACTIVITY_TIMEOUT - timeSinceLastActivity;
+    
+    // Show warning 1 minute before logout
+    if (timeRemaining <= 60000 && timeRemaining > 0 && !warningShown) {
+        warningShown = true;
+        showAlert('⚠️ You will be logged out in 1 minute due to inactivity', 'info');
+        
+        // Reset warning flag after 60 seconds
+        setTimeout(() => {
+            warningShown = false;
+        }, 60000);
+    }
+}
+
+// Check for warning every 10 seconds
+setInterval(checkInactivityWarning, 10000);
 
         // Referral Code URL Handler
         window.addEventListener('DOMContentLoaded', () => {
@@ -3411,15 +3532,17 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
             }
         });
 
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                showAlert('Logged out successfully!', 'success', 'auth-alert');
-            } catch (error) {
-                showAlert(error.message, 'error');
-            }
-        });
+       document.getElementById('logout-btn').addEventListener('click', async () => {
+    try {
+        // Stop inactivity monitoring
+        stopInactivityMonitoring();
+        
+        await signOut(auth);
+        showAlert('Logged out successfully!', 'success', 'auth-alert');
+    } catch (error) {
+        showAlert(error.message, 'error');
+    }
+});
 
         // Auth State Observer
         onAuthStateChanged(auth, async (user) => {
@@ -3508,21 +3631,27 @@ async function ensureReferralCode() {
 }
 
         function showAuth() {
-            document.getElementById('auth-wrapper').classList.remove('hidden');
-            document.getElementById('app-header').classList.add('hidden');
-            document.getElementById('sidebar').classList.add('hidden');
-            document.getElementById('main-content').classList.add('hidden');
-        }
+    document.getElementById('auth-wrapper').classList.remove('hidden');
+    document.getElementById('app-header').classList.add('hidden');
+    document.getElementById('sidebar').classList.add('hidden');
+    document.getElementById('main-content').classList.add('hidden');
+    
+    // Stop inactivity monitoring when user is logged out
+    stopInactivityMonitoring();
+}
 
-        function showDashboard() {
-            document.getElementById('auth-wrapper').classList.add('hidden');
-            document.getElementById('app-header').classList.remove('hidden');
-            document.getElementById('sidebar').classList.remove('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            
-            document.getElementById('user-name').innerHTML = `${userData.firstName} ${userData.surname} ${getVIPBadgeHTML(userData.vipLevel)}`;
-            document.getElementById('user-email').textContent = userData.email;
-        }
+       function showDashboard() {
+    document.getElementById('auth-wrapper').classList.add('hidden');
+    document.getElementById('app-header').classList.remove('hidden');
+    document.getElementById('sidebar').classList.remove('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
+    
+    document.getElementById('user-name').innerHTML = `${userData.firstName} ${userData.surname} ${getVIPBadgeHTML(userData.vipLevel)}`;
+    document.getElementById('user-email').textContent = userData.email;
+    
+    // Start inactivity monitoring when user enters dashboard
+    startInactivityMonitoring();
+}
 
         function updateDashboard() {
             document.getElementById('total-balance').textContent = formatCurrency(userData.balance || 0);
@@ -4911,6 +5040,41 @@ document.getElementById('delete-account-form')?.addEventListener('submit', async
                 mediaStream.getTracks().forEach(track => track.stop());
             }
         });
+        // Optional: Visual timer display
+function updateTimerDisplay() {
+    if (!currentUser) return;
+    
+    const timerDisplay = document.getElementById('timer-display');
+    const sessionTimer = document.getElementById('session-timer');
+    
+    if (!timerDisplay || !sessionTimer) return;
+    
+    const timeSinceLastActivity = Date.now() - lastActivityTime;
+    const timeRemaining = Math.max(0, INACTIVITY_TIMEOUT - timeSinceLastActivity);
+    
+    const minutes = Math.floor(timeRemaining / 60000);
+    const seconds = Math.floor((timeRemaining % 60000) / 1000);
+    
+    timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Show timer only when less than 2 minutes remaining
+    if (timeRemaining <= 120000 && timeRemaining > 0) {
+        sessionTimer.style.display = 'flex';
+        sessionTimer.style.alignItems = 'center';
+        
+        // Change color based on time remaining
+        if (timeRemaining <= 60000) {
+            timerDisplay.style.color = '#e53e3e'; // Red
+        } else {
+            timerDisplay.style.color = '#f6cc33'; // Yellow
+        }
+    } else {
+        sessionTimer.style.display = 'none';
+    }
+}
+
+// Update timer display every second
+setInterval(updateTimerDisplay, 1000);
 
         console.log('SusuPay Enhanced System Initialized - All Features Loaded ✅');
         // Debug: Check if pages exist
