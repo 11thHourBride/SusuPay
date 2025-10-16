@@ -2500,95 +2500,144 @@
         }
 
         async function registerBiometric() {
-            try {
-                const challenge = new Uint8Array(32);
-                crypto.getRandomValues(challenge);
-                
-                const publicKeyCredentialCreationOptions = {
-                    challenge: challenge,
-                    rp: {
-                        name: "SusuPay",
-                        id: window.location.hostname
-                    },
-                    user: {
-                        id: new Uint8Array(16),
-                        name: userData.email,
-                        displayName: `${userData.firstName} ${userData.surname}`
-                    },
-                    pubKeyCredParams: [{alg: -7, type: "public-key"}],
-                    authenticatorSelection: {
-                        authenticatorAttachment: "platform",
-                        userVerification: "required"
-                    },
-                    timeout: 60000,
-                    attestation: "direct"
-                };
+    try {
+        // Generate a proper challenge
+        const challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        
+        // Generate proper user ID
+        const userId = new Uint8Array(16);
+        crypto.getRandomValues(userId);
+        
+        const publicKeyCredentialCreationOptions = {
+            challenge: challenge,
+            rp: {
+                name: "SusuPay",
+                id: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname
+            },
+            user: {
+                id: userId,
+                name: userData.email,
+                displayName: `${userData.firstName} ${userData.surname}`
+            },
+            pubKeyCredParams: [
+                { alg: -7, type: "public-key" },  // ES256
+                { alg: -257, type: "public-key" } // RS256
+            ],
+            authenticatorSelection: {
+                authenticatorAttachment: "platform",
+                requireResidentKey: true,
+                residentKey: "required",
+                userVerification: "required"
+            },
+            timeout: 60000,
+            attestation: "none"
+        };
 
-                const credential = await navigator.credentials.create({
-                    publicKey: publicKeyCredentialCreationOptions
-                });
+        console.log('Creating credential with options:', publicKeyCredentialCreationOptions);
 
-                const credentialId = btoa(String.fromCharCode(...new Uint8Array(credential.rawId)));
-                
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    biometricCredentialId: credentialId,
-                    biometricEnabled: true
-                });
+        const credential = await navigator.credentials.create({
+            publicKey: publicKeyCredentialCreationOptions
+        });
 
-                userData.biometricEnabled = true;
-                userData.biometricCredentialId = credentialId;
+        console.log('Credential created successfully:', credential);
 
-                return true;
-            } catch (error) {
-                console.error('Biometric registration error:', error);
-                throw error;
+        // Store credential data
+        const credentialData = {
+            id: credential.id,
+            rawId: arrayBufferToBase64(credential.rawId),
+            type: credential.type,
+            response: {
+                clientDataJSON: arrayBufferToBase64(credential.response.clientDataJSON),
+                attestationObject: arrayBufferToBase64(credential.response.attestationObject)
             }
+        };
+        
+        // Save to Firestore
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+            biometricCredential: credentialData,
+            biometricEnabled: true,
+            biometricUserId: arrayBufferToBase64(userId)
+        });
+
+        userData.biometricEnabled = true;
+        userData.biometricCredential = credentialData;
+        userData.biometricUserId = arrayBufferToBase64(userId);
+
+        console.log('✅ Biometric registered successfully');
+        return true;
+    } catch (error) {
+        console.error('❌ Biometric registration error:', error);
+        if (error.name === 'NotAllowedError') {
+            throw new Error('Biometric registration was cancelled or not allowed');
+        } else if (error.name === 'NotSupportedError') {
+            throw new Error('Your device does not support biometric authentication');
+        } else {
+            throw new Error(`Registration failed: ${error.message}`);
+        }
+    }
+}
+
+// Helper function to convert ArrayBuffer to Base64
+function arrayBufferToBase64(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+// Helper function to convert Base64 to ArrayBuffer
+function base64ToArrayBuffer(base64) {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes.buffer;
+}
+
+       async function authenticateWithBiometric() {
+    try {
+        // Check if user has biometric enabled
+        if (!userData.biometricEnabled || !userData.biometricCredential) {
+            throw new Error('Biometric authentication not set up');
         }
 
-        async function authenticateWithBiometric() {
-            try {
-                const challenge = new Uint8Array(32);
-                crypto.getRandomValues(challenge);
-                
-                const publicKeyCredentialRequestOptions = {
-                    challenge: challenge,
-                    timeout: 60000,
-                    userVerification: "required"
-                };
+        const challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        
+        const publicKeyCredentialRequestOptions = {
+            challenge: challenge,
+            allowCredentials: [{
+                id: base64ToArrayBuffer(userData.biometricCredential.rawId),
+                type: 'public-key',
+                transports: ['internal']
+            }],
+            timeout: 60000,
+            userVerification: "required",
+            rpId: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname
+        };
 
-                const assertion = await navigator.credentials.get({
-                    publicKey: publicKeyCredentialRequestOptions
-                });
+        console.log('Requesting authentication with options:', publicKeyCredentialRequestOptions);
 
-                return assertion !== null;
-            } catch (error) {
-                console.error('Biometric authentication error:', error);
-                return false;
-            }
+        const assertion = await navigator.credentials.get({
+            publicKey: publicKeyCredentialRequestOptions
+        });
+
+        console.log('✅ Authentication successful:', assertion);
+        return assertion !== null;
+    } catch (error) {
+        console.error('❌ Biometric authentication error:', error);
+        if (error.name === 'NotAllowedError') {
+            console.error('User cancelled or timeout occurred');
+        } else if (error.name === 'InvalidStateError') {
+            console.error('No matching credentials found');
         }
-
-        async function signInWithBiometric() {
-            try {
-                const storedEmail = localStorage.getItem('biometric_email');
-                if (!storedEmail) {
-                    showAlert('Please sign in with password first to enable biometric login', 'error', 'auth-alert');
-                    return;
-                }
-
-                const authenticated = await authenticateWithBiometric();
-                if (authenticated) {
-                    const password = localStorage.getItem('biometric_temp_pass');
-                    if (password) {
-                        await signInWithEmailAndPassword(auth, storedEmail, atob(password));
-                        showAlert('Biometric sign in successful!', 'success', 'auth-alert');
-                    }
-                } else {
-                    showAlert('Biometric authentication failed', 'error', 'auth-alert');
-                }
-            } catch (error) {
-                showAlert(error.message, 'error', 'auth-alert');
-            }
-        }
+        return false;
+    }
+}
 
         async function updateBiometricStatus() {
             const statusDisplay = document.getElementById('biometric-status-display');
@@ -3012,30 +3061,34 @@
         });
 
         // Sign In
-        document.getElementById('signin-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('signin-email').value;
-            const password = document.getElementById('signin-password').value;
+       document.getElementById('signin-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signin-email').value;
+    const password = document.getElementById('signin-password').value;
 
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                if (!userCredential.user.emailVerified) {
-                    showAlert('Please verify your email first.', 'error', 'auth-alert');
-                    await signOut(auth);
-                    return;
-                }
-                
-                const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-                if (userDoc.exists() && userDoc.data().biometricEnabled) {
-                    localStorage.setItem('biometric_email', email);
-                    localStorage.setItem('biometric_temp_pass', btoa(password));
-                }
-                
-                showAlert('Sign in successful!', 'success', 'auth-alert');
-            } catch (error) {
-                showAlert(error.message, 'error', 'auth-alert');
-            }
-        });
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        if (!userCredential.user.emailVerified) {
+            showAlert('Please verify your email first.', 'error', 'auth-alert');
+            await signOut(auth);
+            return;
+        }
+        
+        const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+        if (userDoc.exists() && userDoc.data().biometricEnabled) {
+            // Store credential data for biometric sign-in
+            localStorage.setItem('biometric_email', email);
+            localStorage.setItem('biometric_credential', JSON.stringify(userDoc.data().biometricCredential));
+            localStorage.setItem('biometric_temp_pass', btoa(password));
+        }
+        
+        showAlert('Sign in successful!', 'success', 'auth-alert');
+    } catch (error) {
+        showAlert(error.message, 'error', 'auth-alert');
+    }
+});
+
+        // Sign Up
 document.getElementById('signup-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const firstName = document.getElementById('first-name').value;
@@ -3245,27 +3298,97 @@ document.getElementById('signup-form').addEventListener('submit', async (e) => {
 
         // Biometric Sign-In
         document.getElementById('biometric-signin-btn')?.addEventListener('click', signInWithBiometric);
+        async function signInWithBiometric() {
+    try {
+        // Check if biometric is available
+        const supported = await checkBiometricSupport();
+        if (!supported) {
+            showAlert('Biometric authentication not supported on this device', 'error', 'auth-alert');
+            return;
+        }
+
+        const storedEmail = localStorage.getItem('biometric_email');
+        const storedCredential = localStorage.getItem('biometric_credential');
+        
+        if (!storedEmail || !storedCredential) {
+            showAlert('Please sign in with password first to set up biometric login', 'error', 'auth-alert');
+            return;
+        }
+
+        // Parse stored credential
+        const credentialData = JSON.parse(storedCredential);
+        
+        const challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        
+        const publicKeyCredentialRequestOptions = {
+            challenge: challenge,
+            allowCredentials: [{
+                id: base64ToArrayBuffer(credentialData.rawId),
+                type: 'public-key',
+                transports: ['internal']
+            }],
+            timeout: 60000,
+            userVerification: "required",
+            rpId: window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname
+        };
+
+        const assertion = await navigator.credentials.get({
+            publicKey: publicKeyCredentialRequestOptions
+        });
+
+        if (assertion) {
+            // Biometric authentication successful, now sign in
+            const password = localStorage.getItem('biometric_temp_pass');
+            if (password) {
+                await signInWithEmailAndPassword(auth, storedEmail, atob(password));
+                showAlert('Biometric sign in successful!', 'success', 'auth-alert');
+            } else {
+                showAlert('Password not found. Please sign in normally.', 'error', 'auth-alert');
+            }
+        } else {
+            showAlert('Biometric authentication failed', 'error', 'auth-alert');
+        }
+    } catch (error) {
+        console.error('Biometric sign-in error:', error);
+        if (error.name === 'NotAllowedError') {
+            showAlert('Biometric authentication was cancelled', 'error', 'auth-alert');
+        } else {
+            showAlert('Biometric authentication failed: ' + error.message, 'error', 'auth-alert');
+        }
+    }
+}
 
         // Setup Biometric
-        document.getElementById('setup-biometric-btn')?.addEventListener('click', async () => {
-            try {
-                document.getElementById('setup-biometric-btn').disabled = true;
-                document.getElementById('setup-biometric-btn').textContent = 'Setting up...';
-                
-                await registerBiometric();
-                
-                localStorage.setItem('biometric_email', userData.email);
-                localStorage.setItem('biometric_temp_pass', btoa(userData.withdrawalPassword));
-                
-                showAlert('Fingerprint authentication enabled successfully!', 'success');
-                updateBiometricStatus();
-            } catch (error) {
-                showAlert('Failed to set up fingerprint: ' + error.message, 'error');
-            } finally {
-                document.getElementById('setup-biometric-btn').disabled = false;
-                document.getElementById('setup-biometric-btn').innerHTML = '<span style="font-size: 1.2rem; margin-right: 8px;">👆</span>Set Up Fingerprint Authentication';
-            }
-        });
+       document.getElementById('setup-biometric-btn')?.addEventListener('click', async () => {
+    try {
+        // Check support first
+        const supported = await checkBiometricSupport();
+        if (!supported) {
+            showAlert('Biometric authentication is not supported on your device', 'error');
+            return;
+        }
+
+        document.getElementById('setup-biometric-btn').disabled = true;
+        document.getElementById('setup-biometric-btn').textContent = 'Setting up...';
+        
+        await registerBiometric();
+        
+        // Store credential for sign-in
+        localStorage.setItem('biometric_email', userData.email);
+        localStorage.setItem('biometric_credential', JSON.stringify(userData.biometricCredential));
+        localStorage.setItem('biometric_temp_pass', btoa(userData.withdrawalPassword));
+        
+        showAlert('Fingerprint authentication enabled successfully! You can now use it to sign in and authorize withdrawals.', 'success');
+        updateBiometricStatus();
+    } catch (error) {
+        console.error('Setup error:', error);
+        showAlert('Failed to set up fingerprint: ' + error.message, 'error');
+    } finally {
+        document.getElementById('setup-biometric-btn').disabled = false;
+        document.getElementById('setup-biometric-btn').innerHTML = '<span style="font-size: 1.2rem; margin-right: 8px;">👆</span>Set Up Fingerprint Authentication';
+    }
+});
 
         // Remove Biometric
         document.getElementById('remove-biometric-btn')?.addEventListener('click', async () => {
@@ -3929,27 +4052,44 @@ async function ensureReferralCode() {
         });
 
         // Authenticate Fingerprint for Withdrawal
-        document.getElementById('authenticate-fingerprint-btn')?.addEventListener('click', async () => {
-            try {
-                const authenticated = await authenticateWithBiometric();
-                if (authenticated) {
-                    biometricAuthenticated = true;
-                    const statusDiv = document.createElement('div');
-                    statusDiv.className = 'biometric-status enabled';
-                    statusDiv.innerHTML = `
-                        <span style="font-size: 1.5rem;">✅</span>
-                        <span>Fingerprint authenticated successfully</span>
-                    `;
-                    document.getElementById('fingerprint-auth-container').appendChild(statusDiv);
-                    showAlert('Fingerprint authenticated!', 'success');
-                } else {
-                    showAlert('Fingerprint authentication failed', 'error');
-                }
-            } catch (error) {
-                showAlert('Authentication error: ' + error.message, 'error');
-            }
-        });
+       document.getElementById('authenticate-fingerprint-btn')?.addEventListener('click', async () => {
+    try {
+        if (!userData.biometricEnabled) {
+            showAlert('Please set up fingerprint authentication in Settings first', 'error');
+            return;
+        }
 
+        document.getElementById('authenticate-fingerprint-btn').disabled = true;
+        document.getElementById('authenticate-fingerprint-btn').innerHTML = '<span style="font-size: 1.5rem;">⏳</span> Authenticating...';
+
+        const authenticated = await authenticateWithBiometric();
+        
+        if (authenticated) {
+            biometricAuthenticated = true;
+            
+            // Update UI to show success
+            const fingerprintStatus = document.getElementById('fingerprint-status');
+            fingerprintStatus.classList.remove('disabled');
+            fingerprintStatus.classList.add('enabled');
+            fingerprintStatus.innerHTML = `
+                <span style="font-size: 1.5rem;">✅</span>
+                <span>Fingerprint authenticated successfully</span>
+            `;
+            
+            document.getElementById('authenticate-fingerprint-btn').style.display = 'none';
+            showAlert('Fingerprint authenticated successfully!', 'success');
+        } else {
+            throw new Error('Authentication failed');
+        }
+    } catch (error) {
+        console.error('Authentication error:', error);
+        showAlert('Fingerprint authentication failed: ' + error.message, 'error');
+        biometricAuthenticated = false;
+    } finally {
+        document.getElementById('authenticate-fingerprint-btn').disabled = false;
+        document.getElementById('authenticate-fingerprint-btn').innerHTML = '<span style="font-size: 1.5rem;">👆</span> Authenticate with Fingerprint';
+    }
+});
         document.getElementById('process-withdrawal-btn').addEventListener('click', async () => {
             const monthKey = document.getElementById('withdrawal-month').value;
             const amount = parseFloat(document.getElementById('withdrawal-amount').value);
