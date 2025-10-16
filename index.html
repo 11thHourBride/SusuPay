@@ -2859,16 +2859,27 @@ function resetInactivityTimer() {
         clearTimeout(inactivityTimer);
     }
     
+    // Only set timer if user is logged in
+    if (!currentUser) return;
+    
     // Set new timer
     inactivityTimer = setTimeout(() => {
         handleInactivityLogout();
     }, INACTIVITY_TIMEOUT);
+    
+    // Update display immediately
+    updateTimerDisplay();
 }
 
 async function handleInactivityLogout() {
     if (!currentUser) return;
     
+    console.log('⏰ Inactivity timeout reached - logging out user');
+    
     try {
+        // Stop monitoring immediately
+        stopInactivityMonitoring();
+        
         // Show warning notification
         showAlert('You have been logged out due to inactivity', 'info', 'auth-alert');
         
@@ -2883,27 +2894,49 @@ async function handleInactivityLogout() {
         // Sign out the user
         await signOut(auth);
         
-        console.log('User logged out due to inactivity');
+        console.log('✅ User logged out due to inactivity');
     } catch (error) {
-        console.error('Auto-logout error:', error);
+        console.error('❌ Auto-logout error:', error);
+        // Force logout even if logging fails
+        try {
+            await signOut(auth);
+        } catch (e) {
+            console.error('Force logout failed:', e);
+        }
     }
 }
 
 function startInactivityMonitoring() {
+    // Clear any existing monitoring first
+    stopInactivityMonitoring();
+    
+    // Throttle mouse/touch events to reduce sensitivity
+    let mouseMoveTimeout;
+    const throttledMouseMove = () => {
+        if (mouseMoveTimeout) return;
+        mouseMoveTimeout = setTimeout(() => {
+            resetInactivityTimer();
+            mouseMoveTimeout = null;
+        }, 1000); // Only reset once per second for mouse moves
+    };
+    
     // List of events that indicate user activity
     const activityEvents = [
-        'mousedown',
-        'mousemove',
-        'keypress',
-        'scroll',
-        'touchstart',
-        'click',
-        'keydown'
+        { event: 'mousedown', handler: resetInactivityTimer },
+        { event: 'mousemove', handler: throttledMouseMove },
+        { event: 'keypress', handler: resetInactivityTimer },
+        { event: 'scroll', handler: resetInactivityTimer },
+        { event: 'touchstart', handler: resetInactivityTimer },
+        { event: 'click', handler: resetInactivityTimer },
+        { event: 'keydown', handler: resetInactivityTimer }
     ];
     
-    // Add event listeners for all activity events
-    activityEvents.forEach(event => {
-        document.addEventListener(event, resetInactivityTimer, true);
+    // Store handlers for cleanup
+    window.activityHandlers = activityEvents;
+    
+    // Add event listeners
+    activityEvents.forEach(({ event, handler }) => {
+        document.addEventListener(event, handler, true);
     });
     
     // Start the initial timer
@@ -2919,20 +2952,19 @@ function stopInactivityMonitoring() {
         inactivityTimer = null;
     }
     
-    // Remove event listeners
-    const activityEvents = [
-        'mousedown',
-        'mousemove',
-        'keypress',
-        'scroll',
-        'touchstart',
-        'click',
-        'keydown'
-    ];
+    // Remove all event listeners
+    if (window.activityHandlers) {
+        window.activityHandlers.forEach(({ event, handler }) => {
+            document.removeEventListener(event, handler, true);
+        });
+        window.activityHandlers = null;
+    }
     
-    activityEvents.forEach(event => {
-        document.removeEventListener(event, resetInactivityTimer, true);
-    });
+    // Hide timer display
+    const sessionTimer = document.getElementById('session-timer');
+    if (sessionTimer) {
+        sessionTimer.style.display = 'none';
+    }
     
     console.log('Inactivity monitoring stopped');
 }
@@ -3630,17 +3662,21 @@ async function ensureReferralCode() {
     }
 }
 
-        function showAuth() {
+     function showAuth() {
     document.getElementById('auth-wrapper').classList.remove('hidden');
     document.getElementById('app-header').classList.add('hidden');
     document.getElementById('sidebar').classList.add('hidden');
     document.getElementById('main-content').classList.add('hidden');
     
-    // Stop inactivity monitoring when user is logged out
+    // IMPORTANT: Stop inactivity monitoring when user is logged out
     stopInactivityMonitoring();
+    
+    // Reset variables
+    currentUser = null;
+    userData = null;
+    lastActivityTime = 0;
 }
-
-       function showDashboard() {
+     function showDashboard() {
     document.getElementById('auth-wrapper').classList.add('hidden');
     document.getElementById('app-header').classList.remove('hidden');
     document.getElementById('sidebar').classList.remove('hidden');
@@ -3649,10 +3685,9 @@ async function ensureReferralCode() {
     document.getElementById('user-name').innerHTML = `${userData.firstName} ${userData.surname} ${getVIPBadgeHTML(userData.vipLevel)}`;
     document.getElementById('user-email').textContent = userData.email;
     
-    // Start inactivity monitoring when user enters dashboard
+    // IMPORTANT: Start inactivity monitoring when user enters dashboard
     startInactivityMonitoring();
 }
-
         function updateDashboard() {
             document.getElementById('total-balance').textContent = formatCurrency(userData.balance || 0);
             document.getElementById('total-contributions').textContent = formatCurrency(userData.totalContributions || 0);
@@ -5042,7 +5077,11 @@ document.getElementById('delete-account-form')?.addEventListener('submit', async
         });
         // Optional: Visual timer display
 function updateTimerDisplay() {
-    if (!currentUser) return;
+    if (!currentUser) {
+        const sessionTimer = document.getElementById('session-timer');
+        if (sessionTimer) sessionTimer.style.display = 'none';
+        return;
+    }
     
     const timerDisplay = document.getElementById('timer-display');
     const sessionTimer = document.getElementById('session-timer');
@@ -5052,29 +5091,34 @@ function updateTimerDisplay() {
     const timeSinceLastActivity = Date.now() - lastActivityTime;
     const timeRemaining = Math.max(0, INACTIVITY_TIMEOUT - timeSinceLastActivity);
     
+    // If time expired, trigger logout
+    if (timeRemaining === 0) {
+        handleInactivityLogout();
+        return;
+    }
+    
     const minutes = Math.floor(timeRemaining / 60000);
     const seconds = Math.floor((timeRemaining % 60000) / 1000);
     
     timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     
     // Show timer only when less than 2 minutes remaining
-    if (timeRemaining <= 120000 && timeRemaining > 0) {
+    if (timeRemaining <= 120000) {
         sessionTimer.style.display = 'flex';
         sessionTimer.style.alignItems = 'center';
         
         // Change color based on time remaining
         if (timeRemaining <= 60000) {
             timerDisplay.style.color = '#e53e3e'; // Red
+            timerDisplay.style.fontWeight = 'bold';
         } else {
             timerDisplay.style.color = '#f6cc33'; // Yellow
+            timerDisplay.style.fontWeight = '600';
         }
     } else {
         sessionTimer.style.display = 'none';
     }
 }
-
-// Update timer display every second
-setInterval(updateTimerDisplay, 1000);
 
         console.log('SusuPay Enhanced System Initialized - All Features Loaded ✅');
         // Debug: Check if pages exist
