@@ -1413,17 +1413,29 @@
 .alert-item {
     padding: 15px 20px;
     background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%);
-    border-radius: 8px;
-    margin-bottom: 10px;
+    border-radius: 10px;
+    margin-bottom: 12px;
     border-left: 4px solid #f39c12;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    transition: all 0.3s ease;
+}
+
+.alert-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .alert-item.triggered {
     background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
     border-left-color: #48bb78;
+    animation: alertPulse 1s ease-in-out;
+}
+
+@keyframes alertPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
 }
 
 .alert-badge {
@@ -1433,6 +1445,28 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: #744210;
+    white-space: nowrap;
+}
+
+.alert-item.triggered .alert-badge {
+    color: #22543d;
+    background: #f0fff4;
+}
+
+.alert-delete-btn {
+    background: rgba(229, 62, 62, 0.1);
+    border: none;
+    color: #e53e3e;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.alert-delete-btn:hover {
+    background: #e53e3e;
+    color: white;
 }
     </style>
 </head>
@@ -1564,6 +1598,82 @@
             </div>
         </div>
     </div>
+    <!-- Rate Alert Modal -->
+<div class="modal" id="rate-alert-modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="close-btn" id="close-rate-alert">&times;</button>
+        <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🔔 Set Rate Alert</h2>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">📊</div>
+            <p style="color: #718096;">Get notified when exchange rate reaches your target</p>
+        </div>
+        
+        <form id="rate-alert-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="alert-from-currency">From Currency</label>
+                    <select id="alert-from-currency" required>
+                        <option value="GHS">🇬🇭 GHS</option>
+                        <option value="USD">🇺🇸 USD</option>
+                        <option value="EUR">🇪🇺 EUR</option>
+                        <option value="GBP">🇬🇧 GBP</option>
+                        <option value="NGN">🇳🇬 NGN</option>
+                        <option value="ZAR">🇿🇦 ZAR</option>
+                        <option value="KES">🇰🇪 KES</option>
+                        <option value="JPY">🇯🇵 JPY</option>
+                        <option value="CNY">🇨🇳 CNY</option>
+                        <option value="CAD">🇨🇦 CAD</option>
+                        <option value="AUD">🇦🇺 AUD</option>
+                        <option value="CHF">🇨🇭 CHF</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="alert-to-currency">To Currency</label>
+                    <select id="alert-to-currency" required>
+                        <option value="GHS">🇬🇭 GHS</option>
+                        <option value="USD" selected>🇺🇸 USD</option>
+                        <option value="EUR">🇪🇺 EUR</option>
+                        <option value="GBP">🇬🇧 GBP</option>
+                        <option value="NGN">🇳🇬 NGN</option>
+                        <option value="ZAR">🇿🇦 ZAR</option>
+                        <option value="KES">🇰🇪 KES</option>
+                        <option value="JPY">🇯🇵 JPY</option>
+                        <option value="CNY">🇨🇳 CNY</option>
+                        <option value="CAD">🇨🇦 CAD</option>
+                        <option value="AUD">🇦🇺 AUD</option>
+                        <option value="CHF">🇨🇭 CHF</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="alert-target-rate">Target Rate</label>
+                <input type="number" id="alert-target-rate" step="0.0001" required placeholder="e.g., 0.065">
+                <small style="color: #718096; display: block; margin-top: 5px;">
+                    Current rate: <span id="current-rate-display" style="font-weight: 600; color: #667eea;">-</span>
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label for="alert-condition">Alert Condition</label>
+                <select id="alert-condition" required>
+                    <option value="above">When rate goes above target ↗️</option>
+                    <option value="below">When rate goes below target ↘️</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: #f7fafc; border-radius: 8px;">
+                    <input type="checkbox" id="alert-email-notify" checked style="width: 18px; height: 18px;">
+                    <span style="color: #4a5568;">Send email notification when triggered</span>
+                </label>
+            </div>
+            
+            <button type="submit" class="btn">Create Alert</button>
+        </form>
+    </div>
+</div>
     <!-- Delete Account Modal -->
 <div class="modal" id="delete-account-modal">
     <div class="modal-content" style="max-width: 500px;">
@@ -2667,10 +2777,23 @@
 </div>
 <!-- Rate Alerts -->
 <div class="card" style="margin-bottom: 20px;">
-    <h3 style="margin-bottom: 15px; color: #4a5568;">🔔 Rate Alerts</h3>
-    <div id="rate-alerts-list" style="margin-bottom: 15px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #4a5568; margin: 0;">🔔 Rate Alerts</h3>
+        <span id="alert-count-badge" style="background: #667eea; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; display: none;">
+            0 Active
+        </span>
+    </div>
+    
+    <div style="background: #ebf8ff; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #3182ce;">
+        <p style="color: #2c5282; margin: 0; font-size: 0.9rem;">
+            💡 <strong>Pro Tip:</strong> Set alerts to get notified when rates reach your desired target. 
+            Perfect for planning international transfers or crypto purchases!
+        </p>
+    </div>
+    
+    <div id="rate-alerts-list">
         <div style="text-align: center; color: #718096; padding: 20px;">
-            No active alerts
+            No active alerts. Click "Set Rate Alert" to create one!
         </div>
     </div>
 </div>
@@ -5669,7 +5792,8 @@ function updateRateDisplay() {
     document.getElementById('rates-last-updated').textContent = lastRatesUpdate.toLocaleTimeString();
 }
 
-// Convert currency
+
+// Convert currency (ENHANCED VERSION)
 function convertCurrency() {
     const amountFrom = parseFloat(document.getElementById('amount-from').value) || 0;
     const currencyFrom = document.getElementById('currency-from').value;
@@ -5684,16 +5808,22 @@ function convertCurrency() {
     // Convert from source currency to GHS, then to target currency
     const amountInGHS = amountFrom / exchangeRates[currencyFrom];
     const amountTo = amountInGHS * exchangeRates[currencyTo];
+    const rate = exchangeRates[currencyTo] / exchangeRates[currencyFrom];
     
     // Update displays
     document.getElementById('amount-to').value = amountTo.toFixed(2);
     document.getElementById('conversion-result').textContent = 
         `${currencySymbols[currencyTo]}${amountTo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     
+    // Add to history (only if amount > 0 and user is logged in)
+    if (amountFrom > 0 && currentUser) {
+        addToHistory(currencyFrom, currencyTo, amountFrom, amountTo, rate);
+    }
+    
     console.log(`💱 Converted: ${amountFrom} ${currencyFrom} = ${amountTo.toFixed(2)} ${currencyTo}`);
 }
 
-// Initialize converter when page loads
+// Initialize converter when page loads (ENHANCED VERSION)
 function initConverter() {
     // Fetch rates immediately
     fetchExchangeRates();
@@ -5701,8 +5831,17 @@ function initConverter() {
     // Update rates every 60 seconds
     setInterval(fetchExchangeRates, 60000);
     
+    // Check alerts every 30 seconds
+    setInterval(checkTriggeredAlerts, 30000);
+    
+    // Load saved data
+    loadConverterData();
+    
     // Initial conversion
     convertCurrency();
+    
+    // Initialize chart
+    initRateChart();
     
     // Event listeners
     document.getElementById('amount-from').addEventListener('input', convertCurrency);
@@ -5749,7 +5888,7 @@ function initConverter() {
         });
     });
     
-    console.log('✅ Currency converter initialized');
+    console.log('✅ Currency converter initialized with extended features');
 }
 
 // Update navigation handler to include converter
@@ -5766,6 +5905,439 @@ originalNavigationCode.forEach(item => {
 });
 
 console.log('✅ Currency converter module loaded');
+// ==========================================
+// EXTENDED CONVERTER FEATURES - PART 3
+// ==========================================
+
+// Load saved data from localStorage
+function loadConverterData() {
+    if (!currentUser) return;
+    
+    const savedHistory = localStorage.getItem(`converter_history_${currentUser.uid}`);
+    const savedAlerts = localStorage.getItem(`converter_alerts_${currentUser.uid}`);
+    const savedFavorites = localStorage.getItem(`converter_favorites_${currentUser.uid}`);
+    
+    conversionHistory = savedHistory ? JSON.parse(savedHistory) : [];
+    rateAlerts = savedAlerts ? JSON.parse(savedAlerts) : [];
+    favorites = savedFavorites ? JSON.parse(savedFavorites) : [];
+    
+    renderConversionHistory();
+    renderRateAlerts();
+    renderFavorites();
+}
+
+// Save data to localStorage
+function saveConverterData() {
+    if (!currentUser) return;
+    
+    localStorage.setItem(`converter_history_${currentUser.uid}`, JSON.stringify(conversionHistory));
+    localStorage.setItem(`converter_alerts_${currentUser.uid}`, JSON.stringify(rateAlerts));
+    localStorage.setItem(`converter_favorites_${currentUser.uid}`, JSON.stringify(favorites));
+}
+
+// Add conversion to history
+function addToHistory(fromCurrency, toCurrency, fromAmount, toAmount, rate) {
+    const historyItem = {
+        id: Date.now(),
+        fromCurrency,
+        toCurrency,
+        fromAmount: parseFloat(fromAmount),
+        toAmount: parseFloat(toAmount),
+        rate: parseFloat(rate),
+        timestamp: new Date().toISOString()
+    };
+    
+    conversionHistory.unshift(historyItem);
+    
+    // Keep only last 50 conversions
+    if (conversionHistory.length > 50) {
+        conversionHistory = conversionHistory.slice(0, 50);
+    }
+    
+    saveConverterData();
+    renderConversionHistory();
+}
+
+// Render conversion history
+function renderConversionHistory() {
+    const container = document.getElementById('conversion-history-list');
+    
+    if (!container) return;
+    
+    if (conversionHistory.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: #718096; padding: 40px;">No conversion history yet</div>';
+        return;
+    }
+    
+    container.innerHTML = conversionHistory.map(item => {
+        const date = new Date(item.timestamp);
+        return `
+            <div class="history-item" onclick="replayConversion('${item.fromCurrency}', '${item.toCurrency}', ${item.fromAmount})">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <div style="font-weight: 600; color: #4a5568;">
+                        ${currencySymbols[item.fromCurrency]}${item.fromAmount.toLocaleString()} ${item.fromCurrency} → 
+                        ${currencySymbols[item.toCurrency]}${item.toAmount.toLocaleString()} ${item.toCurrency}
+                    </div>
+                    <button onclick="event.stopPropagation(); deleteHistoryItem(${item.id})" 
+                            style="background: none; border: none; color: #e53e3e; cursor: pointer; font-size: 1.2rem;">
+                        🗑️
+                    </button>
+                </div>
+                <div style="font-size: 0.85rem; color: #718096;">
+                    Rate: 1 ${item.fromCurrency} = ${item.rate.toFixed(6)} ${item.toCurrency} • 
+                    ${date.toLocaleDateString()} ${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Replay a conversion from history
+window.replayConversion = function(fromCurrency, toCurrency, amount) {
+    document.getElementById('currency-from').value = fromCurrency;
+    document.getElementById('currency-to').value = toCurrency;
+    document.getElementById('amount-from').value = amount;
+    convertCurrency();
+    
+    // Scroll to top smoothly
+    document.querySelector('.converter-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    showAlert('✅ Conversion replayed!', 'success');
+};
+
+// Delete history item
+window.deleteHistoryItem = function(id) {
+    if (confirm('Delete this conversion from history?')) {
+        conversionHistory = conversionHistory.filter(item => item.id !== id);
+        saveConverterData();
+        renderConversionHistory();
+        showAlert('History item deleted', 'success');
+    }
+};
+
+// Clear all history
+document.getElementById('clear-history-btn')?.addEventListener('click', () => {
+    if (confirm('Clear all conversion history? This cannot be undone.')) {
+        conversionHistory = [];
+        saveConverterData();
+        renderConversionHistory();
+        showAlert('✅ History cleared', 'success');
+    }
+});
+// ==========================================
+// FAVORITES MANAGEMENT
+// ==========================================
+
+function renderFavorites() {
+    const container = document.getElementById('favorites-list');
+    
+    if (!container) return;
+    
+    if (favorites.length === 0) {
+        container.innerHTML = '<div style="color: #718096; font-size: 0.9rem;">No favorites yet. Add your frequently used conversions!</div>';
+        return;
+    }
+    
+    container.innerHTML = favorites.map(fav => `
+        <div class="favorite-badge" onclick="applyFavorite('${fav.fromCurrency}', '${fav.toCurrency}')">
+            <span>${fav.fromCurrency} → ${fav.toCurrency}</span>
+            <span class="remove-favorite" onclick="event.stopPropagation(); removeFavorite('${fav.id}')">×</span>
+        </div>
+    `).join('');
+}
+
+// Apply favorite conversion
+window.applyFavorite = function(fromCurrency, toCurrency) {
+    document.getElementById('currency-from').value = fromCurrency;
+    document.getElementById('currency-to').value = toCurrency;
+    convertCurrency();
+    
+    showAlert(`✅ Applied ${fromCurrency} → ${toCurrency}`, 'success');
+    
+    // Scroll to converter
+    document.querySelector('.converter-card').scrollIntoView({ behavior: 'smooth' });
+};
+
+// Remove favorite
+window.removeFavorite = function(id) {
+    favorites = favorites.filter(fav => fav.id !== id);
+    saveConverterData();
+    renderFavorites();
+    showAlert('Favorite removed', 'info');
+};
+
+// Add current conversion to favorites
+document.getElementById('add-favorite-btn')?.addEventListener('click', () => {
+    const fromCurrency = document.getElementById('currency-from').value;
+    const toCurrency = document.getElementById('currency-to').value;
+    
+    // Check if already exists
+    const exists = favorites.some(fav => 
+        fav.fromCurrency === fromCurrency && fav.toCurrency === toCurrency
+    );
+    
+    if (exists) {
+        showAlert('⚠️ This conversion is already in favorites', 'info');
+        return;
+    }
+    
+    // Add new favorite
+    const newFavorite = {
+        id: Date.now().toString(),
+        fromCurrency,
+        toCurrency,
+        createdAt: new Date().toISOString()
+    };
+    
+    favorites.push(newFavorite);
+    
+    // Limit to 10 favorites
+    if (favorites.length > 10) {
+        favorites.shift(); // Remove oldest
+        showAlert('⚠️ Maximum 10 favorites. Oldest removed.', 'info');
+    }
+    
+    saveConverterData();
+    renderFavorites();
+    showAlert('⭐ Added to favorites!', 'success');
+});
+// ==========================================
+// RATE ALERTS SYSTEM
+// ==========================================
+
+function renderRateAlerts() {
+    const container = document.getElementById('rate-alerts-list');
+    const badge = document.getElementById('alert-count-badge');
+    
+    if (!container) return;
+    
+    if (rateAlerts.length === 0) {
+        container.innerHTML = '<div style="text-align: center; color: #718096; padding: 20px;">No active alerts. Click "Set Rate Alert" to create one!</div>';
+        if (badge) badge.style.display = 'none';
+        return;
+    }
+    
+    // Update badge
+    if (badge) {
+        badge.textContent = `${rateAlerts.length} Active`;
+        badge.style.display = 'inline-block';
+    }
+    
+    container.innerHTML = rateAlerts.map(alert => {
+        const currentRate = exchangeRates[alert.toCurrency] / exchangeRates[alert.fromCurrency];
+        const isTriggered = alert.triggered || 
+            (alert.condition === 'above' && currentRate >= alert.targetRate) ||
+            (alert.condition === 'below' && currentRate <= alert.targetRate);
+        
+        return `
+            <div class="alert-item ${isTriggered ? 'triggered' : ''}">
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; color: #4a5568; margin-bottom: 5px;">
+                        ${alert.fromCurrency} → ${alert.toCurrency}
+                    </div>
+                    <div style="font-size: 0.85rem; color: #718096;">
+                        Target: ${alert.condition === 'above' ? '↗️' : '↘️'} ${alert.targetRate.toFixed(6)} • 
+                        Current: ${currentRate.toFixed(6)}
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span class="alert-badge">
+                        ${isTriggered ? '✅ Triggered' : '⏳ Active'}
+                    </span>
+                    <button class="alert-delete-btn" onclick="deleteAlert('${alert.id}')">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    // Check for triggered alerts
+    checkTriggeredAlerts();
+}
+
+// Check and notify triggered alerts
+function checkTriggeredAlerts() {
+    rateAlerts.forEach(alert => {
+        if (alert.triggered) return; // Already notified
+        
+        const currentRate = exchangeRates[alert.toCurrency] / exchangeRates[alert.fromCurrency];
+        const triggered = 
+            (alert.condition === 'above' && currentRate >= alert.targetRate) ||
+            (alert.condition === 'below' && currentRate <= alert.targetRate);
+        
+        if (triggered) {
+            alert.triggered = true;
+            saveConverterData();
+            
+            // Show notification
+            showAlert(
+                `🔔 Rate Alert! ${alert.fromCurrency}/${alert.toCurrency} has reached your target of ${alert.targetRate.toFixed(6)}`,
+                'success'
+            );
+            
+            // Browser notification if supported
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('SusuPay Rate Alert', {
+                    body: `${alert.fromCurrency}/${alert.toCurrency} reached ${alert.targetRate.toFixed(6)}`,
+                    icon: '/favicon.ico'
+                });
+            }
+            
+            // Create in-app notification
+            if (currentUser) {
+                createNotification(
+                    'Rate Alert Triggered',
+                    `${alert.fromCurrency}/${alert.toCurrency} has reached your target rate of ${alert.targetRate.toFixed(6)}`,
+                    'info'
+                );
+            }
+        }
+    });
+}
+
+// Delete alert
+window.deleteAlert = function(id) {
+    if (confirm('Delete this rate alert?')) {
+        rateAlerts = rateAlerts.filter(alert => alert.id !== id);
+        saveConverterData();
+        renderRateAlerts();
+        showAlert('Alert deleted', 'success');
+    }
+};
+
+// Open rate alert modal
+document.getElementById('set-alert-btn')?.addEventListener('click', () => {
+    const modal = document.getElementById('rate-alert-modal');
+    if (!modal) return;
+    
+    // Pre-fill with current currencies
+    const fromCurrency = document.getElementById('currency-from').value;
+    const toCurrency = document.getElementById('currency-to').value;
+    
+    document.getElementById('alert-from-currency').value = fromCurrency;
+    document.getElementById('alert-to-currency').value = toCurrency;
+    
+    // Show current rate
+    const currentRate = exchangeRates[toCurrency] / exchangeRates[fromCurrency];
+    document.getElementById('current-rate-display').textContent = currentRate.toFixed(6);
+    document.getElementById('alert-target-rate').value = currentRate.toFixed(6);
+    
+    modal.style.display = 'block';
+});
+
+// Close rate alert modal
+document.getElementById('close-rate-alert')?.addEventListener('click', () => {
+    document.getElementById('rate-alert-modal').style.display = 'none';
+});
+
+// Submit rate alert form
+document.getElementById('rate-alert-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const fromCurrency = document.getElementById('alert-from-currency').value;
+    const toCurrency = document.getElementById('alert-to-currency').value;
+    const targetRate = parseFloat(document.getElementById('alert-target-rate').value);
+    const condition = document.getElementById('alert-condition').value;
+    const emailNotify = document.getElementById('alert-email-notify').checked;
+    
+    if (!targetRate || targetRate <= 0) {
+        showAlert('Please enter a valid target rate', 'error');
+        return;
+    }
+    
+    // Check for duplicates
+    const duplicate = rateAlerts.some(alert =>
+        alert.fromCurrency === fromCurrency &&
+        alert.toCurrency === toCurrency &&
+        alert.targetRate === targetRate &&
+        alert.condition === condition &&
+        !alert.triggered
+    );
+    
+    if (duplicate) {
+        showAlert('⚠️ Similar alert already exists', 'info');
+        return;
+    }
+    
+    // Create new alert
+    const newAlert = {
+        id: Date.now().toString(),
+        fromCurrency,
+        toCurrency,
+        targetRate,
+        condition,
+        emailNotify,
+        triggered: false,
+        createdAt: new Date().toISOString()
+    };
+    
+    rateAlerts.push(newAlert);
+    
+    // Limit to 20 alerts
+    if (rateAlerts.length > 20) {
+        rateAlerts.shift();
+        showAlert('⚠️ Maximum 20 alerts. Oldest removed.', 'info');
+    }
+    
+    saveConverterData();
+    renderRateAlerts();
+    
+    document.getElementById('rate-alert-modal').style.display = 'none';
+    document.getElementById('rate-alert-form').reset();
+    
+    showAlert('✅ Rate alert created!', 'success');
+    
+    // Request notification permission if not granted
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+});
+
+// Update current rate display when currencies change in modal
+document.getElementById('alert-from-currency')?.addEventListener('change', updateAlertCurrentRate);
+document.getElementById('alert-to-currency')?.addEventListener('change', updateAlertCurrentRate);
+
+function updateAlertCurrentRate() {
+    const fromCurrency = document.getElementById('alert-from-currency')?.value;
+    const toCurrency = document.getElementById('alert-to-currency')?.value;
+    
+    if (fromCurrency && toCurrency) {
+        const currentRate = exchangeRates[toCurrency] / exchangeRates[fromCurrency];
+        const display = document.getElementById('current-rate-display');
+        if (display) {
+            display.textContent = currentRate.toFixed(6);
+        }
+    }
+}
+// ==========================================
+// CURRENCY QUICK SELECT
+// ==========================================
+
+document.querySelectorAll('.currency-quick-select').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const currency = btn.dataset.currency;
+        const toCurrencySelect = document.getElementById('currency-to');
+        
+        if (toCurrencySelect.value === currency) {
+            // If same as target, swap them
+            const fromCurrency = document.getElementById('currency-from').value;
+            toCurrencySelect.value = fromCurrency;
+        }
+        
+        document.getElementById('currency-from').value = currency;
+        convertCurrency();
+        
+        // Visual feedback
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            btn.style.transform = '';
+        }, 150);
+        
+        // Scroll to converter
+        document.querySelector('.converter-card').scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
 
         console.log('SusuPay Enhanced System Initialized - All Features Loaded ✅');
         // Debug: Check if pages exist
