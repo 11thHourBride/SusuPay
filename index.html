@@ -1343,6 +1343,97 @@
         font-size: 2rem;
     }
 }
+/* Extended Converter Features */
+.favorite-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid transparent;
+}
+
+.favorite-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.favorite-badge .remove-favorite {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.currency-quick-select {
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #4a5568;
+}
+
+.currency-quick-select:hover {
+    border-color: #667eea;
+    background: #ebf8ff;
+    transform: translateY(-2px);
+}
+
+.history-item {
+    padding: 15px;
+    background: #f7fafc;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.history-item:hover {
+    background: #edf2f7;
+    transform: translateX(5px);
+}
+
+.alert-item {
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #f39c12;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-item.triggered {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    border-left-color: #48bb78;
+}
+
+.alert-badge {
+    background: white;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #744210;
+}
     </style>
 </head>
 <body>
@@ -2524,36 +2615,110 @@
         <!-- Currency Converter Page -->
 <div id="converter-page" class="page-content hidden">
     <h2 style="margin-bottom: 25px; color: #ffffff;">Currency Converter</h2>
+    <!-- Favorites Bar -->
+<div class="card" style="margin-bottom: 20px; padding: 15px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h4 style="color: #4a5568; margin: 0;">⭐ Favorite Conversions</h4>
+        <button class="btn" id="add-favorite-btn" style="width: auto; padding: 8px 20px; font-size: 0.85rem;">
+            + Add Current
+        </button>
+    </div>
+    <div id="favorites-list" style="display: flex; gap: 10px; flex-wrap: wrap; min-height: 40px;">
+        <div style="color: #718096; font-size: 0.9rem;">No favorites yet. Add your frequently used conversions!</div>
+    </div>
+</div>
     
     <div class="converter-card">
         <div class="converter-header">
             <h2>💱 Convert Your Money</h2>
             <p>Real-time exchange rates for GHS, USD, and more</p>
         </div>
+        <!-- Expanded Currency List -->
+<div class="card" style="margin-bottom: 20px;">
+    <h3 style="margin-bottom: 15px; color: #4a5568;">🌍 All Currencies</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">
+        <button class="currency-quick-select" data-currency="GHS">🇬🇭 GHS</button>
+        <button class="currency-quick-select" data-currency="USD">🇺🇸 USD</button>
+        <button class="currency-quick-select" data-currency="EUR">🇪🇺 EUR</button>
+        <button class="currency-quick-select" data-currency="GBP">🇬🇧 GBP</button>
+        <button class="currency-quick-select" data-currency="NGN">🇳🇬 NGN</button>
+        <button class="currency-quick-select" data-currency="ZAR">🇿🇦 ZAR</button>
+        <button class="currency-quick-select" data-currency="KES">🇰🇪 KES</button>
+        <button class="currency-quick-select" data-currency="JPY">🇯🇵 JPY</button>
+        <button class="currency-quick-select" data-currency="CNY">🇨🇳 CNY</button>
+        <button class="currency-quick-select" data-currency="CAD">🇨🇦 CAD</button>
+        <button class="currency-quick-select" data-currency="AUD">🇦🇺 AUD</button>
+        <button class="currency-quick-select" data-currency="CHF">🇨🇭 CHF</button>
+    </div>
+</div>
+<!-- Conversion History -->
+<div class="card" style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #4a5568; margin: 0;">📜 Conversion History</h3>
+        <button class="btn" id="clear-history-btn" style="width: auto; padding: 8px 20px; font-size: 0.85rem; background: #e53e3e;">
+            Clear All
+        </button>
+    </div>
+    <div id="conversion-history-list" style="max-height: 300px; overflow-y: auto;">
+        <div style="text-align: center; color: #718096; padding: 40px;">
+            No conversion history yet
+        </div>
+    </div>
+</div>
+<!-- Rate Alerts -->
+<div class="card" style="margin-bottom: 20px;">
+    <h3 style="margin-bottom: 15px; color: #4a5568;">🔔 Rate Alerts</h3>
+    <div id="rate-alerts-list" style="margin-bottom: 15px;">
+        <div style="text-align: center; color: #718096; padding: 20px;">
+            No active alerts
+        </div>
+    </div>
+</div>
+<!-- Exchange Rate Chart -->
+<div class="card" style="margin-bottom: 20px;">
+    <h3 style="margin-bottom: 15px; color: #4a5568;">📈 7-Day Rate Trend</h3>
+    <div style="background: #f7fafc; padding: 20px; border-radius: 10px; text-align: center;">
+        <canvas id="rate-chart" width="400" height="200"></canvas>
+    </div>
+</div>
 
         <div class="converter-box">
             <div class="currency-input-group">
                 <input type="number" id="amount-from" placeholder="0.00" value="100" min="0" step="0.01">
-                <select class="currency-select" id="currency-from">
-                    <option value="GHS" selected>🇬🇭 GHS</option>
-                    <option value="USD">🇺🇸 USD</option>
-                    <option value="EUR">🇪🇺 EUR</option>
-                    <option value="GBP">🇬🇧 GBP</option>
-                    <option value="NGN">🇳🇬 NGN</option>
-                </select>
+               <select class="currency-select" id="currency-from">
+    <option value="GHS" selected>🇬🇭 GHS</option>
+    <option value="USD">🇺🇸 USD</option>
+    <option value="EUR">🇪🇺 EUR</option>
+    <option value="GBP">🇬🇧 GBP</option>
+    <option value="NGN">🇳🇬 NGN</option>
+    <option value="ZAR">🇿🇦 ZAR</option>
+    <option value="KES">🇰🇪 KES</option>
+    <option value="JPY">🇯🇵 JPY</option>
+    <option value="CNY">🇨🇳 CNY</option>
+    <option value="CAD">🇨🇦 CAD</option>
+    <option value="AUD">🇦🇺 AUD</option>
+    <option value="CHF">🇨🇭 CHF</option>
+</select>
             </div>
 
             <div class="swap-button" id="swap-currencies">🔄</div>
 
             <div class="currency-input-group">
                 <input type="number" id="amount-to" placeholder="0.00" readonly style="background: rgba(255, 255, 255, 0.7);">
-                <select class="currency-select" id="currency-to">
-                    <option value="GHS">🇬🇭 GHS</option>
-                    <option value="USD" selected>🇺🇸 USD</option>
-                    <option value="EUR">🇪🇺 EUR</option>
-                    <option value="GBP">🇬🇧 GBP</option>
-                    <option value="NGN">🇳🇬 NGN</option>
-                </select>
+              <select class="currency-select" id="currency-to">
+    <option value="GHS">🇬🇭 GHS</option>
+    <option value="USD" selected>🇺🇸 USD</option>
+    <option value="EUR">🇪🇺 EUR</option>
+    <option value="GBP">🇬🇧 GBP</option>
+    <option value="NGN">🇳🇬 NGN</option>
+    <option value="ZAR">🇿🇦 ZAR</option>
+    <option value="KES">🇰🇪 KES</option>
+    <option value="JPY">🇯🇵 JPY</option>
+    <option value="CNY">🇨🇳 CNY</option>
+    <option value="CAD">🇨🇦 CAD</option>
+    <option value="AUD">🇦🇺 AUD</option>
+    <option value="CHF">🇨🇭 CHF</option>
+</select>
             </div>
 
             <div class="quick-amounts">
@@ -2563,12 +2728,13 @@
                 <button class="quick-amount-btn" data-amount="5000">₵5,000</button>
             </div>
 
-            <div class="result-display">
-                <div class="result-label">You will receive</div>
-                <div class="result-value" id="conversion-result">$0.00</div>
-            </div>
-        </div>
-    </div>
+           <div class="result-display">
+    <div class="result-label">You will receive</div>
+    <div class="result-value" id="conversion-result">$0.00</div>
+    <button class="btn" id="set-alert-btn" style="margin-top: 15px; width: auto; padding: 10px 25px; background: rgba(255,255,255,0.2);">
+        🔔 Set Rate Alert
+    </button>
+</div>
 
     <div class="card exchange-rate-info">
         <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
@@ -5426,13 +5592,24 @@ function updateTimerDisplay() {
 
 let exchangeRates = {
     GHS: 1,
-    USD: 0.065,     // 1 GHS = ~0.065 USD (≈15.4 GHS per USD)
-    EUR: 0.060,     // 1 GHS = ~0.060 EUR
-    GBP: 0.052,     // 1 GHS = ~0.052 GBP
-    NGN: 106.50     // 1 GHS = ~106.5 NGN
+    USD: 0.065,
+    EUR: 0.060,
+    GBP: 0.052,
+    NGN: 106.50,
+    ZAR: 1.18,      // South African Rand
+    KES: 8.40,      // Kenyan Shilling
+    JPY: 9.50,      // Japanese Yen
+    CNY: 0.47,      // Chinese Yuan
+    CAD: 0.088,     // Canadian Dollar
+    AUD: 0.098,     // Australian Dollar
+    CHF: 0.057      // Swiss Franc
 };
 
 let lastRatesUpdate = new Date();
+let conversionHistory = [];
+let rateAlerts = [];
+let favorites = [];
+let rateChart = null;
 
 // Currency symbols
 const currencySymbols = {
@@ -5440,7 +5617,14 @@ const currencySymbols = {
     USD: '$',
     EUR: '€',
     GBP: '£',
-    NGN: '₦'
+    NGN: '₦',
+    ZAR: 'R',
+    KES: 'KSh',
+    JPY: '¥',
+    CNY: '¥',
+    CAD: 'C$',
+    AUD: 'A$',
+    CHF: 'Fr'
 };
 
 // Fetch live exchange rates from API
