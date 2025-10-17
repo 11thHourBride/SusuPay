@@ -1134,6 +1134,215 @@
                 font-size: 0.8rem;
             }
         }
+        /* Currency Converter Styles */
+.converter-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+    color: white;
+    margin-bottom: 30px;
+}
+
+.converter-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.converter-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.converter-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.converter-box {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 20px;
+}
+
+.currency-input-group {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.currency-input-group input {
+    flex: 2;
+    padding: 18px 20px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #4a5568;
+    transition: all 0.3s ease;
+}
+
+.currency-input-group input:focus {
+    outline: none;
+    border-color: white;
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    transform: scale(1.02);
+}
+
+.currency-select {
+    flex: 1;
+    padding: 18px 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.currency-select:focus {
+    outline: none;
+    border-color: white;
+}
+
+.swap-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.25);
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    font-size: 1.8rem;
+    cursor: pointer;
+    margin: 20px auto;
+    transition: all 0.3s ease;
+}
+
+.swap-button:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: rotate(180deg) scale(1.1);
+}
+
+.swap-button:active {
+    transform: rotate(180deg) scale(0.95);
+}
+
+.result-display {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    margin-top: 30px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.result-display .result-label {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-bottom: 10px;
+}
+
+.result-display .result-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.exchange-rate-info {
+    background: white;
+    color: #4a5568;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.rate-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.rate-row:last-child {
+    border-bottom: none;
+}
+
+.rate-label {
+    font-weight: 600;
+    color: #718096;
+}
+
+.rate-value {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #4a5568;
+}
+
+.last-updated {
+    text-align: center;
+    margin-top: 15px;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.currency-flag {
+    display: inline-block;
+    font-size: 1.5rem;
+    margin-right: 8px;
+}
+
+.quick-amounts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.quick-amount-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.quick-amount-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.quick-amount-btn:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .currency-input-group {
+        flex-direction: column;
+    }
+    
+    .quick-amounts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .result-display .result-value {
+        font-size: 2rem;
+    }
+}
     </style>
 </head>
 <body>
@@ -1435,6 +1644,10 @@
                 <span class="nav-icon">🤝</span>
                 <span>P2P Trading</span>
             </div>
+            <div class="nav-item" data-page="converter">
+    <span class="nav-icon">💱</span>
+    <span>Currency Converter</span>
+</div>
             <div class="nav-item" data-page="susupay-coin">
     <span class="nav-icon">🪙</span>
     <span>SusuPay Coin</span>
@@ -2308,7 +2521,94 @@
                 </button>
             </div>
         </div>
+        <!-- Currency Converter Page -->
+<div id="converter-page" class="page-content hidden">
+    <h2 style="margin-bottom: 25px; color: #ffffff;">Currency Converter</h2>
+    
+    <div class="converter-card">
+        <div class="converter-header">
+            <h2>💱 Convert Your Money</h2>
+            <p>Real-time exchange rates for GHS, USD, and more</p>
+        </div>
+
+        <div class="converter-box">
+            <div class="currency-input-group">
+                <input type="number" id="amount-from" placeholder="0.00" value="100" min="0" step="0.01">
+                <select class="currency-select" id="currency-from">
+                    <option value="GHS" selected>🇬🇭 GHS</option>
+                    <option value="USD">🇺🇸 USD</option>
+                    <option value="EUR">🇪🇺 EUR</option>
+                    <option value="GBP">🇬🇧 GBP</option>
+                    <option value="NGN">🇳🇬 NGN</option>
+                </select>
+            </div>
+
+            <div class="swap-button" id="swap-currencies">🔄</div>
+
+            <div class="currency-input-group">
+                <input type="number" id="amount-to" placeholder="0.00" readonly style="background: rgba(255, 255, 255, 0.7);">
+                <select class="currency-select" id="currency-to">
+                    <option value="GHS">🇬🇭 GHS</option>
+                    <option value="USD" selected>🇺🇸 USD</option>
+                    <option value="EUR">🇪🇺 EUR</option>
+                    <option value="GBP">🇬🇧 GBP</option>
+                    <option value="NGN">🇳🇬 NGN</option>
+                </select>
+            </div>
+
+            <div class="quick-amounts">
+                <button class="quick-amount-btn" data-amount="100">₵100</button>
+                <button class="quick-amount-btn" data-amount="500">₵500</button>
+                <button class="quick-amount-btn" data-amount="1000">₵1,000</button>
+                <button class="quick-amount-btn" data-amount="5000">₵5,000</button>
+            </div>
+
+            <div class="result-display">
+                <div class="result-label">You will receive</div>
+                <div class="result-value" id="conversion-result">$0.00</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card exchange-rate-info">
+        <h3 style="margin-bottom: 20px; color: #4a5568; display: flex; align-items: center; gap: 10px;">
+            <span>📊</span> Current Exchange Rates
+        </h3>
         
+        <div class="rate-row">
+            <span class="rate-label"><span class="currency-flag">🇬🇭</span>1 GHS =</span>
+            <span class="rate-value" id="rate-ghs-usd">$0.00 USD</span>
+        </div>
+        <div class="rate-row">
+            <span class="rate-label"><span class="currency-flag">🇺🇸</span>1 USD =</span>
+            <span class="rate-value" id="rate-usd-ghs">₵0.00 GHS</span>
+        </div>
+        <div class="rate-row">
+            <span class="rate-label"><span class="currency-flag">🇪🇺</span>1 EUR =</span>
+            <span class="rate-value" id="rate-eur-ghs">₵0.00 GHS</span>
+        </div>
+        <div class="rate-row">
+            <span class="rate-label"><span class="currency-flag">🇬🇧</span>1 GBP =</span>
+            <span class="rate-value" id="rate-gbp-ghs">₵0.00 GHS</span>
+        </div>
+        
+        <div class="last-updated">
+            Last updated: <span id="rates-last-updated">Loading...</span>
+        </div>
+    </div>
+
+    <div class="card" style="background: #ebf8ff; border-left: 4px solid #3182ce;">
+        <h3 style="color: #2c5282; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <span>ℹ️</span> Important Information
+        </h3>
+        <ul style="color: #2c5282; line-height: 2; padding-left: 25px;">
+            <li><strong>Real-time rates:</strong> Exchange rates are updated every 60 seconds</li>
+            <li><strong>Estimation only:</strong> Final rates may vary at time of transaction</li>
+            <li><strong>No fees shown:</strong> Actual conversion may include processing fees</li>
+            <li><strong>Bank rates differ:</strong> These rates are for reference only</li>
+        </ul>
+    </div>
+</div>
 
         <!-- Report a Problem Page -->
         <div id="report-page" class="page-content hidden">
@@ -3907,6 +4207,7 @@ async function ensureReferralCode() {
                 else if (page === 'transactions') loadTransactions();
                 else if (page === 'payment-methods') loadPaymentMethods();
                 else if (page === 'settings') loadSettings();
+                 else if (page === 'converter') initConverter();
                 
                 if (window.innerWidth <= 768) {
                     toggleSidebar();
@@ -5119,6 +5420,168 @@ function updateTimerDisplay() {
         sessionTimer.style.display = 'none';
     }
 }
+// ==========================================
+// CURRENCY CONVERTER FUNCTIONALITY
+// ==========================================
+
+let exchangeRates = {
+    GHS: 1,
+    USD: 0.065,     // 1 GHS = ~0.065 USD (≈15.4 GHS per USD)
+    EUR: 0.060,     // 1 GHS = ~0.060 EUR
+    GBP: 0.052,     // 1 GHS = ~0.052 GBP
+    NGN: 106.50     // 1 GHS = ~106.5 NGN
+};
+
+let lastRatesUpdate = new Date();
+
+// Currency symbols
+const currencySymbols = {
+    GHS: '₵',
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+    NGN: '₦'
+};
+
+// Fetch live exchange rates from API
+async function fetchExchangeRates() {
+    try {
+        // Using exchangerate-api.com (free tier: 1500 requests/month)
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/GHS');
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch rates');
+        }
+        
+        const data = await response.json();
+        
+        // Update exchange rates
+        exchangeRates = {
+            GHS: 1,
+            USD: data.rates.USD,
+            EUR: data.rates.EUR,
+            GBP: data.rates.GBP,
+            NGN: data.rates.NGN
+        };
+        
+        lastRatesUpdate = new Date();
+        updateRateDisplay();
+        
+        console.log('✅ Exchange rates updated:', exchangeRates);
+        
+    } catch (error) {
+        console.error('❌ Error fetching exchange rates:', error);
+        // Keep using fallback rates
+        showAlert('Using offline exchange rates', 'info');
+    }
+}
+
+// Update rate display in the info card
+function updateRateDisplay() {
+    document.getElementById('rate-ghs-usd').textContent = `$${exchangeRates.USD.toFixed(4)} USD`;
+    document.getElementById('rate-usd-ghs').textContent = `₵${(1 / exchangeRates.USD).toFixed(2)} GHS`;
+    document.getElementById('rate-eur-ghs').textContent = `₵${(1 / exchangeRates.EUR).toFixed(2)} GHS`;
+    document.getElementById('rate-gbp-ghs').textContent = `₵${(1 / exchangeRates.GBP).toFixed(2)} GHS`;
+    document.getElementById('rates-last-updated').textContent = lastRatesUpdate.toLocaleTimeString();
+}
+
+// Convert currency
+function convertCurrency() {
+    const amountFrom = parseFloat(document.getElementById('amount-from').value) || 0;
+    const currencyFrom = document.getElementById('currency-from').value;
+    const currencyTo = document.getElementById('currency-to').value;
+    
+    if (amountFrom === 0) {
+        document.getElementById('amount-to').value = '0.00';
+        document.getElementById('conversion-result').textContent = `${currencySymbols[currencyTo]}0.00`;
+        return;
+    }
+    
+    // Convert from source currency to GHS, then to target currency
+    const amountInGHS = amountFrom / exchangeRates[currencyFrom];
+    const amountTo = amountInGHS * exchangeRates[currencyTo];
+    
+    // Update displays
+    document.getElementById('amount-to').value = amountTo.toFixed(2);
+    document.getElementById('conversion-result').textContent = 
+        `${currencySymbols[currencyTo]}${amountTo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    
+    console.log(`💱 Converted: ${amountFrom} ${currencyFrom} = ${amountTo.toFixed(2)} ${currencyTo}`);
+}
+
+// Initialize converter when page loads
+function initConverter() {
+    // Fetch rates immediately
+    fetchExchangeRates();
+    
+    // Update rates every 60 seconds
+    setInterval(fetchExchangeRates, 60000);
+    
+    // Initial conversion
+    convertCurrency();
+    
+    // Event listeners
+    document.getElementById('amount-from').addEventListener('input', convertCurrency);
+    document.getElementById('currency-from').addEventListener('change', convertCurrency);
+    document.getElementById('currency-to').addEventListener('change', convertCurrency);
+    
+    // Swap currencies button
+    document.getElementById('swap-currencies').addEventListener('click', () => {
+        const fromCurrency = document.getElementById('currency-from').value;
+        const toCurrency = document.getElementById('currency-to').value;
+        const fromAmount = document.getElementById('amount-from').value;
+        const toAmount = document.getElementById('amount-to').value;
+        
+        // Swap currencies
+        document.getElementById('currency-from').value = toCurrency;
+        document.getElementById('currency-to').value = fromCurrency;
+        
+        // Swap amounts
+        document.getElementById('amount-from').value = toAmount;
+        
+        // Recalculate
+        convertCurrency();
+        
+        // Animation feedback
+        const swapBtn = document.getElementById('swap-currencies');
+        swapBtn.style.transform = 'rotate(180deg) scale(1.2)';
+        setTimeout(() => {
+            swapBtn.style.transform = '';
+        }, 300);
+    });
+    
+    // Quick amount buttons
+    document.querySelectorAll('.quick-amount-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const amount = btn.dataset.amount;
+            document.getElementById('amount-from').value = amount;
+            convertCurrency();
+            
+            // Visual feedback
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 150);
+        });
+    });
+    
+    console.log('✅ Currency converter initialized');
+}
+
+// Update navigation handler to include converter
+const originalNavigationCode = document.querySelectorAll('.nav-item');
+originalNavigationCode.forEach(item => {
+    item.addEventListener('click', () => {
+        const page = item.dataset.page;
+        
+        // Initialize converter when converter page is opened
+        if (page === 'converter') {
+            setTimeout(initConverter, 100);
+        }
+    });
+});
+
+console.log('✅ Currency converter module loaded');
 
         console.log('SusuPay Enhanced System Initialized - All Features Loaded ✅');
         // Debug: Check if pages exist
