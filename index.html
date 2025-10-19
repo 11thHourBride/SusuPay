@@ -2171,23 +2171,39 @@
                     <button class="copy-btn" id="copy-referral-btn">📋 Copy Code</button>
                 </div>
 
-                <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-                    <h4 style="color: #4a5568; margin-bottom: 15px;">📊 Your Referral Stats</h4>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                        <div>
-                            <div style="font-size: 0.9rem; color: #718096;">Total Referrals</div>
-                            <div style="font-size: 1.8rem; font-weight: 700; color: #667eea;" id="total-referrals">0</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.9rem; color: #718096;">Active Referrals</div>
-                            <div style="font-size: 1.8rem; font-weight: 700; color: #48bb78;" id="active-referrals">0</div>
-                        </div>
-                        <div>
-                            <div style="font-size: 0.9rem; color: #718096;">Total Earnings</div>
-                            <div style="font-size: 1.8rem; font-weight: 700; color: #f5576c;" id="referral-earnings">₵0.00</div>
-                        </div>
-                    </div>
-                </div>
+               <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+    <h4 style="color: #4a5568; margin-bottom: 15px;">📊 Your Referral Stats</h4>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+        <div>
+            <div style="font-size: 0.9rem; color: #718096;">Total Referrals</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: #667eea;" id="total-referrals">0</div>
+        </div>
+        <div>
+            <div style="font-size: 0.9rem; color: #718096;">Active Referrals</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: #48bb78;" id="active-referrals">0</div>
+        </div>
+        <div>
+            <div style="font-size: 0.9rem; color: #718096;">Total Earnings</div>
+            <div style="font-size: 1.8rem; font-weight: 700; color: #f5576c;" id="referral-earnings">₵0.00</div>
+        </div>
+    </div>
+    
+    <!-- NEW: Withdrawal Button -->
+    <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div>
+                <div style="font-size: 0.9rem; color: #718096; margin-bottom: 5px;">Available to Withdraw</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #48bb78;" id="withdrawable-earnings">₵0.00</div>
+            </div>
+            <button class="btn" id="withdraw-referral-bonus-btn" style="width: auto; padding: 12px 25px; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                💰 Withdraw Bonus
+            </button>
+        </div>
+        <div id="referral-withdrawal-info" style="margin-top: 15px; padding: 12px; background: #ebf8ff; border-radius: 8px; border-left: 4px solid #3182ce; font-size: 0.9rem; color: #2c5282;">
+            <strong>💡 Note:</strong> You can withdraw your referral bonuses anytime. Minimum withdrawal: ₵10.00
+        </div>
+    </div>
+</div>
 
                 <div style="background: #ebf8ff; padding: 20px; border-radius: 12px; border-left: 4px solid #667eea;">
                     <h4 style="color: #4a5568; margin-bottom: 15px;">💰 Referral Bonus Structure</h4>
@@ -3351,6 +3367,66 @@
             </div>
         </div>
     </div>
+    <!-- Referral Bonus Withdrawal Modal -->
+<div class="modal" id="referral-withdrawal-modal">
+    <div class="modal-content" style="max-width: 550px;">
+        <button class="close-btn" id="close-referral-withdrawal">&times;</button>
+        <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">💰 Withdraw Referral Bonus</h2>
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🎁</div>
+            <div style="font-size: 0.9rem; color: #718096; margin-bottom: 8px;">Available Balance</div>
+            <div style="font-size: 2.5rem; font-weight: 700; color: #48bb78;" id="modal-referral-earnings">₵0.00</div>
+        </div>
+        
+        <form id="referral-withdrawal-form">
+            <div class="form-group">
+                <label for="referral-withdrawal-amount">Withdrawal Amount (GH₵) *</label>
+                <input type="number" id="referral-withdrawal-amount" placeholder="Enter amount" min="10" step="0.01" required>
+                <small style="color: #718096; display: block; margin-top: 5px;">
+                    Minimum: ₵10.00 • Maximum: <span id="max-withdrawal-amount">₵0.00</span>
+                </small>
+            </div>
+            
+            <div class="form-group">
+                <label>Quick Amount Selection</label>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <button type="button" class="btn quick-withdraw-btn" data-amount="25" style="width: 100%; padding: 10px; font-size: 0.9rem;">₵25</button>
+                    <button type="button" class="btn quick-withdraw-btn" data-amount="50" style="width: 100%; padding: 10px; font-size: 0.9rem;">₵50</button>
+                    <button type="button" class="btn quick-withdraw-btn" data-amount="100" style="width: 100%; padding: 10px; font-size: 0.9rem;">₵100</button>
+                    <button type="button" class="btn quick-withdraw-btn" data-amount="all" style="width: 100%; padding: 10px; font-size: 0.9rem;">All</button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="referral-withdrawal-payment-method">Payment Method *</label>
+                <select id="referral-withdrawal-payment-method" required>
+                    <option value="">Select payment method...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="referral-withdrawal-password">Withdrawal Password *</label>
+                <input type="password" id="referral-withdrawal-password" placeholder="Enter your withdrawal password" required>
+            </div>
+            
+            <div style="background: #fef5e7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f6cc33;">
+                <div style="color: #744210; font-size: 0.9rem; line-height: 1.6;">
+                    <strong>⚠️ Important:</strong>
+                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                        <li>Processing time: 24-72 hours</li>
+                        <li>No fees for referral bonus withdrawals</li>
+                        <li>You'll receive a confirmation email</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                💸 Process Withdrawal
+            </button>
+        </form>
+    </div>
+</div>
 
    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -4926,6 +5002,7 @@ async function loadReferralCount() {
             referralEarnings: earnings
         });
         userData.referralEarnings = earnings;
+          updateWithdrawableEarnings();
     }
     
     document.getElementById('referral-earnings').textContent = formatCurrency(earnings);
@@ -5746,6 +5823,179 @@ async function calculateReferralEarnings() {
         showAlert('Error: ' + error.message, 'error');
     }
 });
+// ==========================================
+// REFERRAL BONUS WITHDRAWAL
+// ==========================================
+
+// Update withdrawable earnings display
+function updateWithdrawableEarnings() {
+    const earnings = userData.referralEarnings || 0;
+    document.getElementById('withdrawable-earnings').textContent = formatCurrency(earnings);
+}
+
+// Open referral withdrawal modal
+document.getElementById('withdraw-referral-bonus-btn')?.addEventListener('click', () => {
+    const earnings = userData.referralEarnings || 0;
+    
+    if (earnings < 10) {
+        showAlert('Minimum withdrawal amount is ₵10.00. Keep referring to earn more!', 'error');
+        return;
+    }
+    
+    // Update modal displays
+    document.getElementById('modal-referral-earnings').textContent = formatCurrency(earnings);
+    document.getElementById('max-withdrawal-amount').textContent = formatCurrency(earnings);
+    
+    // Load payment methods
+    loadReferralWithdrawalPaymentMethods();
+    
+    // Show modal
+    document.getElementById('referral-withdrawal-modal').style.display = 'block';
+});
+
+// Close modal
+document.getElementById('close-referral-withdrawal')?.addEventListener('click', () => {
+    document.getElementById('referral-withdrawal-modal').style.display = 'none';
+    document.getElementById('referral-withdrawal-form').reset();
+});
+
+// Load payment methods for referral withdrawal
+function loadReferralWithdrawalPaymentMethods() {
+    const select = document.getElementById('referral-withdrawal-payment-method');
+    select.innerHTML = '<option value="">Select payment method...</option>';
+    
+    const methods = userData.paymentMethods || { mobileMoney: [], crypto: [], bank: [] };
+    
+    methods.mobileMoney.forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = `momo-${index}`;
+        option.textContent = `${method.provider.toUpperCase()} - ${method.number}`;
+        select.appendChild(option);
+    });
+    
+    methods.crypto.forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = `crypto-${index}`;
+        option.textContent = `${method.type.toUpperCase()} - ${method.address.slice(0, 10)}...`;
+        select.appendChild(option);
+    });
+    
+    methods.bank.forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = `bank-${index}`;
+        option.textContent = `${method.bankName} - ${method.accountNumber}`;
+        select.appendChild(option);
+    });
+}
+
+// Quick amount buttons
+document.querySelectorAll('.quick-withdraw-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const amount = btn.dataset.amount;
+        const input = document.getElementById('referral-withdrawal-amount');
+        
+        if (amount === 'all') {
+            input.value = userData.referralEarnings || 0;
+        } else {
+            const maxAmount = userData.referralEarnings || 0;
+            const selectedAmount = parseFloat(amount);
+            input.value = selectedAmount > maxAmount ? maxAmount : selectedAmount;
+        }
+        
+        // Visual feedback
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            btn.style.transform = '';
+        }, 150);
+    });
+});
+
+// Process referral bonus withdrawal
+document.getElementById('referral-withdrawal-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const amount = parseFloat(document.getElementById('referral-withdrawal-amount').value);
+    const paymentMethodId = document.getElementById('referral-withdrawal-payment-method').value;
+    const password = document.getElementById('referral-withdrawal-password').value;
+    
+    // Validation
+    if (amount < 10) {
+        showAlert('Minimum withdrawal amount is ₵10.00', 'error');
+        return;
+    }
+    
+    if (amount > userData.referralEarnings) {
+        showAlert('Insufficient referral bonus balance', 'error');
+        return;
+    }
+    
+    if (password !== userData.withdrawalPassword) {
+        showAlert('Incorrect withdrawal password', 'error');
+        return;
+    }
+    
+    showLoader('Processing your withdrawal');
+    
+    try {
+        // Get payment method details
+        const [type, index] = paymentMethodId.split('-');
+        let paymentDetails = {};
+        
+        if (type === 'momo') {
+            paymentDetails = userData.paymentMethods.mobileMoney[index];
+        } else if (type === 'crypto') {
+            paymentDetails = userData.paymentMethods.crypto[index];
+        } else if (type === 'bank') {
+            paymentDetails = userData.paymentMethods.bank[index];
+        }
+        
+        // Create withdrawal transaction
+        await addDoc(collection(db, 'transactions'), {
+            userId: currentUser.uid,
+            type: 'referral_bonus_withdrawal',
+            amount,
+            paymentMethod: type,
+            paymentDetails,
+            status: 'pending',
+            timestamp: serverTimestamp(),
+            note: 'Referral bonus withdrawal'
+        });
+        
+        // Update user's referral earnings (deduct withdrawn amount)
+        const newEarnings = userData.referralEarnings - amount;
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+            referralEarnings: newEarnings
+        });
+        
+        userData.referralEarnings = newEarnings;
+        
+        hideLoader();
+        
+        // Close modal and reset form
+        document.getElementById('referral-withdrawal-modal').style.display = 'none';
+        document.getElementById('referral-withdrawal-form').reset();
+        
+        showAlert('✅ Withdrawal request submitted successfully! Processing time: 24-72 hours', 'success');
+        
+        // Create notification
+        await createNotification(
+            'Referral Bonus Withdrawal',
+            `${formatCurrency(amount)} withdrawal request submitted`,
+            'withdrawal'
+        );
+        
+        // Update displays
+        updateReferralPage();
+        updateWithdrawableEarnings();
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Referral withdrawal error:', error);
+        showAlert('Error processing withdrawal: ' + error.message, 'error');
+    }
+});
+
+console.log('✅ Referral bonus withdrawal system loaded');
         // Transactions Page
  async function loadTransactions() {
     const container = document.getElementById('transactions-list');
