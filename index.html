@@ -4483,15 +4483,47 @@ setInterval(checkInactivityWarning, 10000);
         showAlert(error.message, 'error', 'auth-alert');
     }
 });
+// Google Sign-In Handler
+document.getElementById('google-signin-btn')?.addEventListener('click', async () => {
+    showLoader('Signing in with Google');
+    
+    try {
+        const result = await signInWithPopup(auth, googleProvider);
+        const user = result.user;
+        
+        // Check if user exists in database
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        
+        if (!userDoc.exists()) {
+            hideLoader();
+            showAlert('No account found. Please sign up first.', 'error', 'auth-alert');
+            await signOut(auth);
+            return;
+        }
+        
+        hideLoader();
+        showAlert('Signed in successfully with Google!', 'success', 'auth-alert');
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Google sign-in error:', error);
+        showAlert(error.message, 'error', 'auth-alert');
+    }
+});
+
+// Biometric Sign-In Button Handler (add after signInWithBiometric function around line 1570)
+document.getElementById('biometric-signin-btn')?.addEventListener('click', async () => {
+    await signInWithBiometric();
+});
 
         // Biometric Sign-In
-    async function signInWithBiometric() {
-    showLoader('Authenticating with fingerprint'); 
+  async function signInWithBiometric() {
+    showLoader('Authenticating with fingerprint'); // ADD THIS LINE
     
     try {
         const supported = await checkBiometricSupport();
         if (!supported) {
-            hideLoader(); 
+            hideLoader(); // ADD THIS LINE
             showAlert('Biometric authentication not supported on this device', 'error', 'auth-alert');
             return;
         }
@@ -4500,7 +4532,7 @@ setInterval(checkInactivityWarning, 10000);
         const storedCredential = localStorage.getItem('biometric_credential');
         
         if (!storedEmail || !storedCredential) {
-            hideLoader(); 
+            hideLoader(); // ADD THIS LINE
             showAlert('Please sign in with password first to set up biometric login', 'error', 'auth-alert');
             return;
         }
@@ -4533,15 +4565,15 @@ setInterval(checkInactivityWarning, 10000);
                 // Loader will hide when onAuthStateChanged triggers
                 showAlert('Biometric sign in successful!', 'success', 'auth-alert');
             } else {
-                hideLoader(); 
+                hideLoader(); // ADD THIS LINE
                 showAlert('Password not found. Please sign in normally.', 'error', 'auth-alert');
             }
         } else {
-            hideLoader(); 
+            hideLoader(); // ADD THIS LINE
             showAlert('Biometric authentication failed', 'error', 'auth-alert');
         }
     } catch (error) {
-        hideLoader(); 
+        hideLoader(); // ADD THIS LINE
         console.error('Biometric sign-in error:', error);
         if (error.name === 'NotAllowedError') {
             showAlert('Biometric authentication was cancelled', 'error', 'auth-alert');
@@ -4549,7 +4581,7 @@ setInterval(checkInactivityWarning, 10000);
             showAlert('Biometric authentication failed: ' + error.message, 'error', 'auth-alert');
         }
     }
-}
+}                                                                                                                                       
 
         // Setup Biometric
        document.getElementById('setup-biometric-btn')?.addEventListener('click', async () => {
@@ -4973,14 +5005,13 @@ async function renderReferralsList() {
                 const referralData = referralDoc.data();
                 
                 // Get first approved contribution
-                const q = query(
-                    collection(db, 'transactions'),
-                    where('userId', '==', referralId),
-                    where('type', '==', 'contribution'),
-                    where('email', '==', 'email'),
-                    where('status', '==', 'approved'),
-                    orderBy('timestamp', 'asc')
-                );
+               const q = query(
+    collection(db, 'transactions'),
+    where('userId', '==', referralId),
+    where('type', '==', 'contribution'),
+    where('status', '==', 'approved'),
+    orderBy('timestamp', 'asc')
+);
                 
                 const transactionSnapshot = await getDocs(q);
                 let firstContribution = null;
