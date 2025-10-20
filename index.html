@@ -72,6 +72,115 @@
             pointer-events: none;
             z-index: -1;
         }
+        /* Future Project Styles */
+.project-type-card {
+    padding: 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.project-type-card:hover {
+    border-color: #667eea;
+    background: #f7fafc;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+}
+
+.project-type-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.project-type-card.urgent:hover {
+    border-color: #f6cc33;
+    box-shadow: 0 10px 25px rgba(246, 204, 51, 0.3);
+}
+
+.project-type-card.urgent.selected {
+    border-color: #f6cc33;
+    box-shadow: 0 8px 20px rgba(246, 204, 51, 0.4);
+}
+
+.project-summary-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.project-summary-card:hover {
+    border-color: #667eea;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.project-summary-card.locked {
+    border-left: 5px solid #e53e3e;
+}
+
+.project-summary-card.imminent {
+    border-left: 5px solid #f6cc33;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    transition: width 0.5s ease;
+    border-radius: 10px;
+}
+
+.project-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.project-badge.active {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+}
+
+.project-badge.matured {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.project-badge.locked {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    color: white;
+}
+
+.milestone-dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #48bb78;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.milestone-dot.pending {
+    background: #cbd5e0;
+}
         /* Biometric & Google Auth Styles */
 .biometric-btn {
     background: linear-gradient(135deg, #5048bb 0%, #8c38a1 100%);
@@ -2049,6 +2158,10 @@
                 <span class="nav-icon">💰</span>
                 <span>Contributions</span>
             </div>
+            <div class="nav-item" data-page="future-project">
+    <span class="nav-icon">🎯</span>
+    <span>Future Project</span>
+</div>
             <div class="nav-item" data-page="withdrawals">
                 <span class="nav-icon">💸</span>
                 <span>Withdrawals</span>
@@ -2127,6 +2240,11 @@
                 <h3 style="margin-bottom: 15px; color: #4a5568;">🎯 VIP Level Progress</h3>
                 <div id="vip-progress-content"></div>
             </div>
+            <!-- Future Projects Summary Widget -->
+<div class="card" id="future-projects-widget" style="display: none;">
+    <h3 style="margin-bottom: 20px; color: #4a5568;">🎯 Your Future Projects</h3>
+    <div id="future-projects-widget-content"></div>
+</div>
 
             <div class="card">
                 <h3 style="margin-bottom: 20px; color: #4a5568;">Set Monthly Rate</h3>
@@ -2597,6 +2715,228 @@
                 </div>
             </div>
         </div>
+        <!-- Future Project Page -->
+<div id="future-project-page" class="page-content hidden">
+    <h2 style="margin-bottom: 20px; color: #ffffff;">🎯 Future Project Savings</h2>
+    
+    <!-- Hero Section -->
+    <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 40px 30px;">
+        <div style="font-size: 4rem; margin-bottom: 15px;">🎯</div>
+        <h2 style="color: white; margin-bottom: 15px; font-size: 2rem;">Save for Your Future Goals</h2>
+        <p style="font-size: 1.1rem; opacity: 0.95; max-width: 700px; margin: 0 auto 25px; line-height: 1.6;">
+            Lock your savings for 3 years and earn <strong>20% guaranteed interest</strong>! 
+            Perfect for long-term goals that matter most.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 25px;">
+            <div style="background: rgba(255,255,255,0.2); padding: 15px 25px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <div style="font-size: 0.9rem; opacity: 0.9;">Lock Period</div>
+                <div style="font-size: 1.8rem; font-weight: 700;">3 Years</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 15px 25px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <div style="font-size: 0.9rem; opacity: 0.9;">Interest Rate</div>
+                <div style="font-size: 1.8rem; font-weight: 700;">20%</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.2); padding: 15px 25px; border-radius: 10px; backdrop-filter: blur(10px);">
+                <div style="font-size: 0.9rem; opacity: 0.9;">Early Exit Penalty</div>
+                <div style="font-size: 1.8rem; font-weight: 700;">30%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Projects Summary -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px; color: #4a5568;">📊 Your Active Projects</h3>
+        <div id="active-projects-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="text-align: center; padding: 40px; color: #718096;">
+                <div style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;">📂</div>
+                <p>No active projects yet. Create your first project below!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create New Project -->
+    <div class="card">
+        <h3 style="margin-bottom: 20px; color: #4a5568;">➕ Create New Future Project</h3>
+        
+        <!-- Project Type Selection -->
+        <div class="form-group">
+            <label>Select Project Type *</label>
+            <div id="project-type-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+                <div class="project-type-card" data-type="kids">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">👶</div>
+                    <div style="font-weight: 600; color: #4a5568;">For My Kids</div>
+                    <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">Education, future needs</div>
+                </div>
+                
+                <div class="project-type-card" data-type="myself">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">🙋</div>
+                    <div style="font-weight: 600; color: #4a5568;">For Myself</div>
+                    <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">Personal goals, dreams</div>
+                </div>
+                
+                <div class="project-type-card" data-type="parents">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">👴👵</div>
+                    <div style="font-weight: 600; color: #4a5568;">For My Parents</div>
+                    <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">Care, support, comfort</div>
+                </div>
+                
+                <div class="project-type-card" data-type="spouse">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">💑</div>
+                    <div style="font-weight: 600; color: #4a5568;">For My Spouse</div>
+                    <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">Gift, surprise, future</div>
+                </div>
+                
+                <div class="project-type-card" data-type="family">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">👨‍👩‍👧‍👦</div>
+                    <div style="font-weight: 600; color: #4a5568;">Family Project</div>
+                    <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">House, vacation, business</div>
+                </div>
+                
+                <div class="project-type-card" data-type="wedding">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">💒</div>
+                    <div style="font-weight: 600; color: #4a5568;">For My Wedding</div>
+                    <div style="font-size: 0.85rem; color: #718096; margin-top: 5px;">Dream ceremony</div>
+                </div>
+                
+                <div class="project-type-card urgent" data-type="imminent" style="border: 2px solid #f6cc33; background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%);">
+                    <div style="font-size: 2.5rem; margin-bottom: 10px;">⚡</div>
+                    <div style="font-weight: 600; color: #744210;">Imminent Attention</div>
+                    <div style="font-size: 0.85rem; color: #744210; margin-top: 5px; font-weight: 600;">Withdrawable anytime</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Project Details Form (Hidden Initially) -->
+        <form id="create-project-form" class="hidden" style="margin-top: 30px;">
+            <div style="background: #ebf8ff; padding: 20px; border-radius: 10px; border-left: 4px solid #3182ce; margin-bottom: 25px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div id="selected-project-icon" style="font-size: 3rem;">🎯</div>
+                    <div>
+                        <div style="font-weight: 700; color: #2c5282; font-size: 1.2rem;" id="selected-project-name">Project Selected</div>
+                        <div style="color: #2c5282; font-size: 0.9rem;" id="selected-project-desc">Description</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="project-title">Project Title/Name *</label>
+                <input type="text" id="project-title" placeholder="e.g., Sarah's University Fund, Family House Project" required>
+                <small style="color: #718096; display: block; margin-top: 5px;">Give your project a meaningful name</small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="project-goal-amount">Target Amount (GH₵) *</label>
+                    <input type="number" id="project-goal-amount" placeholder="e.g., 50000" min="100" step="0.01" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="project-monthly-contribution">Monthly Contribution (GH₵) *</label>
+                    <input type="number" id="project-monthly-contribution" placeholder="e.g., 1500" min="10" step="0.01" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="project-description">Project Description (Optional)</label>
+                <textarea id="project-description" rows="3" placeholder="Tell us more about this project and why it matters to you..."></textarea>
+            </div>
+
+            <!-- Interest Calculator -->
+            <div style="background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <h4 style="color: #22543d; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">💰</span> Projected Returns (3 Years)
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;">Total Contributions</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #4a5568;" id="projected-total">₵0.00</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;">Interest Earned (20%)</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #48bb78;" id="projected-interest">₵0.00</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px;">
+                        <div style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;">Final Amount</div>
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;" id="projected-final">₵0.00</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="card" style="background: #fff5f5; border: 2px solid #feb2b2; padding: 25px; margin-bottom: 25px;">
+                <h4 style="color: #c53030; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">⚠️</span> Important Terms & Conditions
+                </h4>
+                
+                <div id="project-terms-content" style="color: #742a2a; line-height: 1.8; max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                    <p style="font-weight: 600; margin-bottom: 15px;">Please read carefully before creating your project:</p>
+                    
+                    <ol style="margin-left: 20px; margin-bottom: 20px;">
+                        <li style="margin-bottom: 12px;">
+                            <strong>Lock Period:</strong> Your savings will be locked for exactly <strong>3 years (36 months)</strong> from the date of first contribution.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Interest Rate:</strong> You will earn <strong>20% interest</strong> on your total contributions, paid at maturity (after 3 years).
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Early Withdrawal:</strong> If you withdraw before 3 years (except for emergencies):
+                            <ul style="margin-left: 20px; margin-top: 8px;">
+                                <li>You will forfeit ALL interest (0% interest)</li>
+                                <li>A <strong>30% penalty</strong> will be deducted from your total contributions</li>
+                                <li>You will only receive 70% of what you contributed</li>
+                            </ul>
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Emergency Withdrawals:</strong> Only allowed with valid proof (medical bills, death certificate, eviction notice, etc.). Subject to admin approval.
+                        </li>
+                        <li style="margin-bottom: 12px;" id="imminent-terms" style="display: none;">
+                            <strong>Imminent Attention Projects:</strong> Can be withdrawn anytime without penalties, but earn <strong>NO interest</strong>.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Monthly Contributions:</strong> You commit to contributing the specified amount monthly. Missed payments may affect interest calculation.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Maturity Date:</strong> Your project matures exactly 3 years from first contribution. You'll be notified 30 days before maturity.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>Non-Transferable:</strong> This project cannot be transferred to another person or account.
+                        </li>
+                        <li style="margin-bottom: 12px;">
+                            <strong>KYC Required:</strong> You must have completed KYC verification to create Future Projects.
+                        </li>
+                    </ol>
+
+                    <div style="background: #fef5e7; padding: 15px; border-radius: 8px; border-left: 4px solid #f6cc33; margin-top: 20px;">
+                        <strong style="color: #744210;">💡 Example Calculation:</strong>
+                        <div style="margin-top: 10px; color: #744210;">
+                            If you save ₵1,000/month for 36 months:<br>
+                            • Total Saved: ₵36,000<br>
+                            • Interest (20%): ₵7,200<br>
+                            • <strong>Final Amount: ₵43,200</strong><br><br>
+                            
+                            If you withdraw after 18 months (early):<br>
+                            • Total Saved: ₵18,000<br>
+                            • Penalty (30%): -₵5,400<br>
+                            • Interest: ₵0<br>
+                            • <strong>You Receive: ₵12,600</strong> (You lose ₵5,400!)
+                        </div>
+                    </div>
+                </div>
+
+                <label style="display: flex; align-items: flex-start; gap: 12px; margin-top: 20px; cursor: pointer; padding: 15px; background: white; border-radius: 8px; border: 2px solid #e53e3e;">
+                    <input type="checkbox" id="accept-terms-checkbox" required style="margin-top: 4px; width: 20px; height: 20px; cursor: pointer;">
+                    <span style="color: #742a2a; font-weight: 600; line-height: 1.6;">
+                        I have read, understood, and agree to all the terms and conditions above. I understand that early withdrawal will result in a 30% penalty and forfeiture of all interest.
+                    </span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn" id="create-project-btn" disabled style="opacity: 0.5;">
+                🎯 Create Future Project
+            </button>
+        </form>
+    </div>
+</div>
 
         <!-- Transactions Page -->
         <div id="transactions-page" class="page-content hidden">
@@ -3427,6 +3767,17 @@
         </form>
     </div>
 </div>
+<!-- Project Details Modal -->
+<div class="modal" id="project-details-modal">
+    <div class="modal-content" style="max-width: 700px;">
+        <button class="close-btn" id="close-project-details">&times;</button>
+        <h2 style="margin-bottom: 25px; color: #4a5568; text-align: center;" id="modal-project-title">Project Details</h2>
+        
+        <div id="project-details-content">
+            <!-- Content will be dynamically loaded -->
+        </div>
+    </div>
+</div>
 
    <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -3488,6 +3839,1058 @@
         let notifications = [];
         let biometricAuthenticated = false;
         let selectedWithdrawalAuthMethod = 'password';
+        // Future Project Variables
+let selectedProjectType = null;
+let activeProjects = [];
+
+const projectTypeData = {
+    kids: {
+        icon: '👶',
+        name: 'For My Kids',
+        description: 'Secure your children\'s future with dedicated savings',
+        locked: true
+    },
+    myself: {
+        icon: '🙋',
+        name: 'For Myself',
+        description: 'Invest in your personal goals and dreams',
+        locked: true
+    },
+    parents: {
+        icon: '👴👵',
+        name: 'For My Parents',
+        description: 'Provide care and comfort for your parents',
+        locked: true
+    },
+    spouse: {
+        icon: '💑',
+        name: 'For My Spouse',
+        description: 'Create something special for your life partner',
+        locked: true
+    },
+    family: {
+        icon: '👨‍👩‍👧‍👦',
+        name: 'Family Project',
+        description: 'Build a better future for your entire family',
+        locked: true
+    },
+    wedding: {
+        icon: '💒',
+        name: 'For My Wedding',
+        description: 'Save for your dream wedding ceremony',
+        locked: true
+    },
+    imminent: {
+        icon: '⚡',
+        name: 'Imminent Attention',
+        description: 'Flexible savings for urgent needs - withdrawable anytime',
+        locked: false
+    }
+};
+// ==========================================
+// FUTURE PROJECT FUNCTIONALITY
+// ==========================================
+
+// Initialize Future Project Page
+async function initFutureProjectPage() {
+    // Check KYC status
+    if (userData.kycStatus !== 'approved') {
+        document.getElementById('future-project-page').innerHTML = `
+            <h2 style="margin-bottom: 20px; color: #ffffff;">🎯 Future Project Savings</h2>
+            <div class="card" style="text-align: center; padding: 60px 20px;">
+                <div style="font-size: 5rem; margin-bottom: 20px;">🔒</div>
+                <h3 style="color: #4a5568; margin-bottom: 15px;">KYC Verification Required</h3>
+                <p style="color: #718096; margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    Future Project savings require KYC verification to ensure security and compliance. 
+                    Complete your verification to unlock this premium savings feature.
+                </p>
+                <button class="btn" onclick="document.querySelector('[data-page=kyc]').click()" style="width: auto; padding: 12px 30px;">
+                    Complete KYC Verification
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    await loadActiveProjects();
+    setupProjectTypeSelection();
+    setupProjectForm();
+}
+
+// Load user's active projects & Run maturity check when projects are loaded
+async function loadActiveProjects() {
+    try {
+        const q = query(
+            collection(db, 'future_projects'),
+            where('userId', '==', currentUser.uid),
+            where('status', 'in', ['active', 'matured'])
+        );
+        
+        const snapshot = await getDocs(q);
+        activeProjects = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate() || new Date(),
+            maturityDate: doc.data().maturityDate?.toDate() || new Date()
+        }));
+        
+        renderActiveProjects();
+        await checkProjectMaturity();
+        
+    } catch (error) {
+        console.error('Error loading projects:', error);
+        showAlert('Error loading projects. Please refresh.', 'error');
+    }
+}
+// Render active projects summary
+function renderActiveProjects() {
+    const container = document.getElementById('active-projects-summary');
+    
+    if (!container) return;
+    
+    if (activeProjects.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #718096; grid-column: 1 / -1;">
+                <div style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;">📂</div>
+                <p>No active projects yet. Create your first project below!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = activeProjects.map(project => {
+        const progress = (project.currentAmount / project.goalAmount) * 100;
+        const daysRemaining = Math.ceil((project.maturityDate - new Date()) / (1000 * 60 * 60 * 24));
+        const monthsRemaining = Math.ceil(daysRemaining / 30);
+        const isMatured = daysRemaining <= 0;
+        const isLocked = projectTypeData[project.type].locked && !isMatured;
+        
+        const projectedInterest = isMatured ? project.currentAmount * 0.20 : 0;
+        const projectedTotal = isMatured ? project.currentAmount + projectedInterest : project.currentAmount;
+        
+        return `
+            <div class="project-summary-card ${isLocked ? 'locked' : ''} ${project.type === 'imminent' ? 'imminent' : ''}" 
+                 onclick="viewProjectDetails('${project.id}')">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="font-size: 2.5rem;">${projectTypeData[project.type].icon}</div>
+                        <div>
+                            <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${project.title}</div>
+                            <div style="font-size: 0.85rem; color: #718096;">${projectTypeData[project.type].name}</div>
+                        </div>
+                    </div>
+                    ${isLocked ? '<span style="font-size: 1.5rem;">🔒</span>' : ''}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                        <span style="font-size: 0.85rem; color: #718096;">Progress</span>
+                        <span style="font-weight: 600; color: #667eea;">${progress.toFixed(1)}%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: ${Math.min(progress, 100)}%"></div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <div style="font-size: 0.75rem; color: #718096;">Current</div>
+                        <div style="font-weight: 700; color: #4a5568;">${formatCurrency(project.currentAmount)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.75rem; color: #718096;">Goal</div>
+                        <div style="font-weight: 700; color: #667eea;">${formatCurrency(project.goalAmount)}</div>
+                    </div>
+                </div>
+                
+                ${isMatured ? `
+                    <div style="background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="font-size: 0.85rem; color: #22543d; font-weight: 600; margin-bottom: 5px;">🎉 Project Matured!</div>
+                        <div style="font-size: 0.8rem; color: #22543d;">Interest: ${formatCurrency(projectedInterest)}</div>
+                        <div style="font-size: 0.9rem; color: #22543d; font-weight: 700;">Total: ${formatCurrency(projectedTotal)}</div>
+                    </div>
+                ` : `
+                    <div style="font-size: 0.85rem; color: #718096; margin-bottom: 10px;">
+                        ${isLocked ? `🔒 Matures in: <strong>${monthsRemaining} months</strong>` : '⚡ Withdrawable anytime'}
+                    </div>
+                `}
+                
+                <span class="project-badge ${isMatured ? 'matured' : isLocked ? 'locked' : 'active'}">
+                    ${isMatured ? '✅ Matured' : isLocked ? '🔒 Locked' : '⚡ Active'}
+                </span>
+            </div>
+        `;
+    }).join('');
+}
+
+// Setup project type selection
+function setupProjectTypeSelection() {
+    document.querySelectorAll('.project-type-card').forEach(card => {
+        card.addEventListener('click', () => {
+            // Remove previous selection
+            document.querySelectorAll('.project-type-card').forEach(c => c.classList.remove('selected'));
+            
+            // Select new type
+            card.classList.add('selected');
+            selectedProjectType = card.dataset.type;
+            
+            // Update form display
+            const form = document.getElementById('create-project-form');
+            form.classList.remove('hidden');
+            
+            const projectData = projectTypeData[selectedProjectType];
+            document.getElementById('selected-project-icon').textContent = projectData.icon;
+            document.getElementById('selected-project-name').textContent = projectData.name;
+            document.getElementById('selected-project-desc').textContent = projectData.description;
+            
+            // Show/hide imminent terms
+            const imminentTerms = document.getElementById('imminent-terms');
+            if (selectedProjectType === 'imminent') {
+                imminentTerms.style.display = 'list-item';
+            } else {
+                imminentTerms.style.display = 'none';
+            }
+            
+            // Scroll to form
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Reset form
+            document.getElementById('create-project-form').reset();
+            document.getElementById('accept-terms-checkbox').checked = false;
+            updateProjectCalculations();
+        });
+    });
+}
+
+// Setup project form handlers
+function setupProjectForm() {
+    // Enable/disable submit button based on terms acceptance
+    document.getElementById('accept-terms-checkbox')?.addEventListener('change', (e) => {
+        const btn = document.getElementById('create-project-btn');
+        btn.disabled = !e.target.checked;
+        btn.style.opacity = e.target.checked ? '1' : '0.5';
+    });
+    
+    // Update calculations on input
+    document.getElementById('project-monthly-contribution')?.addEventListener('input', updateProjectCalculations);
+    document.getElementById('project-goal-amount')?.addEventListener('input', updateProjectCalculations);
+    
+    // Handle form submission
+    document.getElementById('create-project-form')?.addEventListener('submit', handleCreateProject);
+}
+
+// Update project calculations
+function updateProjectCalculations() {
+    const monthlyContribution = parseFloat(document.getElementById('project-monthly-contribution')?.value) || 0;
+    const goalAmount = parseFloat(document.getElementById('project-goal-amount')?.value) || 0;
+    
+    // Calculate 3-year projections
+    const totalContributions = monthlyContribution * 36;
+    const interest = selectedProjectType === 'imminent' ? 0 : totalContributions * 0.20;
+    const finalAmount = totalContributions + interest;
+    
+    document.getElementById('projected-total').textContent = formatCurrency(totalContributions);
+    document.getElementById('projected-interest').textContent = formatCurrency(interest);
+    document.getElementById('projected-final').textContent = formatCurrency(finalAmount);
+}
+
+// Handle create project submission
+async function handleCreateProject(e) {
+    e.preventDefault();
+    
+    if (!selectedProjectType) {
+        showAlert('Please select a project type', 'error');
+        return;
+    }
+    
+    const title = document.getElementById('project-title').value;
+    const goalAmount = parseFloat(document.getElementById('project-goal-amount').value);
+    const monthlyContribution = parseFloat(document.getElementById('project-monthly-contribution').value);
+    const description = document.getElementById('project-description').value;
+    
+    if (goalAmount < 100) {
+        showAlert('Minimum goal amount is ₵100', 'error');
+        return;
+    }
+    
+    if (monthlyContribution < 10) {
+        showAlert('Minimum monthly contribution is ₵10', 'error');
+        return;
+    }
+    
+    showLoader('Creating your project');
+    
+    try {
+        const now = new Date();
+        const maturityDate = new Date(now.getTime() + (3 * 365 * 24 * 60 * 60 * 1000)); // 3 years from now
+        
+        const projectData = {
+            userId: currentUser.uid,
+            userName: `${userData.firstName} ${userData.surname}`,
+            type: selectedProjectType,
+            title,
+            description,
+            goalAmount,
+            monthlyContribution,
+            currentAmount: 0,
+            status: 'active',
+            createdAt: serverTimestamp(),
+            maturityDate: maturityDate,
+            isLocked: projectTypeData[selectedProjectType].locked,
+            termsAccepted: true,
+            termsAcceptedAt: serverTimestamp(),
+            lastContributionDate: null,
+            contributions: [],
+            withdrawals: [],
+            interestRate: selectedProjectType === 'imminent' ? 0 : 0.20,
+            earlyWithdrawalPenalty: 0.30
+        };
+        
+        const docRef = await addDoc(collection(db, 'future_projects'), projectData);
+        
+        // Create notification
+        await createNotification(
+            'Future Project Created',
+            `Your "${title}" project has been created successfully!`,
+            'info'
+        );
+        
+        hideLoader();
+        
+        showAlert(`✅ Project "${title}" created successfully!`, 'success');
+        
+        // Reset form and reload
+        document.getElementById('create-project-form').reset();
+        document.getElementById('create-project-form').classList.add('hidden');
+        document.querySelectorAll('.project-type-card').forEach(c => c.classList.remove('selected'));
+        selectedProjectType = null;
+        
+        await loadActiveProjects();
+        
+        // Scroll to top
+        document.getElementById('future-project-page').scrollIntoView({ behavior: 'smooth' });
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error creating project:', error);
+        showAlert('Error creating project: ' + error.message, 'error');
+    }
+}
+
+console.log('✅ Future Project system loaded');
+// Update dashboard to show future projects summary
+async function updateDashboardFutureProjects() {
+    const widget = document.getElementById('future-projects-widget');
+    const content = document.getElementById('future-projects-widget-content');
+    
+    if (!widget || !content) return;
+    
+    try {
+        const q = query(
+            collection(db, 'future_projects'),
+            where('userId', '==', currentUser.uid),
+            where('status', '==', 'active')
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+            widget.style.display = 'none';
+            return;
+        }
+        
+        widget.style.display = 'block';
+        
+        const projects = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            maturityDate: doc.data().maturityDate?.toDate() || new Date()
+        }));
+        
+        const totalSaved = projects.reduce((sum, p) => sum + p.currentAmount, 0);
+        const totalGoal = projects.reduce((sum, p) => sum + p.goalAmount, 0);
+        const projectedInterest = projects.reduce((sum, p) => {
+            if (p.type !== 'imminent') {
+                return sum + (p.currentAmount * 0.20);
+            }
+            return sum;
+        }, 0);
+        
+        content.innerHTML = `
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
+                    <div style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;">Active Projects</div>
+                    <div style="font-size: 1.8rem; font-weight: 700; color: #667eea;">${projects.length}</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
+                    <div style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;">Total Saved</div>
+                    <div style="font-size: 1.8rem; font-weight: 700; color: #48bb78;">${formatCurrency(totalSaved)}</div>
+                </div>
+                <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
+                    <div style="font-size: 0.85rem; color: #718096; margin-bottom: 5px;">Projected Interest</div>
+                    <div style="font-size: 1.8rem; font-weight: 700; color: #f6cc33;">${formatCurrency(projectedInterest)}</div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="document.querySelector('[data-page=future-project]').click()" 
+                    style="width: 100%; padding: 12px;">
+                View All Projects →
+            </button>
+        `;
+        
+    } catch (error) {
+        console.error('Error updating future projects widget:', error);
+        widget.style.display = 'none';
+    }
+}
+
+
+// View project details
+window.viewProjectDetails = async function(projectId) {
+    const project = activeProjects.find(p => p.id === projectId);
+    
+    if (!project) {
+        showAlert('Project not found', 'error');
+        return;
+    }
+    
+    const progress = (project.currentAmount / project.goalAmount) * 100;
+    const daysRemaining = Math.ceil((project.maturityDate - new Date()) / (1000 * 60 * 60 * 24));
+    const monthsRemaining = Math.ceil(daysRemaining / 30);
+    const isMatured = daysRemaining <= 0;
+    const isLocked = projectTypeData[project.type].locked && !isMatured;
+    
+    const projectedInterest = project.currentAmount * project.interestRate;
+    const projectedTotal = project.currentAmount + projectedInterest;
+    const penaltyAmount = project.currentAmount * project.earlyWithdrawalPenalty;
+    const earlyWithdrawalAmount = project.currentAmount - penaltyAmount;
+    
+    const content = `
+        <div style="text-align: center; margin-bottom: 25px;">
+            <div style="font-size: 4rem; margin-bottom: 10px;">${projectTypeData[project.type].icon}</div>
+            <h3 style="color: #4a5568; margin-bottom: 5px;">${project.title}</h3>
+            <div style="color: #718096; font-size: 0.9rem;">${projectTypeData[project.type].name}</div>
+            ${project.description ? `<p style="color: #718096; margin-top: 10px; font-style: italic;">"${project.description}"</p>` : ''}
+        </div>
+
+        <!-- Progress Section -->
+        <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="font-weight: 600; color: #4a5568;">Progress</span>
+                <span style="font-weight: 700; color: #667eea; font-size: 1.2rem;">${progress.toFixed(1)}%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" style="width: ${Math.min(progress, 100)}%"></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.8rem; color: #718096;">Current</div>
+                    <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${formatCurrency(project.currentAmount)}</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.8rem; color: #718096;">Goal</div>
+                    <div style="font-weight: 700; color: #667eea; font-size: 1.1rem;">${formatCurrency(project.goalAmount)}</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 0.8rem; color: #718096;">Monthly</div>
+                    <div style="font-weight: 700; color: #48bb78; font-size: 1.1rem;">${formatCurrency(project.monthlyContribution)}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Section -->
+        <div style="background: ${isMatured ? 'linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%)' : isLocked ? 'linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%)' : 'linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%)'}; 
+                    padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+            <h4 style="color: ${isMatured ? '#22543d' : isLocked ? '#742a2a' : '#744210'}; margin-bottom: 15px;">
+                ${isMatured ? '🎉 Project Status: MATURED' : isLocked ? '🔒 Project Status: LOCKED' : '⚡ Project Status: ACTIVE'}
+            </h4>
+            <div style="color: ${isMatured ? '#22543d' : isLocked ? '#742a2a' : '#744210'}; line-height: 1.8;">
+                ${isMatured ? `
+                    <strong>Congratulations!</strong> Your project has matured!<br>
+                    <div style="margin-top: 15px; background: white; padding: 15px; border-radius: 8px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <div style="font-size: 0.85rem;">Contributions</div>
+                                <div style="font-weight: 700; font-size: 1.2rem;">${formatCurrency(project.currentAmount)}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85rem;">Interest (20%)</div>
+                                <div style="font-weight: 700; font-size: 1.2rem; color: #48bb78;">+${formatCurrency(projectedInterest)}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #e2e8f0;">
+                            <div style="font-size: 0.85rem;">Total Available</div>
+                            <div style="font-weight: 700; font-size: 1.5rem; color: #667eea;">${formatCurrency(projectedTotal)}</div>
+                        </div>
+                    </div>
+                ` : isLocked ? `
+                    <strong>Lock Period:</strong> ${monthsRemaining} months remaining<br>
+                    <strong>Maturity Date:</strong> ${project.maturityDate.toLocaleDateString()}<br><br>
+                    <strong>⚠️ Early Withdrawal:</strong><br>
+                    • Penalty: ${formatCurrency(penaltyAmount)} (30%)<br>
+                    • You would receive: ${formatCurrency(earlyWithdrawalAmount)}<br>
+                    • Interest forfeited: ${formatCurrency(projectedInterest)}
+                ` : `
+                    <strong>Withdrawable Anytime</strong><br>
+                    No lock period or penalties apply to Imminent Attention projects.<br>
+                    Current balance available for withdrawal: ${formatCurrency(project.currentAmount)}
+                `}
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;">
+            <button class="btn" onclick="contributeToProject('${project.id}')" 
+                    style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                💰 Add Contribution
+            </button>
+            <button class="btn" onclick="withdrawFromProject('${project.id}')" 
+                    style="background: ${isMatured || !isLocked ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)'};">
+                ${isMatured || !isLocked ? '💸 Withdraw' : '⚠️ Emergency Withdrawal'}
+            </button>
+        </div>
+
+        <!-- Project Timeline -->
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e2e8f0;">
+            <h4 style="color: #4a5568; margin-bottom: 15px;">📅 Project Timeline</h4>
+            <div style="font-size: 0.9rem; color: #718096; line-height: 1.8;">
+                <strong>Created:</strong> ${project.createdAt.toLocaleDateString()}<br>
+                <strong>Maturity:</strong> ${project.maturityDate.toLocaleDateString()}<br>
+                <strong>Duration:</strong> 36 months (3 years)<br>
+                <strong>Time Elapsed:</strong> ${36 - monthsRemaining} months<br>
+                <strong>Contributions Made:</strong> ${project.contributions?.length || 0}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('project-details-content').innerHTML = content;
+    document.getElementById('modal-project-title').textContent = project.title;
+    document.getElementById('project-details-modal').style.display = 'block';
+};
+
+// Close project details modal
+document.getElementById('close-project-details')?.addEventListener('click', () => {
+    document.getElementById('project-details-modal').style.display = 'none';
+});
+// ==========================================
+// PROJECT CONTRIBUTION FUNCTION
+// ==========================================
+
+window.contributeToProject = function(projectId) {
+    const project = activeProjects.find(p => p.id === projectId);
+    
+    if (!project) {
+        showAlert('Project not found', 'error');
+        return;
+    }
+    
+    // Close details modal
+    document.getElementById('project-details-modal').style.display = 'none';
+    
+    // Create contribution modal
+    const modalHTML = `
+        <div class="modal" id="project-contribution-modal" style="display: block;">
+            <div class="modal-content" style="max-width: 550px;">
+                <button class="close-btn" onclick="closeProjectContributionModal()">&times;</button>
+                <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">💰 Add Contribution</h2>
+                
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">${projectTypeData[project.type].icon}</div>
+                    <h3 style="color: #4a5568; margin-bottom: 5px;">${project.title}</h3>
+                    <div style="color: #718096; font-size: 0.9rem;">Current Balance: <strong>${formatCurrency(project.currentAmount)}</strong></div>
+                </div>
+                
+                <form id="project-contribution-form" onsubmit="submitProjectContribution(event, '${projectId}')">
+                    <div class="form-group">
+                        <label for="project-contribution-amount">Contribution Amount (GH₵) *</label>
+                        <input type="number" id="project-contribution-amount" value="${project.monthlyContribution}" 
+                               min="10" step="0.01" required placeholder="Enter amount">
+                        <small style="color: #718096; display: block; margin-top: 5px;">
+                            Recommended: ${formatCurrency(project.monthlyContribution)}/month
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Quick Amount Selection</label>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                            <button type="button" class="btn quick-contribute-btn" 
+                                    onclick="setContributionAmount(${project.monthlyContribution})" 
+                                    style="width: 100%; padding: 10px; font-size: 0.9rem;">Monthly</button>
+                            <button type="button" class="btn quick-contribute-btn" 
+                                    onclick="setContributionAmount(${project.monthlyContribution * 3})" 
+                                    style="width: 100%; padding: 10px; font-size: 0.9rem;">3 Months</button>
+                            <button type="button" class="btn quick-contribute-btn" 
+                                    onclick="setContributionAmount(${project.monthlyContribution * 6})" 
+                                    style="width: 100%; padding: 10px; font-size: 0.9rem;">6 Months</button>
+                            <button type="button" class="btn quick-contribute-btn" 
+                                    onclick="setContributionAmount(${project.monthlyContribution * 12})" 
+                                    style="width: 100%; padding: 10px; font-size: 0.9rem;">1 Year</button>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-method-selector">
+                        <div class="payment-option" data-method="mobile-money" onclick="selectProjectPaymentMethod('mobile-money')">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">📱</div>
+                            <div style="font-weight: 600;">Mobile Money</div>
+                        </div>
+                        <div class="payment-option" data-method="crypto" onclick="selectProjectPaymentMethod('crypto')">
+                            <div style="font-size: 2rem; margin-bottom: 10px;">₿</div>
+                            <div style="font-weight: 600;">Cryptocurrency</div>
+                        </div>
+                    </div>
+
+                    <div id="project-payment-details" class="hidden">
+                        <div class="form-group">
+                            <label>Payment Instructions</label>
+                            <div id="project-payment-instructions" style="padding: 15px; background: #f7fafc; border-radius: 8px; color: #4a5568; line-height: 1.8;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="project-transaction-id">Transaction ID/Reference *</label>
+                            <input type="text" id="project-transaction-id" placeholder="Paste your transaction ID" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                        💰 Submit Contribution
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('project-contribution-modal');
+    if (existingModal) existingModal.remove();
+    
+    // Add new modal
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+};
+
+window.closeProjectContributionModal = function() {
+    const modal = document.getElementById('project-contribution-modal');
+    if (modal) modal.remove();
+};
+
+window.setContributionAmount = function(amount) {
+    document.getElementById('project-contribution-amount').value = amount;
+};
+
+let selectedProjectPaymentMethod = null;
+
+window.selectProjectPaymentMethod = function(method) {
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    event.currentTarget.classList.add('selected');
+    selectedProjectPaymentMethod = method;
+    
+    document.getElementById('project-payment-details').classList.remove('hidden');
+    
+    const instructions = document.getElementById('project-payment-instructions');
+    
+    if (method === 'mobile-money') {
+        instructions.innerHTML = `
+            <strong>Mobile Money Payment:</strong><br>
+            1. Dial *170# (MTN) or *110# (Telecel)<br>
+            2. Select "Send Money"<br>
+            3. Enter: <strong>0551000715</strong> or <strong>0208551270</strong><br>
+            4. Enter the amount shown above<br>
+            5. Use as Reference <b>Future Project - ${activeProjects.find(p => p.id === arguments[0])?.title}</b><br>
+            6. Recipient's Name <b>Godfred Mensah</b><br>
+            7. Paste transaction ID below
+        `;
+    } else if (method === 'crypto') {
+        instructions.innerHTML = `
+            <strong>Cryptocurrency Payment:</strong><br>
+            <strong>USDT (ERC-20):</strong> ${cryptoAddresses.usdt.erc20}<br>
+            <strong>USDT (TRC-20):</strong> ${cryptoAddresses.usdt.trc20}<br>
+            <strong>BTC:</strong> ${cryptoAddresses.btc}<br>
+            <strong>ETH:</strong> ${cryptoAddresses.eth}<br>
+            <strong>USDC:</strong> ${cryptoAddresses.usdc}
+        `;
+    }
+};
+
+window.submitProjectContribution = async function(event, projectId) {
+    event.preventDefault();
+    
+    const amount = parseFloat(document.getElementById('project-contribution-amount').value);
+    const transactionId = document.getElementById('project-transaction-id').value.trim();
+    
+    if (!selectedProjectPaymentMethod) {
+        showAlert('Please select a payment method', 'error');
+        return;
+    }
+    
+    if (!transactionId) {
+        showAlert('Please enter transaction ID', 'error');
+        return;
+    }
+    
+    showLoader('Processing your contribution');
+    
+    try {
+        // Create transaction record
+        await addDoc(collection(db, 'transactions'), {
+            userId: currentUser.uid,
+            type: 'future_project_contribution',
+            projectId: projectId,
+            amount: amount,
+            status: 'pending',
+            paymentMethod: selectedProjectPaymentMethod,
+            transactionId: transactionId,
+            timestamp: serverTimestamp()
+        });
+        
+        hideLoader();
+        
+        closeProjectContributionModal();
+        
+        showAlert('✅ Contribution submitted! Pending approval.', 'success');
+        
+        await createNotification(
+            'Project Contribution Submitted',
+            `${formatCurrency(amount)} contribution to "${activeProjects.find(p => p.id === projectId)?.title}" is pending approval`,
+            'info'
+        );
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Contribution error:', error);
+        showAlert('Error: ' + error.message, 'error');
+    }
+};
+
+// ==========================================
+// PROJECT WITHDRAWAL FUNCTION
+// ==========================================
+
+window.withdrawFromProject = function(projectId) {
+    const project = activeProjects.find(p => p.id === projectId);
+    
+    if (!project) {
+        showAlert('Project not found', 'error');
+        return;
+    }
+    
+    if (project.currentAmount === 0) {
+        showAlert('No funds available for withdrawal', 'error');
+        return;
+    }
+    
+    // Close details modal
+    document.getElementById('project-details-modal').style.display = 'none';
+    
+    const daysRemaining = Math.ceil((project.maturityDate - new Date()) / (1000 * 60 * 60 * 24));
+    const isMatured = daysRemaining <= 0;
+    const isLocked = projectTypeData[project.type].locked && !isMatured;
+    
+    const projectedInterest = project.currentAmount * project.interestRate;
+    const projectedTotal = project.currentAmount + projectedInterest;
+    const penaltyAmount = project.currentAmount * project.earlyWithdrawalPenalty;
+    const earlyWithdrawalAmount = project.currentAmount - penaltyAmount;
+    
+    // Create withdrawal modal
+    const modalHTML = `
+        <div class="modal" id="project-withdrawal-modal" style="display: block;">
+            <div class="modal-content" style="max-width: 600px;">
+                <button class="close-btn" onclick="closeProjectWithdrawalModal()">&times;</button>
+                <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">
+                    ${isMatured || !isLocked ? '💸 Withdraw Funds' : '⚠️ Emergency Withdrawal'}
+                </h2>
+                
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">${projectTypeData[project.type].icon}</div>
+                    <h3 style="color: #4a5568; margin-bottom: 5px;">${project.title}</h3>
+                </div>
+
+                ${isMatured ? `
+                    <!-- Matured Project Withdrawal -->
+                    <div style="background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                        <h4 style="color: #22543d; margin-bottom: 15px; text-align: center;">🎉 Congratulations!</h4>
+                        <div style="background: white; padding: 20px; border-radius: 10px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.85rem; color: #718096;">Your Contributions</div>
+                                    <div style="font-weight: 700; font-size: 1.3rem; color: #4a5568;">${formatCurrency(project.currentAmount)}</div>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 0.85rem; color: #718096;">Interest Earned (20%)</div>
+                                    <div style="font-weight: 700; font-size: 1.3rem; color: #48bb78;">+${formatCurrency(projectedInterest)}</div>
+                                </div>
+                            </div>
+                            <div style="padding-top: 15px; border-top: 2px solid #e2e8f0; text-align: center;">
+                                <div style="font-size: 0.9rem; color: #718096; margin-bottom: 5px;">Total Available</div>
+                                <div style="font-weight: 700; font-size: 2rem; color: #667eea;">${formatCurrency(projectedTotal)}</div>
+                            </div>
+                        </div>
+                    </div>
+                ` : isLocked ? `
+                    <!-- Early/Emergency Withdrawal -->
+                    <div style="background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                        <h4 style="color: #742a2a; margin-bottom: 15px;">⚠️ Early Withdrawal Warning</h4>
+                        <div style="color: #742a2a; line-height: 1.8; margin-bottom: 15px;">
+                            <strong>This is an early withdrawal before maturity!</strong><br>
+                            By withdrawing now, you will incur significant penalties:
+                        </div>
+                        <div style="background: white; padding: 20px; border-radius: 10px;">
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-size: 0.85rem; color: #718096;">Current Balance</div>
+                                <div style="font-weight: 700; font-size: 1.2rem; color: #4a5568;">${formatCurrency(project.currentAmount)}</div>
+                            </div>
+                            <div style="margin-bottom: 12px; padding: 12px; background: #fff5f5; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                                <div style="font-size: 0.85rem; color: #e53e3e;">Penalty (30%)</div>
+                                <div style="font-weight: 700; font-size: 1.2rem; color: #e53e3e;">-${formatCurrency(penaltyAmount)}</div>
+                            </div>
+                            <div style="margin-bottom: 12px; padding: 12px; background: #fff5f5; border-radius: 8px; border-left: 4px solid #e53e3e;">
+                                <div style="font-size: 0.85rem; color: #e53e3e;">Interest Forfeited</div>
+                                <div style="font-weight: 700; font-size: 1.2rem; color: #e53e3e;">-${formatCurrency(projectedInterest)}</div>
+                            </div>
+                            <div style="padding-top: 15px; border-top: 2px solid #e2e8f0; text-align: center;">
+                                <div style="font-size: 0.9rem; color: #718096; margin-bottom: 5px;">You Will Receive</div>
+                                <div style="font-weight: 700; font-size: 1.8rem; color: #e53e3e;">${formatCurrency(earlyWithdrawalAmount)}</div>
+                                <div style="font-size: 0.85rem; color: #e53e3e; margin-top: 5px;">
+                                    Total Loss: ${formatCurrency(penaltyAmount + projectedInterest)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="color: #742a2a; font-weight: 600;">Emergency Reason *</label>
+                        <select id="emergency-reason" required style="border-color: #feb2b2;">
+                            <option value="">Select emergency reason...</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="death">Death in Family</option>
+                            <option value="eviction">Eviction/Housing Crisis</option>
+                            <option value="legal">Legal Emergency</option>
+                            <option value="natural_disaster">Natural Disaster</option>
+                            <option value="job_loss">Job Loss/Financial Crisis</option>
+                            <option value="other">Other Emergency</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="color: #742a2a; font-weight: 600;">Detailed Explanation *</label>
+                        <textarea id="emergency-explanation" rows="4" required 
+                                  placeholder="Please provide detailed explanation of your emergency situation..." 
+                                  style="border-color: #feb2b2;"></textarea>
+                        <small style="color: #742a2a; display: block; margin-top: 5px;">
+                            <strong>Note:</strong> You may be required to provide supporting documents (medical bills, certificates, etc.)
+                        </small>
+                    </div>
+                ` : `
+                    <!-- Imminent Attention Withdrawal -->
+                    <div style="background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%); padding: 25px; border-radius: 12px; margin-bottom: 25px;">
+                        <h4 style="color: #744210; margin-bottom: 15px;">⚡ Imminent Attention Withdrawal</h4>
+                        <div style="background: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <div style="font-size: 0.9rem; color: #718096; margin-bottom: 5px;">Available Balance</div>
+                            <div style="font-weight: 700; font-size: 2rem; color: #667eea;">${formatCurrency(project.currentAmount)}</div>
+                            <div style="margin-top: 15px; font-size: 0.9rem; color: #718096;">
+                                No penalties • No lock period • No interest
+                            </div>
+                        </div>
+                    </div>
+                `}
+
+                <form id="project-withdrawal-form" onsubmit="submitProjectWithdrawal(event, '${projectId}', ${isMatured}, ${isLocked})">
+                    <div class="form-group">
+                        <label for="project-withdrawal-amount">Withdrawal Amount (GH₵) *</label>
+                        <input type="number" id="project-withdrawal-amount" 
+                               value="${isMatured ? projectedTotal : isLocked ? earlyWithdrawalAmount : project.currentAmount}" 
+                               max="${isMatured ? projectedTotal : isLocked ? earlyWithdrawalAmount : project.currentAmount}" 
+                               min="10" step="0.01" required 
+                               ${isMatured || isLocked ? 'readonly style="background: #f7fafc;"' : ''}>
+                        <small style="color: #718096; display: block; margin-top: 5px;">
+                            Maximum: ${formatCurrency(isMatured ? projectedTotal : isLocked ? earlyWithdrawalAmount : project.currentAmount)}
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-withdrawal-payment-method">Payment Method *</label>
+                        <select id="project-withdrawal-payment-method" required>
+                            <option value="">Select payment method...</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-withdrawal-password">Withdrawal Password *</label>
+                        <input type="password" id="project-withdrawal-password" 
+                               placeholder="Enter your withdrawal password" required>
+                    </div>
+                    
+                    ${isLocked ? `
+                        <div style="background: #fff5f5; padding: 15px; border-radius: 8px; border: 2px solid #e53e3e; margin-bottom: 20px;">
+                            <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+                                <input type="checkbox" id="confirm-early-withdrawal" required 
+                                       style="margin-top: 4px; width: 20px; height: 20px; cursor: pointer;">
+                                <span style="color: #742a2a; font-weight: 600; line-height: 1.6;">
+                                    I understand that I am withdrawing early and accept the 30% penalty (${formatCurrency(penaltyAmount)}) 
+                                    and forfeiture of all interest (${formatCurrency(projectedInterest)}). 
+                                    I will only receive ${formatCurrency(earlyWithdrawalAmount)}.
+                                </span>
+                            </label>
+                        </div>
+                    ` : ''}
+                    
+                    <button type="submit" class="btn" 
+                            style="background: ${isMatured || !isLocked ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)'};">
+                        ${isMatured ? '💰 Withdraw with Interest' : isLocked ? '⚠️ Submit Emergency Withdrawal' : '💸 Withdraw Funds'}
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('project-withdrawal-modal');
+    if (existingModal) existingModal.remove();
+    
+    // Add new modal
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Load payment methods
+    loadProjectWithdrawalPaymentMethods();
+};
+
+window.closeProjectWithdrawalModal = function() {
+    const modal = document.getElementById('project-withdrawal-modal');
+    if (modal) modal.remove();
+};
+
+function loadProjectWithdrawalPaymentMethods() {
+    const select = document.getElementById('project-withdrawal-payment-method');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Select payment method...</option>';
+    
+    const methods = userData.paymentMethods || { mobileMoney: [], crypto: [], bank: [] };
+    
+    methods.mobileMoney.forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = `momo-${index}`;
+        option.textContent = `${method.provider.toUpperCase()} - ${method.number}`;
+        select.appendChild(option);
+    });
+    
+    methods.crypto.forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = `crypto-${index}`;
+        option.textContent = `${method.type.toUpperCase()} - ${method.address.slice(0, 10)}...`;
+        select.appendChild(option);
+    });
+    
+    methods.bank.forEach((method, index) => {
+        const option = document.createElement('option');
+        option.value = `bank-${index}`;
+        option.textContent = `${method.bankName} - ${method.accountNumber}`;
+        select.appendChild(option);
+    });
+}
+
+window.submitProjectWithdrawal = async function(event, projectId, isMatured, isLocked) {
+    event.preventDefault();
+    
+    const amount = parseFloat(document.getElementById('project-withdrawal-amount').value);
+    const paymentMethodId = document.getElementById('project-withdrawal-payment-method').value;
+    const password = document.getElementById('project-withdrawal-password').value;
+    
+    const project = activeProjects.find(p => p.id === projectId);
+    
+    if (!project) {
+        showAlert('Project not found', 'error');
+        return;
+    }
+    
+    if (password !== userData.withdrawalPassword) {
+        showAlert('Incorrect withdrawal password', 'error');
+        return;
+    }
+    
+    // Get emergency details if early withdrawal
+    let emergencyReason = null;
+    let emergencyExplanation = null;
+    
+    if (isLocked) {
+        const confirmCheckbox = document.getElementById('confirm-early-withdrawal');
+        if (!confirmCheckbox || !confirmCheckbox.checked) {
+            showAlert('Please confirm you understand the penalties', 'error');
+            return;
+        }
+        
+        emergencyReason = document.getElementById('emergency-reason')?.value;
+        emergencyExplanation = document.getElementById('emergency-explanation')?.value;
+        
+        if (!emergencyReason || !emergencyExplanation) {
+            showAlert('Please provide emergency reason and explanation', 'error');
+            return;
+        }
+    }
+    
+    showLoader('Processing withdrawal request');
+    
+    try {
+        const [type, index] = paymentMethodId.split('-');
+        let paymentDetails = {};
+        
+        if (type === 'momo') {
+            paymentDetails = userData.paymentMethods.mobileMoney[index];
+        } else if (type === 'crypto') {
+            paymentDetails = userData.paymentMethods.crypto[index];
+        } else if (type === 'bank') {
+            paymentDetails = userData.paymentMethods.bank[index];
+        }
+        
+        // Create withdrawal transaction
+        const withdrawalData = {
+            userId: currentUser.uid,
+            type: 'future_project_withdrawal',
+            projectId: projectId,
+            projectTitle: project.title,
+            projectType: project.type,
+            amount: amount,
+            paymentMethod: type,
+            paymentDetails: paymentDetails,
+            status: 'pending',
+            timestamp: serverTimestamp(),
+            isMatured: isMatured,
+            isEarlyWithdrawal: isLocked,
+            withdrawalType: isMatured ? 'matured' : isLocked ? 'emergency' : 'imminent'
+        };
+        
+        if (isLocked) {
+            withdrawalData.emergencyReason = emergencyReason;
+            withdrawalData.emergencyExplanation = emergencyExplanation;
+            withdrawalData.penaltyAmount = project.currentAmount * 0.30;
+            withdrawalData.forfeitedInterest = project.currentAmount * 0.20;
+        }
+        
+        await addDoc(collection(db, 'transactions'), withdrawalData);
+        
+        hideLoader();
+        closeProjectWithdrawalModal();
+        
+        const message = isMatured 
+            ? `Maturity withdrawal of ${formatCurrency(amount)} submitted!` 
+            : isLocked 
+            ? `Emergency withdrawal request submitted. Subject to admin approval.`
+            : `Withdrawal of ${formatCurrency(amount)} submitted!`;
+        
+        showAlert(`✅ ${message}`, 'success');
+        
+        await createNotification(
+            'Project Withdrawal Submitted',
+            `${formatCurrency(amount)} withdrawal from "${project.title}" is pending approval`,
+            'withdrawal'
+        );
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Withdrawal error:', error);
+        showAlert('Error: ' + error.message, 'error');
+    }
+};
+
+console.log('✅ Project contribution and withdrawal functions loaded');
 
         const cryptoAddresses = {
             usdt: {
@@ -3508,6 +4911,71 @@
             }
             return code;
         }
+
+        // ==========================================
+// INTEREST CALCULATOR HELPER
+// ==========================================
+
+function calculateProjectInterest(currentAmount, monthlyContribution, monthsRemaining, projectType) {
+    if (projectType === 'imminent') {
+        return {
+            totalContributions: currentAmount,
+            projectedTotal: currentAmount + (monthlyContribution * monthsRemaining),
+            interest: 0,
+            finalAmount: currentAmount + (monthlyContribution * monthsRemaining)
+        };
+    }
+    
+    const projectedTotal = currentAmount + (monthlyContribution * monthsRemaining);
+    const interest = projectedTotal * 0.20;
+    const finalAmount = projectedTotal + interest;
+    
+    return {
+        totalContributions: currentAmount,
+        projectedTotal: projectedTotal,
+        interest: interest,
+        finalAmount: finalAmount,
+        monthlyInterest: interest / 36,
+        yearlyInterest: interest / 3
+    };
+}
+
+// Example usage in project details
+function showInterestBreakdown(project) {
+    const daysRemaining = Math.ceil((project.maturityDate - new Date()) / (1000 * 60 * 60 * 24));
+    const monthsRemaining = Math.ceil(daysRemaining / 30);
+    
+    const calc = calculateProjectInterest(
+        project.currentAmount,
+        project.monthlyContribution,
+        monthsRemaining,
+        project.type
+    );
+    
+    return `
+        <div style="background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); padding: 20px; border-radius: 12px; margin: 20px 0;">
+            <h4 style="color: #2c5282; margin-bottom: 15px;">💡 Interest Projection</h4>
+            <div style="display: grid; gap: 10px;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #2c5282;">Current savings:</span>
+                    <strong>${formatCurrency(calc.totalContributions)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: #2c5282;">If you continue (${monthsRemaining} months):</span>
+                    <strong>${formatCurrency(calc.projectedTotal)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 2px solid #bee3f8;">
+                    <span style="color: #48bb78; font-weight: 600;">Interest at maturity:</span>
+                    <strong style="color: #48bb78;">${formatCurrency(calc.interest)}</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding-top: 10px; border-top: 2px solid #bee3f8;">
+                    <span style="color: #667eea; font-weight: 700;">Final amount:</span>
+                    <strong style="color: #667eea; font-size: 1.3rem;">${formatCurrency(calc.finalAmount)}</strong>
+                </div>
+            </div>
+        </div>
+    `;
+}
         // ==========================================
 // PROFESSIONAL LOADER FUNCTIONS
 // ==========================================
@@ -3843,6 +5311,7 @@ function base64ToArrayBuffer(base64) {
                     name: 'VIP 1',
                     stakingMonths: 6,
                     referralBonus: 0.015,
+                     stars: '⭐',
                     features: ['Staking up to 6 months', 'Referral bonus (1.5%)', 'Bronze badge'],
                     nextLevel: 'VIP 2',
                     required: 5000
@@ -3851,6 +5320,7 @@ function base64ToArrayBuffer(base64) {
                     name: 'VIP 2',
                     stakingMonths: 12,
                     referralBonus: 0.02,
+                     stars: '⭐⭐',
                     features: ['Staking up to 12 months', 'Referral bonus (2%)', 'Silver badge'],
                     nextLevel: 'VIP 3',
                     required: 10000
@@ -3859,6 +5329,7 @@ function base64ToArrayBuffer(base64) {
                     name: 'VIP 3',
                     stakingMonths: 18,
                     referralBonus: 0.025,
+                    stars: '⭐⭐⭐',
                     features: ['Staking up to 18 months', 'Referral bonus (2.5%)', 'Gold badge', 'Can request admin role'],
                     nextLevel: 'VIP 4',
                     required: 20000
@@ -3867,6 +5338,7 @@ function base64ToArrayBuffer(base64) {
                     name: 'VIP 4',
                     stakingMonths: 18,
                     referralBonus: 0.03,
+                    stars: '⭐⭐⭐⭐',
                     features: ['Staking up to 18 months', 'Referral bonus (3%)', 'Emerald badge', 'Can request admin role'],
                     nextLevel: 'VIP 5',
                     required: 50000
@@ -3875,6 +5347,7 @@ function base64ToArrayBuffer(base64) {
                     name: 'VIP 5',
                     stakingMonths: 24,
                     referralBonus: 0.04,
+                    stars: '⭐⭐⭐⭐⭐',
                     features: ['Staking up to 24 months', 'Referral bonus (4%)', 'Sapphire badge', 'Can request financial admin role'],
                     nextLevel: 'VIP 6',
                     required: 100000
@@ -3883,6 +5356,7 @@ function base64ToArrayBuffer(base64) {
                     name: 'VIP 6',
                     stakingMonths: 36,
                     referralBonus: 0.05,
+                    stars: '⭐⭐⭐⭐⭐⭐',
                     features: ['Staking up to 36 months', 'Referral bonus (5%)', 'Diamond badge', 'Can request financial admin role'],
                     nextLevel: 'VIP 7',
                     required: 1000000
@@ -4899,19 +6373,22 @@ async function loadReferralCount() {
     // IMPORTANT: Start inactivity monitoring when user enters dashboard
     startInactivityMonitoring();
 }
-        function updateDashboard() {
-            document.getElementById('total-balance').textContent = formatCurrency(userData.balance || 0);
-            document.getElementById('total-contributions').textContent = formatCurrency(userData.totalContributions || 0);
-            document.getElementById('vip-level-display').textContent = getVIPBenefits(userData.vipLevel).name;
-         document.getElementById('referral-count').textContent = userData.referralCount || (userData.referrals || []).length;
-            document.getElementById('dashboard-referral-code').textContent = userData.referralCode || 'N/A';
-          document.getElementById('dashboard-referral-count').textContent = userData.referralCount || (userData.referrals || []).length;
-            updateVIPProgress();
-            updateReferralPage();
-            updateStakingBenefits();
-            updateP2PAccess();
-            updateKYCStatus();
-        }
+      
+function updateDashboard() {
+    document.getElementById('total-balance').textContent = formatCurrency(userData.balance || 0);
+    document.getElementById('total-contributions').textContent = formatCurrency(userData.totalContributions || 0);
+    document.getElementById('vip-level-display').textContent = getVIPBenefits(userData.vipLevel).name;
+    document.getElementById('referral-count').textContent = userData.referralCount || (userData.referrals || []).length;
+    document.getElementById('dashboard-referral-code').textContent = userData.referralCode || 'N/A';
+    document.getElementById('dashboard-referral-count').textContent = userData.referralCount || (userData.referrals || []).length;
+    updateVIPProgress();
+    updateReferralPage();
+    updateStakingBenefits();
+    updateP2PAccess();
+    updateKYCStatus();
+    updateWithdrawableEarnings();
+    updateDashboardFutureProjects();
+}
 
         function updateKYCStatus() {
             if (userData.kycStatus === 'under_review' || userData.kycStatus === 'pending') {
@@ -5312,19 +6789,129 @@ async function processReferralBonus(userId, contributionAmount) {
                 const page = item.dataset.page;
                 document.getElementById(`${page}-page`).classList.remove('hidden');
                 
-              if (page === 'contributions') initContributionsPage();
-        else if (page === 'withdrawals') initWithdrawalsPage();
-        else if (page === 'transactions') loadTransactions();
-        else if (page === 'payment-methods') loadPaymentMethods();
-        else if (page === 'settings') loadSettings();
-        else if (page === 'converter') initConverter();
-        else if (page === 'referrals') renderReferralsList();
+             
+if (page === 'contributions') initContributionsPage();
+else if (page === 'withdrawals') initWithdrawalsPage();
+else if (page === 'transactions') loadTransactions();
+else if (page === 'payment-methods') loadPaymentMethods();
+else if (page === 'settings') loadSettings();
+else if (page === 'converter') initConverter();
+else if (page === 'referrals') renderReferralsList();
+else if (page === 'future-project') initFutureProjectPage();
                 
                 if (window.innerWidth <= 768) {
                     toggleSidebar();
                 }
             });
         });
+        // ==========================================
+// PROJECT MILESTONES (BONUS FEATURE)
+// ==========================================
+
+function calculateProjectMilestones(project) {
+    const milestones = [
+        { percent: 25, label: 'Quarter Way There!', icon: '🎯', achieved: false },
+        { percent: 50, label: 'Halfway Milestone!', icon: '🌟', achieved: false },
+        { percent: 75, label: 'Almost There!', icon: '🚀', achieved: false },
+        { percent: 100, label: 'Goal Achieved!', icon: '🎉', achieved: false }
+    ];
+    
+    const progress = (project.currentAmount / project.goalAmount) * 100;
+    
+    milestones.forEach(milestone => {
+        if (progress >= milestone.percent) {
+            milestone.achieved = true;
+        }
+    });
+    
+    return milestones;
+}
+
+// Add this to the viewProjectDetails function after the timeline section:
+function addMilestonesSection(project) {
+    const milestones = calculateProjectMilestones(project);
+    
+    return `
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e2e8f0;">
+            <h4 style="color: #4a5568; margin-bottom: 15px;">🏆 Milestones</h4>
+            <div style="display: grid; gap: 12px;">
+                ${milestones.map(milestone => `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: ${milestone.achieved ? '#f0fff4' : '#f7fafc'}; border-radius: 8px; border-left: 4px solid ${milestone.achieved ? '#48bb78' : '#cbd5e0'};">
+                        <span class="milestone-dot ${milestone.achieved ? '' : 'pending'}"></span>
+                        <span style="font-size: 1.5rem;">${milestone.icon}</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: ${milestone.achieved ? '#22543d' : '#718096'};">${milestone.label}</div>
+                            <div style="font-size: 0.85rem; color: #718096;">${milestone.percent}% of goal</div>
+                        </div>
+                        ${milestone.achieved ? '<span style="color: #48bb78; font-size: 1.2rem;">✓</span>' : ''}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+// ==========================================
+// AUTOMATIC MATURITY CHECKER
+// ==========================================
+
+async function checkProjectMaturity() {
+    if (!currentUser) return;
+    
+    try {
+        const now = new Date();
+        
+        for (const project of activeProjects) {
+            const daysUntilMaturity = Math.ceil((project.maturityDate - now) / (1000 * 60 * 60 * 24));
+            
+            // Check if maturing within 30 days and not yet notified
+            if (daysUntilMaturity <= 30 && daysUntilMaturity > 0) {
+                const notificationKey = `maturity_notice_${project.id}_30days`;
+                const alreadyNotified = localStorage.getItem(notificationKey);
+                
+                if (!alreadyNotified) {
+                    await createNotification(
+                        'Project Maturing Soon!',
+                        `Your "${project.title}" project will mature in ${daysUntilMaturity} days. You'll earn 20% interest!`,
+                        'info'
+                    );
+                    localStorage.setItem(notificationKey, 'true');
+                }
+            }
+            
+            // Check if matured today
+            if (daysUntilMaturity <= 0 && daysUntilMaturity > -1) {
+                const notificationKey = `maturity_complete_${project.id}`;
+                const alreadyNotified = localStorage.getItem(notificationKey);
+                
+                if (!alreadyNotified) {
+                    const interest = project.currentAmount * 0.20;
+                    const total = project.currentAmount + interest;
+                    
+                    await createNotification(
+                        '🎉 Project Matured!',
+                        `Congratulations! Your "${project.title}" has matured. Total available: ${formatCurrency(total)} (includes ${formatCurrency(interest)} interest)`,
+                        'success'
+                    );
+                    localStorage.setItem(notificationKey, 'true');
+                    
+                    // Confetti celebration
+                    if (typeof confetti !== 'undefined') {
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                    }
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error checking project maturity:', error);
+    }
+}
+
+
+
       // Calculate actual referral earnings based on referees' first contributions
 async function calculateReferralEarnings() {
     if (!userData.referrals || userData.referrals.length === 0) {
