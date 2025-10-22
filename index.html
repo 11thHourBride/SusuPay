@@ -2715,7 +2715,33 @@
                 </div>
             </div>
         </div>
-        <!-- Future Project Page -->
+       
+         <!--Future Project Page  & Features Overview -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+    <div class="card" style="text-align: center; padding: 25px; border-left: 4px solid #667eea;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">📅</div>
+        <h4 style="color: #4a5568; margin-bottom: 8px;">Smart Reminders</h4>
+        <p style="color: #718096; font-size: 0.9rem;">Never miss a contribution with automatic monthly reminders</p>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 25px; border-left: 4px solid #48bb78;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🔄</div>
+        <h4 style="color: #4a5568; margin-bottom: 8px;">Auto-Contribute</h4>
+        <p style="color: #718096; font-size: 0.9rem;">Set it once and funds transfer automatically on schedule</p>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 25px; border-left: 4px solid #f093fb;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">👨‍👩‍👧‍👦</div>
+        <h4 style="color: #4a5568; margin-bottom: 8px;">Family Sharing</h4>
+        <p style="color: #718096; font-size: 0.9rem;">Share projects with family members to save together</p>
+    </div>
+    
+    <div class="card" style="text-align: center; padding: 25px; border-left: 4px solid #f6cc33;">
+        <div style="font-size: 2.5rem; margin-bottom: 10px;">🏆</div>
+        <h4 style="color: #4a5568; margin-bottom: 8px;">Challenges</h4>
+        <p style="color: #718096; font-size: 0.9rem;">Join savings competitions and win exciting prizes</p>
+    </div>
+</div>
 <div id="future-project-page" class="page-content hidden">
     <h2 style="margin-bottom: 20px; color: #ffffff;">🎯 Future Project Savings</h2>
     
@@ -3840,11 +3866,22 @@
         let biometricAuthenticated = false;
         let selectedWithdrawalAuthMethod = 'password';
         // Future Project Variables
-let selectedProjectType = null;
-let activeProjects = [];
+        let selectedProjectType = null;
+        let activeProjects = [];
+       // Contribution Reminders Variables
+       let contributionReminders = [];
+       let reminderIntervals = {};
+       // Project Sharing Variables
+       let sharedProjects = [];
+       let projectInvitations = [];
+       // Savings Challenges Variables
+let activeChallenges = [];
+let userChallengeParticipation = [];
+// Auto-Contribution Variables
+let autoContributionSettings = [];
 
-const projectTypeData = {
-    kids: {
+       const projectTypeData = {
+        kids: {
         icon: '👶',
         name: 'For My Kids',
         description: 'Secure your children\'s future with dedicated savings',
@@ -3888,13 +3925,1594 @@ const projectTypeData = {
     }
 };
 // ==========================================
+// MONTHLY CONTRIBUTION REMINDERS
+// ==========================================
+
+// Load user's reminder preferences
+async function loadContributionReminders() {
+    if (!currentUser) return;
+    
+    try {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const data = userDoc.data();
+        
+        contributionReminders = data.contributionReminders || [];
+        
+        // Set up active reminders
+        contributionReminders.forEach(reminder => {
+            if (reminder.enabled) {
+                scheduleReminder(reminder);
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error loading reminders:', error);
+    }
+}
+
+// Schedule a reminder
+function scheduleReminder(reminder) {
+    // Clear existing reminder if any
+    if (reminderIntervals[reminder.projectId]) {
+        clearInterval(reminderIntervals[reminder.projectId]);
+    }
+    
+    // Check daily for reminder triggers
+    reminderIntervals[reminder.projectId] = setInterval(() => {
+        checkReminderTrigger(reminder);
+    }, 24 * 60 * 60 * 1000); // Check every 24 hours
+    
+    // Also check immediately
+    checkReminderTrigger(reminder);
+}
+
+// Check if reminder should trigger
+async function checkReminderTrigger(reminder) {
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    
+    // Check if it's the reminder day
+    if (dayOfMonth === reminder.dayOfMonth) {
+        // Check if already reminded today
+        const lastRemindedKey = `last_reminded_${reminder.projectId}_${today.toDateString()}`;
+        const alreadyReminded = localStorage.getItem(lastRemindedKey);
+        
+        if (!alreadyReminded) {
+            await sendContributionReminder(reminder);
+            localStorage.setItem(lastRemindedKey, 'true');
+        }
+    }
+    
+    // Also check for overdue reminders (3 days after due date)
+    if (dayOfMonth === (reminder.dayOfMonth + 3) % 31) {
+        const overdueKey = `overdue_reminder_${reminder.projectId}_${today.toDateString()}`;
+        const alreadyRemindedOverdue = localStorage.getItem(overdueKey);
+        
+        if (!alreadyRemindedOverdue) {
+            await sendOverdueReminder(reminder);
+            localStorage.setItem(overdueKey, 'true');
+        }
+    }
+}
+
+// Send contribution reminder
+async function sendContributionReminder(reminder) {
+    const project = activeProjects.find(p => p.id === reminder.projectId);
+    
+    if (!project) return;
+    
+    // Create notification
+    await createNotification(
+        '📅 Monthly Contribution Reminder',
+        `Time to contribute ${formatCurrency(project.monthlyContribution)} to "${project.title}"!`,
+        'info'
+    );
+    
+    // Browser notification if permitted
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('SusuPay Reminder', {
+            body: `Monthly contribution due for "${project.title}"`,
+            icon: '/favicon.ico',
+            badge: '🏦'
+        });
+    }
+    
+    // Play notification sound if enabled
+    if (reminder.soundEnabled) {
+        playNotificationSound();
+    }
+    
+    console.log(`📅 Reminder sent for project: ${project.title}`);
+}
+
+// Send overdue reminder
+async function sendOverdueReminder(reminder) {
+    const project = activeProjects.find(p => p.id === reminder.projectId);
+    
+    if (!project) return;
+    
+    await createNotification(
+        '⚠️ Overdue Contribution Reminder',
+        `You missed your monthly contribution for "${project.title}". Contribute now to stay on track!`,
+        'warning'
+    );
+    
+    if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('SusuPay - Overdue', {
+            body: `Missed contribution for "${project.title}"`,
+            icon: '/favicon.ico',
+            badge: '⚠️',
+            requireInteraction: true
+        });
+    }
+}
+
+// Play notification sound
+function playNotificationSound() {
+    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+ltryxnMpBSuBzvLZiTYIG2a/7OObTgwNUKXi8LViFgY5kdXzzHorBSB2x+/dkT8KFF+x6OyrVhUJR6Hf8r9vIAU0iNHz04MzBiBuwfDjmUkODlWs5++xXRgIP5XX8sV0KAUrgc7y2Yk2CBtmv+zjm04MDVCl4vC1YhYGOZHV88x6KwUgdsfw3ZI/ChVfsejrq1cVCUih3/K/cCEFM4nQ89GDMwYfb8Hw4ppJDg5VrOXwsV4YCECVWPLGdCcFKoHO8tqKNggbZr/s45tODA1QpOLxtWIWBjmS1fTMeywGIHbH8N6SPwoVX7Ho66tYFgpIot/yv3EgBTPJ0PPRhDMGH2/B8OKaSQ4PVqzl8LFeFwhAlVnyw3YnBSqBzvLaijUIHGa+7OSbTQwOUKPh8LVjFgc5ktX0zHsrBiF2xu/ekTwLFV+v6OuqWBcKSKHh8sFwIAU0yM/z0oQzBx9uwfDimUkOD1as5fCxYBgHQJVZ8sN2JwUqgc7y2og1CRtkv+3km04ND1Ck4vG1YhYHOpLV9Mx7KwUhdsXv3pE8CxVgr+frqlgXCkii4PK/cCEFNMjQ89KEMwcfbsLw4plJDw5WrOXwsV8YCECVWfLEdicFKoHO8tqINQkbZL/s5ZxPDQ5QpOLxtWMXCDqS1PTNeysFI XbF796RPAsVYK/n66pZFwpIouDyv3AhBTTI0PPShDQHH27C8OKZSg4OVqzm8LFgGAhAlVnyw3YnBSqBzvLZiTUIHGa+7OSbTw0OUKPi8LVjFwg6kdX0zHwrBSJ2xe/ekj0LFWCw6OuqWRcKSKLg8r9xIQU0yNDz0oQ0Bx9uwu/hmUoODlat5fCxYBgIQJVZ8sR2JgYqgc7y2Yk1CB1lvu/jnE4OEE+i4vG1YxcJOpHV9M18KgUidcbw3pE9CxZfs+jqqlobC0ih4fK/cyAGM8nQ89KFMwgfb8Lx4ppKDw5WrOXwsWAYCUCUWPLEdicGK4DN8tqJNQgdZb7v45xODhBPo+LxtWMXCTqS1fPPfCsGI3bG796SPQsWX7To7KpZGwtIoOH ');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Could not play sound:', e));
+}
+
+// Add reminder settings to project details modal
+function addReminderSection(projectId) {
+    const reminder = contributionReminders.find(r => r.projectId === projectId) || {
+        projectId: projectId,
+        enabled: false,
+        dayOfMonth: 1,
+        soundEnabled: true
+    };
+    
+    return `
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e2e8f0;">
+            <h4 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <span>📅</span> Monthly Contribution Reminder
+            </h4>
+            
+            <div style="background: #f7fafc; padding: 20px; border-radius: 12px;">
+                <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px; cursor: pointer;">
+                    <input type="checkbox" id="reminder-enabled-${projectId}" ${reminder.enabled ? 'checked' : ''} 
+                           onchange="toggleReminder('${projectId}')"
+                           style="width: 20px; height: 20px; cursor: pointer;">
+                    <span style="font-weight: 600; color: #4a5568;">Enable monthly reminders</span>
+                </label>
+                
+                <div id="reminder-settings-${projectId}" style="${reminder.enabled ? '' : 'display: none;'}">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #4a5568; font-weight: 600; font-size: 0.9rem;">
+                                Reminder Day (of month)
+                            </label>
+                            <input type="number" id="reminder-day-${projectId}" value="${reminder.dayOfMonth}" 
+                                   min="1" max="28" onchange="updateReminderDay('${projectId}')"
+                                   style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <small style="color: #718096; display: block; margin-top: 5px;">Day 1-28 recommended</small>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #4a5568; font-weight: 600; font-size: 0.9rem;">
+                                Notification Sound
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: white; border-radius: 8px; cursor: pointer;">
+                                <input type="checkbox" id="reminder-sound-${projectId}" ${reminder.soundEnabled ? 'checked' : ''} 
+                                       onchange="updateReminderSound('${projectId}')"
+                                       style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="color: #4a5568;">Enable sound</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #ebf8ff; padding: 12px; border-radius: 8px; border-left: 4px solid #3182ce;">
+                        <div style="color: #2c5282; font-size: 0.9rem; line-height: 1.6;">
+                            <strong>📱 Next reminder:</strong> ${getNextReminderDate(reminder.dayOfMonth)}<br>
+                            <strong>⚠️ Overdue alert:</strong> 3 days after reminder
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Get next reminder date
+function getNextReminderDate(dayOfMonth) {
+    const today = new Date();
+    const currentDay = today.getDate();
+    
+    let nextDate = new Date(today.getFullYear(), today.getMonth(), dayOfMonth);
+    
+    if (currentDay >= dayOfMonth) {
+        // Next month
+        nextDate = new Date(today.getFullYear(), today.getMonth() + 1, dayOfMonth);
+    }
+    
+    return nextDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+}
+
+// Toggle reminder
+window.toggleReminder = async function(projectId) {
+    const enabled = document.getElementById(`reminder-enabled-${projectId}`).checked;
+    const settings = document.getElementById(`reminder-settings-${projectId}`);
+    
+    if (enabled) {
+        settings.style.display = 'block';
+        
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                showAlert('⚠️ Enable notifications for reminders to work', 'info');
+            }
+        }
+    } else {
+        settings.style.display = 'none';
+    }
+    
+    await saveReminderSettings(projectId, enabled);
+};
+
+// Update reminder day
+window.updateReminderDay = async function(projectId) {
+    const day = parseInt(document.getElementById(`reminder-day-${projectId}`).value);
+    
+    if (day < 1 || day > 31) {
+        showAlert('Please select a day between 1-31', 'error');
+        return;
+    }
+    
+    await saveReminderSettings(projectId);
+};
+
+// Update reminder sound
+window.updateReminderSound = async function(projectId) {
+    await saveReminderSettings(projectId);
+};
+
+// Save reminder settings
+async function saveReminderSettings(projectId, enabled = null) {
+    try {
+        const enabledCheckbox = document.getElementById(`reminder-enabled-${projectId}`);
+        const dayInput = document.getElementById(`reminder-day-${projectId}`);
+        const soundCheckbox = document.getElementById(`reminder-sound-${projectId}`);
+        
+        const reminderData = {
+            projectId: projectId,
+            enabled: enabled !== null ? enabled : enabledCheckbox.checked,
+            dayOfMonth: parseInt(dayInput.value),
+            soundEnabled: soundCheckbox.checked,
+            updatedAt: new Date().toISOString()
+        };
+        
+        // Update local array
+        const existingIndex = contributionReminders.findIndex(r => r.projectId === projectId);
+        if (existingIndex >= 0) {
+            contributionReminders[existingIndex] = reminderData;
+        } else {
+            contributionReminders.push(reminderData);
+        }
+        
+        // Save to Firebase
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+            contributionReminders: contributionReminders
+        });
+        
+        // Schedule or cancel reminder
+        if (reminderData.enabled) {
+            scheduleReminder(reminderData);
+            showAlert('✅ Reminder enabled successfully!', 'success');
+        } else {
+            if (reminderIntervals[projectId]) {
+                clearInterval(reminderIntervals[projectId]);
+                delete reminderIntervals[projectId];
+            }
+            showAlert('Reminder disabled', 'info');
+        }
+        
+    } catch (error) {
+        console.error('Error saving reminder:', error);
+        showAlert('Error saving reminder settings', 'error');
+    }
+}
+// ==========================================
+// PROJECT SHARING WITH FAMILY MEMBERS
+// ==========================================
+
+// Share project with family member
+window.shareProject = function(projectId) {
+    const project = activeProjects.find(p => p.id === projectId);
+    
+    if (!project) {
+        showAlert('Project not found', 'error');
+        return;
+    }
+    
+    // Close details modal
+    document.getElementById('project-details-modal').style.display = 'none';
+    
+    const modalHTML = `
+        <div class="modal" id="share-project-modal" style="display: block;">
+            <div class="modal-content" style="max-width: 550px;">
+                <button class="close-btn" onclick="closeShareProjectModal()">&times;</button>
+                <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">👨‍👩‍👧‍👦 Share Project</h2>
+                
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">${projectTypeData[project.type].icon}</div>
+                    <h3 style="color: #4a5568; margin-bottom: 5px;">${project.title}</h3>
+                    <p style="color: #718096; font-size: 0.9rem;">Share with family members to contribute together</p>
+                </div>
+                
+                <div style="background: #ebf8ff; padding: 20px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid #3182ce;">
+                    <h4 style="color: #2c5282; margin-bottom: 12px;">✨ Sharing Benefits:</h4>
+                    <ul style="color: #2c5282; line-height: 2; margin-left: 20px;">
+                        <li>Family members can view project progress</li>
+                        <li>They can contribute to the project</li>
+                        <li>All contributions count towards the goal</li>
+                        <li>You remain the project owner</li>
+                        <li>Interest is shared proportionally at maturity</li>
+                    </ul>
+                </div>
+                
+                <form id="share-project-form" onsubmit="sendProjectInvitation(event, '${projectId}')">
+                    <div class="form-group">
+                        <label for="share-email">Family Member's Email *</label>
+                        <input type="email" id="share-email" required placeholder="Enter their email address">
+                        <small style="color: #718096; display: block; margin-top: 5px;">
+                            They must have a SusuPay account
+                        </small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="share-role">Access Level *</label>
+                        <select id="share-role" required>
+                            <option value="contributor">Contributor (Can contribute only)</option>
+                            <option value="viewer">Viewer (Can view only)</option>
+                            <option value="co-owner">Co-Owner (Can contribute & withdraw)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="share-message">Personal Message (Optional)</label>
+                        <textarea id="share-message" rows="3" 
+                                  placeholder="Add a personal message to your invitation..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        📧 Send Invitation
+                    </button>
+                </form>
+                
+                <!-- Current Shared Members -->
+                <div id="shared-members-list" style="margin-top: 25px;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">👥 Shared With:</h4>
+                    <div id="shared-members-content"></div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    const existingModal = document.getElementById('share-project-modal');
+    if (existingModal) existingModal.remove();
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    loadSharedMembers(projectId);
+};
+
+window.closeShareProjectModal = function() {
+    const modal = document.getElementById('share-project-modal');
+    if (modal) modal.remove();
+};
+
+// Send project invitation
+window.sendProjectInvitation = async function(event, projectId) {
+    event.preventDefault();
+    
+    const email = document.getElementById('share-email').value.trim();
+    const role = document.getElementById('share-role').value;
+    const message = document.getElementById('share-message').value.trim();
+    
+    if (email === userData.email) {
+        showAlert('You cannot share with yourself', 'error');
+        return;
+    }
+    
+    showLoader('Sending invitation');
+    
+    try {
+        // Check if user exists
+        const usersQuery = query(collection(db, 'users'), where('email', '==', email));
+        const userSnapshot = await getDocs(usersQuery);
+        
+        if (userSnapshot.empty) {
+            hideLoader();
+            showAlert('User not found. They need to create a SusuPay account first.', 'error');
+            return;
+        }
+        
+        const inviteeUser = userSnapshot.docs[0];
+        const inviteeId = inviteeUser.id;
+        const inviteeData = inviteeUser.data();
+        
+        // Check if already shared
+        const existingShare = query(
+            collection(db, 'project_shares'),
+            where('projectId', '==', projectId),
+            where('sharedWithUserId', '==', inviteeId)
+        );
+        const existingShareSnapshot = await getDocs(existingShare);
+        
+        if (!existingShareSnapshot.empty) {
+            hideLoader();
+            showAlert('Project already shared with this user', 'info');
+            return;
+        }
+        
+        const project = activeProjects.find(p => p.id === projectId);
+        
+        // Create invitation
+        await addDoc(collection(db, 'project_invitations'), {
+            projectId: projectId,
+            projectTitle: project.title,
+            projectType: project.type,
+            ownerId: currentUser.uid,
+            ownerName: `${userData.firstName} ${userData.surname}`,
+            inviteeId: inviteeId,
+            inviteeEmail: email,
+            inviteeName: `${inviteeData.firstName} ${inviteeData.surname}`,
+            role: role,
+            message: message,
+            status: 'pending',
+            createdAt: serverTimestamp()
+        });
+        
+        // Notify invitee
+        await addDoc(collection(db, 'notifications'), {
+            userId: inviteeId,
+            title: 'Project Share Invitation',
+            message: `${userData.firstName} ${userData.surname} invited you to join "${project.title}" as a ${role}`,
+            type: 'project_invitation',
+            read: false,
+            timestamp: serverTimestamp()
+        });
+        
+        hideLoader();
+        
+        showAlert('✅ Invitation sent successfully!', 'success');
+        
+        document.getElementById('share-email').value = '';
+        document.getElementById('share-message').value = '';
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error sending invitation:', error);
+        showAlert('Error sending invitation: ' + error.message, 'error');
+    }
+};
+
+// Load shared members
+async function loadSharedMembers(projectId) {
+    const content = document.getElementById('shared-members-content');
+    
+    if (!content) return;
+    
+    try {
+        const q = query(
+            collection(db, 'project_shares'),
+            where('projectId', '==', projectId),
+            where('status', '==', 'accepted')
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+            content.innerHTML = '<div style="text-align: center; color: #718096; padding: 20px;">Not shared with anyone yet</div>';
+            return;
+        }
+        
+        content.innerHTML = snapshot.docs.map(doc => {
+            const share = doc.data();
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f7fafc; border-radius: 8px; margin-bottom: 10px;">
+                    <div>
+                        <div style="font-weight: 600; color: #4a5568;">${share.sharedWithName}</div>
+                        <div style="font-size: 0.85rem; color: #718096;">${share.sharedWithEmail} • ${share.role}</div>
+                    </div>
+                    <button onclick="removeSharedMember('${doc.id}')" 
+                            style="background: #fed7d7; color: #c53030; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        Remove
+                    </button>
+                </div>
+            `;
+        }).join('');
+        
+    } catch (error) {
+        console.error('Error loading shared members:', error);
+        content.innerHTML = '<div style="text-align: center; color: #e53e3e; padding: 20px;">Error loading shared members</div>';
+    }
+}
+
+// Remove shared member
+window.removeSharedMember = async function(shareId) {
+    if (!confirm('Remove this member from the project?')) return;
+    
+    showLoader('Removing member');
+    
+    try {
+        await updateDoc(doc(db, 'project_shares', shareId), {
+            status: 'removed',
+            removedAt: serverTimestamp()
+        });
+        
+        hideLoader();
+        showAlert('Member removed successfully', 'success');
+        
+        // Reload list
+        const projectId = activeProjects[0]?.id; // Get current project ID from context
+        loadSharedMembers(projectId);
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error removing member:', error);
+        showAlert('Error removing member', 'error');
+    }
+};
+
+// View and manage invitations
+async function loadProjectInvitations() {
+    if (!currentUser) return;
+    
+    try {
+        const q = query(
+            collection(db, 'project_invitations'),
+            where('inviteeId', '==', currentUser.uid),
+            where('status', '==', 'pending')
+        );
+        
+        const snapshot = await getDocs(q);
+        projectInvitations = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        
+        // Show notification badge if there are pending invitations
+        if (projectInvitations.length > 0) {
+            showProjectInvitationBadge();
+        }
+        
+    } catch (error) {
+        console.error('Error loading invitations:', error);
+    }
+}
+// ==========================================
+// AUTO-CONTRIBUTION FROM REGULAR SAVINGS
+// ==========================================
+
+// Load auto-contribution settings
+async function loadAutoContributionSettings() {
+    if (!currentUser) return;
+    
+    try {
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const data = userDoc.data();
+        
+        autoContributionSettings = data.autoContributionSettings || [];
+        
+    } catch (error) {
+        console.error('Error loading auto-contribution settings:', error);
+    }
+}
+
+// Add auto-contribution section to project details
+function addAutoContributionSection(projectId) {
+    const autoSetting = autoContributionSettings.find(s => s.projectId === projectId) || {
+        projectId: projectId,
+        enabled: false,
+        frequency: 'monthly',
+        amount: 0,
+        source: 'balance',
+        dayOfMonth: 1
+    };
+    
+    return `
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e2e8f0;">
+            <h4 style="color: #4a5568; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <span>🔄</span> Auto-Contribution Settings
+            </h4>
+            
+            <div style="background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #3182ce;">
+                <h5 style="color: #2c5282; margin-bottom: 10px;">💡 What is Auto-Contribution?</h5>
+                <p style="color: #2c5282; font-size: 0.9rem; line-height: 1.6;">
+                    Automatically transfer funds from your regular savings balance to this Future Project on a schedule. 
+                    Set it once and never miss a contribution!
+                </p>
+            </div>
+            
+            <div style="background: #f7fafc; padding: 20px; border-radius: 12px;">
+                <label style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; cursor: pointer;">
+                    <input type="checkbox" id="auto-contrib-enabled-${projectId}" ${autoSetting.enabled ? 'checked' : ''} 
+                           onchange="toggleAutoContribution('${projectId}')"
+                           style="width: 20px; height: 20px; cursor: pointer;">
+                    <span style="font-weight: 600; color: #4a5568;">Enable Auto-Contribution</span>
+                </label>
+                
+                <div id="auto-contrib-settings-${projectId}" style="${autoSetting.enabled ? '' : 'display: none;'}">
+                    <div style="display: grid; gap: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #4a5568; font-weight: 600; font-size: 0.9rem;">
+                                Contribution Amount (GH₵)
+                            </label>
+                            <input type="number" id="auto-contrib-amount-${projectId}" value="${autoSetting.amount}" 
+                                   min="10" step="0.01" onchange="updateAutoContribution('${projectId}')"
+                                   style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <small style="color: #718096; display: block; margin-top: 5px;">Minimum: ₵10.00</small>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #4a5568; font-weight: 600; font-size: 0.9rem;">
+                                Frequency
+                            </label>
+                            <select id="auto-contrib-frequency-${projectId}" onchange="updateAutoContribution('${projectId}')"
+                                    style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                <option value="daily" ${autoSetting.frequency === 'daily' ? 'selected' : ''}>Daily</option>
+                                <option value="weekly" ${autoSetting.frequency === 'weekly' ? 'selected' : ''}>Weekly</option>
+                                <option value="monthly" ${autoSetting.frequency === 'monthly' ? 'selected' : ''}>Monthly</option>
+                            </select>
+                        </div>
+                        
+                        <div id="day-of-month-container-${projectId}" style="${autoSetting.frequency === 'monthly' ? '' : 'display: none;'}">
+                            <label style="display: block; margin-bottom: 8px; color: #4a5568; font-weight: 600; font-size: 0.9rem;">
+                                Day of Month
+                            </label>
+                            <input type="number" id="auto-contrib-day-${projectId}" value="${autoSetting.dayOfMonth}" 
+                                   min="1" max="28" onchange="updateAutoContribution('${projectId}')"
+                                   style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <small style="color: #718096; display: block; margin-top: 5px;">Recommended: 1-28 (to avoid month-end issues)</small>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: #4a5568; font-weight: 600; font-size: 0.9rem;">
+                                Source of Funds
+                            </label>
+                            <select id="auto-contrib-source-${projectId}" onchange="updateAutoContribution('${projectId}')"
+                                    style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                <option value="balance" ${autoSetting.source === 'balance' ? 'selected' : ''}>Main Balance (₵${(userData.balance || 0).toFixed(2)})</option>
+                                <option value="referral" ${autoSetting.source === 'referral' ? 'selected' : ''}>Referral Earnings (₵${(userData.referralEarnings || 0).toFixed(2)})</option>
+                            </select>
+                            <small style="color: #718096; display: block; margin-top: 5px;">
+                                Funds will be automatically deducted from selected source
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff5f5; padding: 15px; border-radius: 8px; margin-top: 20px; border-left: 4px solid #feb2b2;">
+                        <h5 style="color: #742a2a; margin-bottom: 10px;">⚠️ Important Notes:</h5>
+                        <ul style="color: #742a2a; font-size: 0.9rem; line-height: 1.8; margin-left: 20px;">
+                            <li>Ensure sufficient balance before scheduled date</li>
+                            <li>If balance is insufficient, auto-contribution will be skipped</li>
+                            <li>You'll receive a notification before each auto-contribution</li>
+                            <li>You can disable this anytime without penalty</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #ebf8ff; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3182ce;">
+                        <div style="color: #2c5282; font-size: 0.9rem;">
+                            <strong>📅 Next scheduled transfer:</strong> ${getNextAutoContributionDate(autoSetting)}<br>
+                            <strong>💰 Amount:</strong> ${formatCurrency(autoSetting.amount)}<br>
+                            <strong>📊 Projected annual contribution:</strong> ${formatCurrency(calculateAnnualAutoContribution(autoSetting))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Toggle auto-contribution
+window.toggleAutoContribution = async function(projectId) {
+    const enabled = document.getElementById(`auto-contrib-enabled-${projectId}`).checked;
+    const settings = document.getElementById(`auto-contrib-settings-${projectId}`);
+    
+    if (enabled) {
+        settings.style.display = 'block';
+        
+        // Validate minimum requirements
+        const amount = parseFloat(document.getElementById(`auto-contrib-amount-${projectId}`).value);
+        if (!amount || amount < 10) {
+            document.getElementById(`auto-contrib-amount-${projectId}`).value = 10;
+        }
+    } else {
+        settings.style.display = 'none';
+    }
+    
+    await saveAutoContributionSettings(projectId);
+};
+
+// Update auto-contribution settings
+window.updateAutoContribution = async function(projectId) {
+    const frequency = document.getElementById(`auto-contrib-frequency-${projectId}`).value;
+    const dayContainer = document.getElementById(`day-of-month-container-${projectId}`);
+    
+    // Show/hide day of month based on frequency
+    if (frequency === 'monthly') {
+        dayContainer.style.display = 'block';
+    } else {
+        dayContainer.style.display = 'none';
+    }
+    
+    await saveAutoContributionSettings(projectId);
+};
+
+// Save auto-contribution settings
+async function saveAutoContributionSettings(projectId) {
+    try {
+        const enabled = document.getElementById(`auto-contrib-enabled-${projectId}`).checked;
+        const amount = parseFloat(document.getElementById(`auto-contrib-amount-${projectId}`).value);
+        const frequency = document.getElementById(`auto-contrib-frequency-${projectId}`).value;
+        const dayOfMonth = parseInt(document.getElementById(`auto-contrib-day-${projectId}`).value);
+        const source = document.getElementById(`auto-contrib-source-${projectId}`).value;
+        
+        if (enabled && (!amount || amount < 10)) {
+            showAlert('Minimum auto-contribution amount is ₵10.00', 'error');
+            return;
+        }
+        
+        if (frequency === 'monthly' && (dayOfMonth < 1 || dayOfMonth > 28)) {
+            showAlert('Please select a day between 1-28', 'error');
+            return;
+        }
+        
+        const settingData = {
+            projectId: projectId,
+            enabled: enabled,
+            amount: amount,
+            frequency: frequency,
+            dayOfMonth: dayOfMonth,
+            source: source,
+            updatedAt: new Date().toISOString()
+        };
+        
+        // Update local array
+        const existingIndex = autoContributionSettings.findIndex(s => s.projectId === projectId);
+        if (existingIndex >= 0) {
+            autoContributionSettings[existingIndex] = settingData;
+        } else {
+            autoContributionSettings.push(settingData);
+        }
+        
+        // Save to Firebase
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+            autoContributionSettings: autoContributionSettings
+        });
+        
+        if (enabled) {
+            showAlert('✅ Auto-contribution enabled successfully!', 'success');
+        } else {
+            showAlert('Auto-contribution disabled', 'info');
+        }
+        
+    } catch (error) {
+        console.error('Error saving auto-contribution settings:', error);
+        showAlert('Error saving settings', 'error');
+    }
+}
+
+// Get next auto-contribution date
+function getNextAutoContributionDate(setting) {
+    if (!setting.enabled) return 'Not scheduled';
+    
+    const today = new Date();
+    let nextDate = new Date();
+    
+    switch (setting.frequency) {
+        case 'daily':
+            nextDate.setDate(today.getDate() + 1);
+            break;
+            
+        case 'weekly':
+            nextDate.setDate(today.getDate() + 7);
+            break;
+            
+        case 'monthly':
+            const currentDay = today.getDate();
+            if (currentDay >= setting.dayOfMonth) {
+                // Next month
+                nextDate = new Date(today.getFullYear(), today.getMonth() + 1, setting.dayOfMonth);
+            } else {
+                // This month
+                nextDate = new Date(today.getFullYear(), today.getMonth(), setting.dayOfMonth);
+            }
+            break;
+    }
+    
+    return nextDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+}
+
+// Calculate projected annual auto-contribution
+function calculateAnnualAutoContribution(setting) {
+    if (!setting.enabled || !setting.amount) return 0;
+    
+    let contributionsPerYear = 0;
+    
+    switch (setting.frequency) {
+        case 'daily':
+            contributionsPerYear = 365;
+            break;
+        case 'weekly':
+            contributionsPerYear = 52;
+            break;
+        case 'monthly':
+            contributionsPerYear = 12;
+            break;
+    }
+    
+    return setting.amount * contributionsPerYear;
+}
+
+// Process auto-contributions (this would run daily via backend/cron job)
+async function processAutoContributions() {
+    // THIS IS A REFERENCE FUNCTION FOR BACKEND IMPLEMENTATION
+    /*
+    For each user with active auto-contribution settings:
+    
+    1. Check if today matches the schedule
+    2. Verify sufficient balance in source account
+    3. If sufficient:
+       - Deduct from source (balance or referralEarnings)
+       - Create contribution transaction
+       - Update project currentAmount
+       - Send success notification
+    4. If insufficient:
+       - Send warning notification
+       - Skip contribution (don't disable auto-contrib)
+    5. Log all auto-contribution attempts
+    
+    Example pseudo-code:
+    
+    const today = new Date();
+    const dayOfMonth = today.getDate();
+    const dayOfWeek = today.getDay();
+    
+    for (const setting of autoContributionSettings) {
+        if (!setting.enabled) continue;
+        
+        let shouldProcess = false;
+        
+        if (setting.frequency === 'daily') {
+            shouldProcess = true;
+        } else if (setting.frequency === 'weekly' && dayOfWeek === 1) { // Monday
+            shouldProcess = true;
+        } else if (setting.frequency === 'monthly' && dayOfMonth === setting.dayOfMonth) {
+            shouldProcess = true;
+        }
+        
+        if (shouldProcess) {
+            const sourceBalance = setting.source === 'balance' ? 
+                userData.balance : userData.referralEarnings;
+            
+            if (sourceBalance >= setting.amount) {
+                // Process contribution
+                await processAutoContribution(setting);
+            } else {
+                // Send insufficient funds notification
+                await notifyInsufficientFunds(setting);
+            }
+        }
+    }
+    */
+}
+
+// Show auto-contribution history
+function renderAutoContributionHistory(projectId) {
+    return `
+        <div style="margin-top: 20px;">
+            <h5 style="color: #4a5568; margin-bottom: 12px;">📊 Auto-Contribution History (Last 30 days)</h5>
+            <div id="auto-contrib-history-${projectId}" style="max-height: 200px; overflow-y: auto;">
+                <!-- This would be populated with actual history from Firebase -->
+                <div style="text-align: center; padding: 30px; color: #718096; background: #f7fafc; border-radius: 8px;">
+                    <p>No auto-contributions yet</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Send auto-contribution reminder (24 hours before)
+async function sendAutoContributionReminder(setting) {
+    const project = activeProjects.find(p => p.id === setting.projectId);
+    
+    if (!project) return;
+    
+    const sourceBalance = setting.source === 'balance' ? 
+        userData.balance : userData.referralEarnings;
+    
+    const sufficientFunds = sourceBalance >= setting.amount;
+    
+    await createNotification(
+        '🔄 Auto-Contribution Tomorrow',
+        `${formatCurrency(setting.amount)} will be auto-contributed to "${project.title}" tomorrow. ${sufficientFunds ? '✅ Sufficient funds' : '⚠️ Insufficient funds - please top up!'}`,
+        sufficientFunds ? 'info' : 'warning'
+    );
+}
+
+console.log('✅ Auto-contribution system loaded');
+// ==========================================
+// SAVINGS CHALLENGES & COMPETITIONS
+// ==========================================
+
+// Load available challenges
+async function loadSavingsChallenges() {
+    if (!currentUser) return;
+    
+    try {
+        // Load global challenges
+        const challengesQuery = query(
+            collection(db, 'savings_challenges'),
+            where('status', '==', 'active'),
+            where('endDate', '>', new Date())
+        );
+        
+        const snapshot = await getDocs(challengesQuery);
+        activeChallenges = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            startDate: doc.data().startDate?.toDate() || new Date(),
+            endDate: doc.data().endDate?.toDate() || new Date()
+        }));
+        
+        // Load user's challenge participation
+        const participationQuery = query(
+            collection(db, 'challenge_participants'),
+            where('userId', '==', currentUser.uid),
+            where('status', '==', 'active')
+        );
+        
+        const participationSnapshot = await getDocs(participationQuery);
+        userChallengeParticipation = participationSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        
+    } catch (error) {
+        console.error('Error loading challenges:', error);
+    }
+}
+
+// Render challenges section
+function renderSavingsChallenges() {
+    if (activeChallenges.length === 0) return '';
+    
+    return `
+        <div class="card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; margin-bottom: 25px;">
+            <h3 style="color: white; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem;">🏆</span> Active Savings Challenges
+            </h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                ${activeChallenges.map(challenge => renderChallengeCard(challenge)).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Render single challenge card
+function renderChallengeCard(challenge) {
+    const isParticipating = userChallengeParticipation.some(p => p.challengeId === challenge.id);
+    const daysRemaining = Math.ceil((challenge.endDate - new Date()) / (1000 * 60 * 60 * 24));
+    
+    const participation = isParticipating ? 
+        userChallengeParticipation.find(p => p.challengeId === challenge.id) : null;
+    
+    return `
+        <div style="background: white; color: #4a5568; border-radius: 15px; padding: 25px;">
+            <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                <div>
+                    <div style="font-size: 2rem; margin-bottom: 10px;">${challenge.icon || '🏆'}</div>
+                    <h4 style="color: #4a5568; margin-bottom: 8px; font-size: 1.2rem;">${challenge.name}</h4>
+                    <p style="color: #718096; font-size: 0.9rem; line-height: 1.6;">${challenge.description}</p>
+                </div>
+            </div>
+            
+            <div style="background: #f7fafc; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div>
+                        <div style="font-size: 0.8rem; color: #718096;">Goal</div>
+                        <div style="font-weight: 700; color: #667eea;">${formatCurrency(challenge.goalAmount)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #718096;">Prize Pool</div>
+                        <div style="font-weight: 700; color: #48bb78;">${formatCurrency(challenge.prizePool)}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #718096;">Duration</div>
+                        <div style="font-weight: 700; color: #4a5568;">${challenge.duration} days</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #718096;">Participants</div>
+                        <div style="font-weight: 700; color: #f5576c;">${challenge.participants || 0}</div>
+                    </div>
+                </div>
+            </div>
+            
+            ${isParticipating ? `
+                <div style="background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); padding: 15px; border-radius: 10px; margin-bottom: 15px;">
+                    <div style="font-weight: 600; color: #22543d; margin-bottom: 10px;">✅ You're participating!</div>
+                    <div style="margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.85rem; color: #22543d;">Your Progress</span>
+                            <span style="font-weight: 700; color: #22543d;">${((participation.currentAmount / challenge.goalAmount) * 100).toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${Math.min((participation.currentAmount / challenge.goalAmount) * 100, 100)}%; background: #48bb78;"></div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #22543d;">
+                        <span>Saved: ${formatCurrency(participation.currentAmount)}</span>
+                        <span>Rank: #${participation.rank || '-'}</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" onclick="viewChallengeLeaderboard('${challenge.id}')" 
+                            style="flex: 1; padding: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        🏆 Leaderboard
+                    </button>
+                    <button class="btn" onclick="withdrawFromChallenge('${challenge.id}')" 
+                            style="flex: 1; padding: 10px; background: #e53e3e;">
+                        Exit Challenge
+                    </button>
+                </div>
+            ` : `
+                <div style="background: #fef5e7; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #f6cc33;">
+                    <div style="font-size: 0.85rem; color: #744210;">
+                        <strong>⏰ ${daysRemaining} days remaining</strong><br>
+                        Ends: ${challenge.endDate.toLocaleDateString()}
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="joinChallenge('${challenge.id}')" 
+                        style="width: 100%; padding: 12px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    🚀 Join Challenge
+                </button>
+            `}
+        </div>
+    `;
+}
+
+// Join challenge
+window.joinChallenge = async function(challengeId) {
+    const challenge = activeChallenges.find(c => c.id === challengeId);
+    
+    if (!challenge) {
+        showAlert('Challenge not found', 'error');
+        return;
+    }
+    
+    // Show confirmation modal
+    const modalHTML = `
+        <div class="modal" id="join-challenge-modal" style="display: block;">
+            <div class="modal-content" style="max-width: 550px;">
+                <button class="close-btn" onclick="closeJoinChallengeModal()">&times;</button>
+                <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🏆 Join Challenge</h2>
+                
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 4rem; margin-bottom: 15px;">${challenge.icon || '🏆'}</div>
+                    <h3 style="color: #4a5568; margin-bottom: 10px;">${challenge.name}</h3>
+                    <p style="color: #718096;">${challenge.description}</p>
+                </div>
+                
+                <div style="background: #f7fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h4 style="color: #4a5568; margin-bottom: 15px;">Challenge Details:</h4>
+                    <div style="color: #4a5568; line-height: 2;">
+                        <strong>Goal:</strong> Save ${formatCurrency(challenge.goalAmount)} in ${challenge.duration} days<br>
+                        <strong>Prize Pool:</strong> ${formatCurrency(challenge.prizePool)}<br>
+                        <strong>Current Participants:</strong> ${challenge.participants || 0}<br>
+                        <strong>Ends:</strong> ${challenge.endDate.toLocaleDateString()}
+                    </div>
+                </div>
+                
+                <div style="background: #ebf8ff; padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #3182ce;">
+                    <h4 style="color: #2c5282; margin-bottom: 12px;">🎁 Prizes:</h4>
+                    <ul style="color: #2c5282; line-height: 2; margin-left: 20px;">
+                        ${challenge.prizes ? challenge.prizes.map((prize, index) => `
+                            <li><strong>${index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : '🏅'} ${prize.position}:</strong> ${prize.reward}</li>
+                        `).join('') : '<li>Details coming soon</li>'}
+                    </ul>
+                </div>
+                
+                <div style="background: #fff5f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #feb2b2;">
+                    <h4 style="color: #742a2a; margin-bottom: 10px;">⚠️ Challenge Rules:</h4>
+                    <ul style="color: #742a2a; line-height: 1.8; margin-left: 20px; font-size: 0.9rem;">
+                        <li>You must have an active Future Project to participate</li>
+                        <li>Contributions must be made to the linked project</li>
+                        <li>You can exit anytime but forfeit eligibility for prizes</li>
+                        <li>Prizes distributed within 7 days after challenge ends</li>
+                        <li>Winners announced on leaderboard</li>
+                    </ul>
+                </div>
+                
+                <form id="join-challenge-form" onsubmit="confirmJoinChallenge(event, '${challengeId}')">
+                    <div class="form-group">
+                        <label for="challenge-project">Link to Project *</label>
+                        <select id="challenge-project" required>
+                            <option value="">Select a project...</option>
+                            ${activeProjects.filter(p => !p.isShared && p.status === 'active').map(project => `
+                                <option value="${project.id}">${project.title} (${formatCurrency(project.currentAmount)})</option>
+                            `).join('')}
+                        </select>
+                        <small style="color: #718096; display: block; margin-top: 5px;">
+                            Contributions to this project will count towards the challenge
+                        </small>
+                    </div>
+                    
+                    <label style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; cursor: pointer; padding: 15px; background: #f7fafc; border-radius: 8px;">
+                        <input type="checkbox" id="challenge-terms" required style="margin-top: 4px; width: 20px; height: 20px; cursor: pointer;">
+                        <span style="color: #4a5568; line-height: 1.6;">
+                            I understand the challenge rules and agree to participate fairly. I acknowledge that prize distribution is based on final rankings.
+                        </span>
+                    </label>
+                    
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        🚀 Join Challenge Now
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    const existingModal = document.getElementById('join-challenge-modal');
+    if (existingModal) existingModal.remove();
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+};
+
+window.closeJoinChallengeModal = function() {
+    const modal = document.getElementById('join-challenge-modal');
+    if (modal) modal.remove();
+};
+
+// Confirm join challenge
+window.confirmJoinChallenge = async function(event, challengeId) {
+    event.preventDefault();
+    
+    const projectId = document.getElementById('challenge-project').value;
+    const termsAccepted = document.getElementById('challenge-terms').checked;
+    
+    if (!termsAccepted) {
+        showAlert('Please accept the challenge terms', 'error');
+        return;
+    }
+    
+    showLoader('Joining challenge');
+    
+    try {
+        const challenge = activeChallenges.find(c => c.id === challengeId);
+        const project = activeProjects.find(p => p.id === projectId);
+        
+        // Create participation record
+        await addDoc(collection(db, 'challenge_participants'), {
+            challengeId: challengeId,
+            challengeName: challenge.name,
+            userId: currentUser.uid,
+            userName: `${userData.firstName} ${userData.surname}`,
+            projectId: projectId,
+            projectTitle: project.title,
+            currentAmount: 0,
+            goalAmount: challenge.goalAmount,
+            status: 'active',
+            joinedAt: serverTimestamp(),
+            rank: null
+        });
+        
+        // Update challenge participant count
+        await updateDoc(doc(db, 'savings_challenges', challengeId), {
+            participants: (challenge.participants || 0) + 1
+        });
+        
+        // Create notification
+        await createNotification(
+            'Challenge Joined!',
+            `You've joined "${challenge.name}"! Start contributing to climb the leaderboard.`,
+            'success'
+        );
+        
+        hideLoader();
+        closeJoinChallengeModal();
+        
+        showAlert('✅ Successfully joined the challenge!', 'success');
+        
+        // Confetti celebration
+        if (typeof confetti !== 'undefined') {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+        
+        // Reload challenges
+        await loadSavingsChallenges();
+        initFutureProjectPage();
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error joining challenge:', error);
+        showAlert('Error joining challenge: ' + error.message, 'error');
+    }
+};
+
+// View challenge leaderboard
+window.viewChallengeLeaderboard = async function(challengeId) {
+    showLoader('Loading leaderboard');
+    
+    try {
+        const challenge = activeChallenges.find(c => c.id === challengeId);
+        
+        // Load all participants
+        const participantsQuery = query(
+            collection(db, 'challenge_participants'),
+            where('challengeId', '==', challengeId),
+            where('status', '==', 'active')
+        );
+        
+        const snapshot = await getDocs(participantsQuery);
+        const participants = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        
+        // Sort by current amount (descending)
+        participants.sort((a, b) => b.currentAmount - a.currentAmount);
+        
+        // Assign ranks
+        participants.forEach((participant, index) => {
+            participant.rank = index + 1;
+            participant.progress = (participant.currentAmount / challenge.goalAmount) * 100;
+        });
+        
+        hideLoader();
+        
+        // Show leaderboard modal
+        const modalHTML = `
+            <div class="modal" id="leaderboard-modal" style="display: block;">
+                <div class="modal-content" style="max-width: 700px;">
+                    <button class="close-btn" onclick="closeLeaderboardModal()">&times;</button>
+                    <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">🏆 Leaderboard</h2>
+                    
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <h3 style="color: #4a5568; margin-bottom: 5px;">${challenge.name}</h3>
+                        <p style="color: #718096; font-size: 0.9rem;">
+                            ${participants.length} participants • Goal: ${formatCurrency(challenge.goalAmount)}
+                        </p>
+                    </div>
+                    
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        ${participants.map(participant => `
+                            <div style="background: ${participant.userId === currentUser.uid ? '#ebf8ff' : '#f7fafc'}; 
+                                        padding: 20px; border-radius: 12px; margin-bottom: 15px;
+                                        border-left: 4px solid ${participant.rank <= 3 ? '#f6cc33' : '#cbd5e0'};">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <div style="font-size: 2rem;">
+                                            ${participant.rank === 1 ? '🥇' : participant.rank === 2 ? '🥈' : participant.rank === 3 ? '🥉' : ''}
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">
+                                                #${participant.rank} ${participant.userName}
+                                                ${participant.userId === currentUser.uid ? '<span style="color: #667eea; font-size: 0.9rem;">(You)</span>' : ''}
+                                            </div>
+                                            <div style="font-size: 0.85rem; color: #718096;">${participant.projectTitle}</div>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-weight: 700; font-size: 1.2rem; color: #667eea;">${formatCurrency(participant.currentAmount)}</div>
+                                        <div style="font-size: 0.8rem; color: #718096;">${participant.progress.toFixed(1)}% of goal</div>
+                                    </div>
+                                </div>
+                                <div class="progress-bar-container" style="height: 8px;">
+                                    <div class="progress-bar" style="width: ${Math.min(participant.progress, 100)}%;"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    ${participants.length === 0 ? `
+                        <div style="text-align: center; padding: 60px 20px; color: #718096;">
+                            <div style="font-size: 4rem; margin-bottom: 15px;">🏆</div>
+                            <p>No participants yet. Be the first to join!</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        
+        const existingModal = document.getElementById('leaderboard-modal');
+        if (existingModal) existingModal.remove();
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error loading leaderboard:', error);
+        showAlert('Error loading leaderboard', 'error');
+    }
+};
+
+window.closeLeaderboardModal = function() {
+    const modal = document.getElementById('leaderboard-modal');
+    if (modal) modal.remove();
+};
+
+// Withdraw from challenge
+window.withdrawFromChallenge = async function(challengeId) {
+    if (!confirm('Are you sure you want to exit this challenge? You will forfeit all prize eligibility.')) return;
+    
+    showLoader('Exiting challenge');
+    
+    try {
+        const participation = userChallengeParticipation.find(p => p.challengeId === challengeId);
+        
+        await updateDoc(doc(db, 'challenge_participants', participation.id), {
+            status: 'withdrawn',
+            withdrawnAt: serverTimestamp()
+        });
+        
+        hideLoader();
+        
+        showAlert('You have exited the challenge', 'info');
+        
+        await loadSavingsChallenges();
+        initFutureProjectPage();
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error withdrawing from challenge:', error);
+        showAlert('Error exiting challenge', 'error');
+    }
+};
+
+console.log('✅ Savings challenges system loaded');
+// Show invitation badge on Future Project nav item
+function showProjectInvitationBadge() {
+    const navItem = document.querySelector('[data-page="future-project"]');
+    if (!navItem) return;
+    
+    const existingBadge = navItem.querySelector('.invitation-badge');
+    if (existingBadge) existingBadge.remove();
+    
+    const badge = document.createElement('span');
+    badge.className = 'invitation-badge';
+    badge.style.cssText = `
+        background: #e53e3e;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    `;
+    badge.textContent = projectInvitations.length;
+    
+    navItem.style.position = 'relative';
+    navItem.appendChild(badge);
+}
+
+// Add invitation section to Future Project page
+function renderProjectInvitations() {
+    if (projectInvitations.length === 0) return '';
+    
+    return `
+        <div class="card" style="background: linear-gradient(135deg, #fef5e7 0%, #ffeaa7 100%); border: 2px solid #f6cc33; margin-bottom: 25px;">
+            <h3 style="color: #744210; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem;">📬</span> 
+                You have ${projectInvitations.length} project invitation(s)
+            </h3>
+            
+            ${projectInvitations.map(invitation => `
+                <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                        <div>
+                            <div style="font-size: 1.5rem; margin-bottom: 10px;">${projectTypeData[invitation.projectType].icon}</div>
+                            <h4 style="color: #4a5568; margin-bottom: 5px;">${invitation.projectTitle}</h4>
+                            <p style="color: #718096; font-size: 0.9rem;">
+                                From: <strong>${invitation.ownerName}</strong> • Role: <strong>${invitation.role}</strong>
+                            </p>
+                            ${invitation.message ? `
+                                <div style="background: #f7fafc; padding: 12px; border-radius: 8px; margin-top: 10px; font-style: italic; color: #4a5568;">
+                                    "${invitation.message}"
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="acceptProjectInvitation('${invitation.id}')" 
+                                style="flex: 1; background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
+                            ✅ Accept
+                        </button>
+                        <button class="btn" onclick="declineProjectInvitation('${invitation.id}')" 
+                                style="flex: 1; background: #e53e3e;">
+                            ❌ Decline
+                        </button>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+// Accept project invitation
+window.acceptProjectInvitation = async function(invitationId) {
+    showLoader('Accepting invitation');
+    
+    try {
+        const invitation = projectInvitations.find(inv => inv.id === invitationId);
+        
+        if (!invitation) {
+            hideLoader();
+            showAlert('Invitation not found', 'error');
+            return;
+        }
+        
+        // Create project share record
+        await addDoc(collection(db, 'project_shares'), {
+            projectId: invitation.projectId,
+            projectTitle: invitation.projectTitle,
+            projectType: invitation.projectType,
+            ownerId: invitation.ownerId,
+            ownerName: invitation.ownerName,
+            sharedWithUserId: currentUser.uid,
+            sharedWithName: `${userData.firstName} ${userData.surname}`,
+            sharedWithEmail: userData.email,
+            role: invitation.role,
+            status: 'accepted',
+            acceptedAt: serverTimestamp()
+        });
+        
+        // Update invitation status
+        await updateDoc(doc(db, 'project_invitations', invitationId), {
+            status: 'accepted',
+            acceptedAt: serverTimestamp()
+        });
+        
+        // Notify project owner
+        await addDoc(collection(db, 'notifications'), {
+            userId: invitation.ownerId,
+            title: 'Project Invitation Accepted',
+            message: `${userData.firstName} ${userData.surname} accepted your invitation to join "${invitation.projectTitle}"`,
+            type: 'project_share_accepted',
+            read: false,
+            timestamp: serverTimestamp()
+        });
+        
+        hideLoader();
+        
+        showAlert('✅ Invitation accepted! You can now access the shared project.', 'success');
+        
+        // Reload invitations and projects
+        await loadProjectInvitations();
+        await loadActiveProjects();
+        
+        // Reload page to show updated content
+        initFutureProjectPage();
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error accepting invitation:', error);
+        showAlert('Error accepting invitation: ' + error.message, 'error');
+    }
+};
+
+// Decline project invitation
+window.declineProjectInvitation = async function(invitationId) {
+    if (!confirm('Are you sure you want to decline this invitation?')) return;
+    
+    showLoader('Declining invitation');
+    
+    try {
+        const invitation = projectInvitations.find(inv => inv.id === invitationId);
+        
+        // Update invitation status
+        await updateDoc(doc(db, 'project_invitations', invitationId), {
+            status: 'declined',
+            declinedAt: serverTimestamp()
+        });
+        
+        // Notify project owner
+        await addDoc(collection(db, 'notifications'), {
+            userId: invitation.ownerId,
+            title: 'Project Invitation Declined',
+            message: `${userData.firstName} ${userData.surname} declined your invitation to join "${invitation.projectTitle}"`,
+            type: 'project_share_declined',
+            read: false,
+            timestamp: serverTimestamp()
+        });
+        
+        hideLoader();
+        
+        showAlert('Invitation declined', 'info');
+        
+        // Reload invitations
+        await loadProjectInvitations();
+        initFutureProjectPage();
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error declining invitation:', error);
+        showAlert('Error declining invitation: ' + error.message, 'error');
+    }
+};
+
+// Load shared projects (projects shared with me)
+async function loadSharedProjects() {
+    if (!currentUser) return;
+    
+    try {
+        const q = query(
+            collection(db, 'project_shares'),
+            where('sharedWithUserId', '==', currentUser.uid),
+            where('status', '==', 'accepted')
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        const sharedProjectIds = snapshot.docs.map(doc => doc.data().projectId);
+        
+        if (sharedProjectIds.length === 0) return;
+        
+        // Load project details for shared projects
+        for (const projectId of sharedProjectIds) {
+            const projectDoc = await getDoc(doc(db, 'future_projects', projectId));
+            if (projectDoc.exists()) {
+                const projectData = {
+                    id: projectDoc.id,
+                    ...projectDoc.data(),
+                    isShared: true,
+                    createdAt: projectDoc.data().createdAt?.toDate() || new Date(),
+                    maturityDate: projectDoc.data().maturityDate?.toDate() || new Date()
+                };
+                
+                // Add to active projects if not already there
+                if (!activeProjects.find(p => p.id === projectId)) {
+                    activeProjects.push(projectData);
+                }
+            }
+        }
+        
+        renderActiveProjects();
+        
+    } catch (error) {
+        console.error('Error loading shared projects:', error);
+    }
+}
+
+
+
+
+console.log('✅ Monthly contribution reminders system loaded');
+// ==========================================
 // FUTURE PROJECT FUNCTIONALITY
 // ==========================================
 
 // Initialize Future Project Page
+// Initialize Future Project Page (FIXED VERSION)
 async function initFutureProjectPage() {
     // Check KYC status
-    if (userData.kycStatus !== 'approved') {
+    if (!userData || userData.kycStatus !== 'approved') {
         document.getElementById('future-project-page').innerHTML = `
             <h2 style="margin-bottom: 20px; color: #ffffff;">🎯 Future Project Savings</h2>
             <div class="card" style="text-align: center; padding: 60px 20px;">
@@ -3912,21 +5530,84 @@ async function initFutureProjectPage() {
         return;
     }
     
-    await loadActiveProjects();
-    setupProjectTypeSelection();
-    setupProjectForm();
+    console.log('🎯 Initializing Future Project page...');
+    
+    try {
+        // Load features in sequence with error handling
+        await loadProjectInvitations().catch(err => {
+            console.warn('Could not load invitations:', err);
+        });
+        
+        await loadActiveProjects(); // This is the main one
+        
+        await loadSharedProjects().catch(err => {
+            console.warn('Could not load shared projects:', err);
+        });
+        
+        await loadSavingsChallenges().catch(err => {
+            console.warn('Could not load challenges:', err);
+        });
+        
+        // Insert invitations section if there are pending invitations
+        if (projectInvitations.length > 0) {
+            const heroSection = document.querySelector('#future-project-page .coin-hero');
+            if (heroSection) {
+                const existingInvitations = heroSection.nextElementSibling;
+                if (existingInvitations && existingInvitations.querySelector('.project-invitation')) {
+                    existingInvitations.remove();
+                }
+                heroSection.insertAdjacentHTML('afterend', renderProjectInvitations());
+            }
+        }
+        
+        // Insert challenges section if there are active challenges
+        if (activeChallenges.length > 0) {
+            const projectsWidget = document.getElementById('active-projects-summary')?.closest('.card');
+            if (projectsWidget) {
+                const existingChallenges = projectsWidget.nextElementSibling;
+                if (existingChallenges && existingChallenges.textContent.includes('Active Savings Challenges')) {
+                    existingChallenges.remove();
+                }
+                projectsWidget.insertAdjacentHTML('afterend', renderSavingsChallenges());
+            }
+        }
+        
+        setupProjectTypeSelection();
+        setupProjectForm();
+        
+        console.log('✅ Future Project page initialized successfully');
+        
+    } catch (error) {
+        console.error('❌ Error initializing Future Project page:', error);
+        showAlert('Some features could not load. Please refresh the page.', 'warning');
+    }
 }
+
+// Add share button to project details modal
+function addShareButtonToProjectDetails(projectId, isOwner) {
+    if (!isOwner) return ''; // Only owners can share
+    
+    return `
+        <button class="btn" onclick="shareProject('${projectId}')" 
+                style="width: 100%; margin-top: 15px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            👨‍👩‍👧‍👦 Share with Family
+        </button>
+    `;
+}
+
+console.log('✅ Project sharing with family members loaded');
 
 // Load user's active projects & Run maturity check when projects are loaded
 async function loadActiveProjects() {
     try {
+        // First, try to load only user's own projects
         const q = query(
             collection(db, 'future_projects'),
-            where('userId', '==', currentUser.uid),
-            where('status', 'in', ['active', 'matured'])
+            where('userId', '==', currentUser.uid)
         );
         
         const snapshot = await getDocs(q);
+        
         activeProjects = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
@@ -3934,21 +5615,46 @@ async function loadActiveProjects() {
             maturityDate: doc.data().maturityDate?.toDate() || new Date()
         }));
         
+        // Filter active and matured projects in JavaScript instead of Firestore
+        activeProjects = activeProjects.filter(p => 
+            p.status === 'active' || p.status === 'matured'
+        );
+        
+        console.log('✅ Loaded projects:', activeProjects.length);
+        
         renderActiveProjects();
+        
+        // Check maturity after rendering
         await checkProjectMaturity();
         
     } catch (error) {
-        console.error('Error loading projects:', error);
-        showAlert('Error loading projects. Please refresh.', 'error');
+        console.error('❌ Error loading projects:', error);
+        
+        // Show user-friendly message
+        const container = document.getElementById('active-projects-summary');
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #718096; grid-column: 1 / -1;">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+                    <p style="margin-bottom: 10px;">Could not load projects</p>
+                    <button class="btn" onclick="initFutureProjectPage()" style="width: auto; padding: 10px 25px;">
+                        🔄 Try Again
+                    </button>
+                </div>
+            `;
+        }
     }
 }
-// Render active projects summary
+// Render active projects summary (FIXED VERSION)
 function renderActiveProjects() {
     const container = document.getElementById('active-projects-summary');
     
-    if (!container) return;
+    if (!container) {
+        console.warn('⚠️ Active projects container not found');
+        return;
+    }
     
-    if (activeProjects.length === 0) {
+    if (!activeProjects || activeProjects.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 40px; color: #718096; grid-column: 1 / -1;">
                 <div style="font-size: 3rem; margin-bottom: 10px; opacity: 0.5;">📂</div>
@@ -3958,69 +5664,139 @@ function renderActiveProjects() {
         return;
     }
     
-    container.innerHTML = activeProjects.map(project => {
-        const progress = (project.currentAmount / project.goalAmount) * 100;
-        const daysRemaining = Math.ceil((project.maturityDate - new Date()) / (1000 * 60 * 60 * 24));
-        const monthsRemaining = Math.ceil(daysRemaining / 30);
-        const isMatured = daysRemaining <= 0;
-        const isLocked = projectTypeData[project.type].locked && !isMatured;
-        
-        const projectedInterest = isMatured ? project.currentAmount * 0.20 : 0;
-        const projectedTotal = isMatured ? project.currentAmount + projectedInterest : project.currentAmount;
-        
-        return `
-            <div class="project-summary-card ${isLocked ? 'locked' : ''} ${project.type === 'imminent' ? 'imminent' : ''}" 
-                 onclick="viewProjectDetails('${project.id}')">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="font-size: 2.5rem;">${projectTypeData[project.type].icon}</div>
-                        <div>
-                            <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${project.title}</div>
-                            <div style="font-size: 0.85rem; color: #718096;">${projectTypeData[project.type].name}</div>
+    try {
+        container.innerHTML = activeProjects.map(project => {
+            const progress = (project.currentAmount / project.goalAmount) * 100;
+            const daysRemaining = Math.ceil((project.maturityDate - new Date()) / (1000 * 60 * 60 * 24));
+            const monthsRemaining = Math.ceil(daysRemaining / 30);
+            const isMatured = daysRemaining <= 0;
+            const isLocked = projectTypeData[project.type]?.locked && !isMatured;
+            
+            const projectedInterest = isMatured ? project.currentAmount * 0.20 : 0;
+            const projectedTotal = isMatured ? project.currentAmount + projectedInterest : project.currentAmount;
+            
+            return `
+                <div class="project-summary-card ${isLocked ? 'locked' : ''} ${project.type === 'imminent' ? 'imminent' : ''}" 
+                     onclick="viewProjectDetails('${project.id}')">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 2.5rem;">${projectTypeData[project.type]?.icon || '🎯'}</div>
+                            <div>
+                                <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${project.title || 'Untitled Project'}</div>
+                                <div style="font-size: 0.85rem; color: #718096;">${projectTypeData[project.type]?.name || 'Future Project'}</div>
+                            </div>
+                        </div>
+                        ${isLocked ? '<span style="font-size: 1.5rem;">🔒</span>' : ''}
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.85rem; color: #718096;">Progress</span>
+                            <span style="font-weight: 600; color: #667eea;">${progress.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: ${Math.min(progress, 100)}%"></div>
                         </div>
                     </div>
-                    ${isLocked ? '<span style="font-size: 1.5rem;">🔒</span>' : ''}
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <div style="font-size: 0.75rem; color: #718096;">Current</div>
+                            <div style="font-weight: 700; color: #4a5568;">${formatCurrency(project.currentAmount || 0)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.75rem; color: #718096;">Goal</div>
+                            <div style="font-weight: 700; color: #667eea;">${formatCurrency(project.goalAmount || 0)}</div>
+                        </div>
+                    </div>
+                    
+                    ${isMatured ? `
+                        <div style="background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); padding: 12px; border-radius: 8px; margin-bottom: 10px;">
+                            <div style="font-size: 0.85rem; color: #22543d; font-weight: 600; margin-bottom: 5px;">🎉 Project Matured!</div>
+                            <div style="font-size: 0.8rem; color: #22543d;">Interest: ${formatCurrency(projectedInterest)}</div>
+                            <div style="font-size: 0.9rem; color: #22543d; font-weight: 700;">Total: ${formatCurrency(projectedTotal)}</div>
+                        </div>
+                    ` : `
+                        <div style="font-size: 0.85rem; color: #718096; margin-bottom: 10px;">
+                            ${isLocked ? `🔒 Matures in: <strong>${monthsRemaining} months</strong>` : '⚡ Withdrawable anytime'}
+                        </div>
+                    `}
+                    
+                    <span class="project-badge ${isMatured ? 'matured' : isLocked ? 'locked' : 'active'}">
+                        ${isMatured ? '✅ Matured' : isLocked ? '🔒 Locked' : '⚡ Active'}
+                    </span>
                 </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                        <span style="font-size: 0.85rem; color: #718096;">Progress</span>
-                        <span style="font-weight: 600; color: #667eea;">${progress.toFixed(1)}%</span>
-                    </div>
-                    <div class="progress-bar-container">
-                        <div class="progress-bar" style="width: ${Math.min(progress, 100)}%"></div>
-                    </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-                    <div>
-                        <div style="font-size: 0.75rem; color: #718096;">Current</div>
-                        <div style="font-weight: 700; color: #4a5568;">${formatCurrency(project.currentAmount)}</div>
-                    </div>
-                    <div>
-                        <div style="font-size: 0.75rem; color: #718096;">Goal</div>
-                        <div style="font-weight: 700; color: #667eea;">${formatCurrency(project.goalAmount)}</div>
-                    </div>
-                </div>
-                
-                ${isMatured ? `
-                    <div style="background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); padding: 12px; border-radius: 8px; margin-bottom: 10px;">
-                        <div style="font-size: 0.85rem; color: #22543d; font-weight: 600; margin-bottom: 5px;">🎉 Project Matured!</div>
-                        <div style="font-size: 0.8rem; color: #22543d;">Interest: ${formatCurrency(projectedInterest)}</div>
-                        <div style="font-size: 0.9rem; color: #22543d; font-weight: 700;">Total: ${formatCurrency(projectedTotal)}</div>
-                    </div>
-                ` : `
-                    <div style="font-size: 0.85rem; color: #718096; margin-bottom: 10px;">
-                        ${isLocked ? `🔒 Matures in: <strong>${monthsRemaining} months</strong>` : '⚡ Withdrawable anytime'}
-                    </div>
-                `}
-                
-                <span class="project-badge ${isMatured ? 'matured' : isLocked ? 'locked' : 'active'}">
-                    ${isMatured ? '✅ Matured' : isLocked ? '🔒 Locked' : '⚡ Active'}
-                </span>
+            `;
+        }).join('');
+        
+        console.log('✅ Rendered', activeProjects.length, 'projects');
+        
+    } catch (error) {
+        console.error('❌ Error rendering projects:', error);
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #e53e3e; grid-column: 1 / -1;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">⚠️</div>
+                <p style="margin-bottom: 10px;">Error displaying projects</p>
+                <p style="font-size: 0.85rem; color: #718096;">${error.message}</p>
             </div>
         `;
-    }).join('');
+    }
+}
+// Ensure projectTypeData exists
+if (typeof projectTypeData === 'undefined') {
+    const projectTypeData = {
+        kids: { icon: '👶', name: 'For My Kids', locked: true },
+        myself: { icon: '🙋', name: 'For Myself', locked: true },
+        parents: { icon: '👴👵', name: 'For My Parents', locked: true },
+        spouse: { icon: '💑', name: 'For My Spouse', locked: true },
+        family: { icon: '👨‍👩‍👧‍👦', name: 'Family Project', locked: true },
+        wedding: { icon: '💒', name: 'For My Wedding', locked: true },
+        imminent: { icon: '⚡', name: 'Imminent Attention', locked: false }
+    };
+}
+
+// Ensure loadProjectInvitations exists
+if (typeof loadProjectInvitations === 'undefined') {
+    async function loadProjectInvitations() {
+        projectInvitations = [];
+        console.log('Project invitations feature not yet implemented');
+    }
+}
+
+// Ensure loadSharedProjects exists
+if (typeof loadSharedProjects === 'undefined') {
+    async function loadSharedProjects() {
+        console.log('Shared projects feature not yet implemented');
+    }
+}
+
+// Ensure loadSavingsChallenges exists
+if (typeof loadSavingsChallenges === 'undefined') {
+    async function loadSavingsChallenges() {
+        activeChallenges = [];
+        console.log('Savings challenges feature not yet implemented');
+    }
+}
+
+// Ensure renderProjectInvitations exists
+if (typeof renderProjectInvitations === 'undefined') {
+    function renderProjectInvitations() {
+        return '';
+    }
+}
+
+// Ensure renderSavingsChallenges exists
+if (typeof renderSavingsChallenges === 'undefined') {
+    function renderSavingsChallenges() {
+        return '';
+    }
+}
+
+// Ensure checkProjectMaturity exists
+if (typeof checkProjectMaturity === 'undefined') {
+    async function checkProjectMaturity() {
+        console.log('Project maturity checker not yet implemented');
+    }
 }
 
 // Setup project type selection
@@ -4243,9 +6019,110 @@ async function updateDashboardFutureProjects() {
         widget.style.display = 'none';
     }
 }
+// Enhanced dashboard with quick actions
+function addQuickActionsWidget() {
+    return `
+        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h3 style="color: white; margin-bottom: 20px;">⚡ Quick Actions</h3>
+            
+            <div style="display: grid; gap: 12px;">
+                <button class="btn" onclick="document.querySelector('[data-page=future-project]').click()" 
+                        style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.3); color: white; text-align: left; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">🎯</div>
+                            <div style="font-weight: 600;">Create New Project</div>
+                        </div>
+                        <div style="font-size: 1.5rem;">→</div>
+                    </div>
+                </button>
+                
+                <button class="btn" onclick="quickContribute()" 
+                        style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.3); color: white; text-align: left; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">💰</div>
+                            <div style="font-weight: 600;">Quick Contribute</div>
+                        </div>
+                        <div style="font-size: 1.5rem;">→</div>
+                    </div>
+                </button>
+                
+                <button class="btn" onclick="viewActiveChallenges()" 
+                        style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); border: 2px solid rgba(255, 255, 255, 0.3); color: white; text-align: left; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-size: 1.5rem; margin-bottom: 5px;">🏆</div>
+                            <div style="font-weight: 600;">Join Challenge</div>
+                        </div>
+                        <div style="font-size: 1.5rem;">→</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    `;
+}
 
+// Quick contribute function
+window.quickContribute = function() {
+    if (activeProjects.length === 0) {
+        showAlert('Create a Future Project first!', 'info');
+        document.querySelector('[data-page="future-project"]').click();
+        return;
+    }
+    
+    // Show quick contribute modal with project selection
+    const modalHTML = `
+        <div class="modal" id="quick-contribute-modal" style="display: block;">
+            <div class="modal-content" style="max-width: 500px;">
+                <button class="close-btn" onclick="closeQuickContribute()">&times;</button>
+                <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">💰 Quick Contribute</h2>
+                
+                <div class="form-group">
+                    <label>Select Project</label>
+                    <div style="display: grid; gap: 10px;">
+                        ${activeProjects.filter(p => p.status === 'active').map(project => `
+                            <div onclick="contributeToProject('${project.id}'); closeQuickContribute();" 
+                                 style="padding: 15px; background: #f7fafc; border-radius: 10px; cursor: pointer; border: 2px solid #e2e8f0; transition: all 0.3s ease;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <div style="font-size: 2rem;">${projectTypeData[project.type].icon}</div>
+                                    <div style="flex: 1;">
+                                        <div style="font-weight: 600; color: #4a5568;">${project.title}</div>
+                                        <div style="font-size: 0.85rem; color: #718096;">
+                                            ${formatCurrency(project.currentAmount)} of ${formatCurrency(project.goalAmount)}
+                                        </div>
+                                    </div>
+                                    <div style="font-size: 1.2rem; color: #667eea;">→</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+};
+
+window.closeQuickContribute = function() {
+    const modal = document.getElementById('quick-contribute-modal');
+    if (modal) modal.remove();
+};
+
+// View active challenges
+window.viewActiveChallenges = function() {
+    document.querySelector('[data-page="future-project"]').click();
+    setTimeout(() => {
+        const challengesSection = document.querySelector('.coin-hero');
+        if (challengesSection) {
+            challengesSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, 500);
+};
 
 // View project details
+// Enhanced viewProjectDetails with all features
 window.viewProjectDetails = async function(projectId) {
     const project = activeProjects.find(p => p.id === projectId);
     
@@ -4259,6 +6136,7 @@ window.viewProjectDetails = async function(projectId) {
     const monthsRemaining = Math.ceil(daysRemaining / 30);
     const isMatured = daysRemaining <= 0;
     const isLocked = projectTypeData[project.type].locked && !isMatured;
+    const isOwner = project.userId === currentUser.uid;
     
     const projectedInterest = project.currentAmount * project.interestRate;
     const projectedTotal = project.currentAmount + projectedInterest;
@@ -4270,6 +6148,7 @@ window.viewProjectDetails = async function(projectId) {
             <div style="font-size: 4rem; margin-bottom: 10px;">${projectTypeData[project.type].icon}</div>
             <h3 style="color: #4a5568; margin-bottom: 5px;">${project.title}</h3>
             <div style="color: #718096; font-size: 0.9rem;">${projectTypeData[project.type].name}</div>
+            ${project.isShared ? '<div style="color: #667eea; font-size: 0.9rem; margin-top: 5px;">👥 Shared Project</div>' : ''}
             ${project.description ? `<p style="color: #718096; margin-top: 10px; font-style: italic;">"${project.description}"</p>` : ''}
         </div>
 
@@ -4339,15 +6218,26 @@ window.viewProjectDetails = async function(projectId) {
         </div>
 
         <!-- Action Buttons -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 25px;">
+        <div style="display: grid; grid-template-columns: repeat(${isOwner ? '3' : '2'}, 1fr); gap: 10px; margin-top: 25px;">
             <button class="btn" onclick="contributeToProject('${project.id}')" 
                     style="background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);">
-                💰 Add Contribution
+                💰 Contribute
             </button>
-            <button class="btn" onclick="withdrawFromProject('${project.id}')" 
-                    style="background: ${isMatured || !isLocked ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)'};">
-                ${isMatured || !isLocked ? '💸 Withdraw' : '⚠️ Emergency Withdrawal'}
-            </button>
+            ${isOwner ? `
+                <button class="btn" onclick="withdrawFromProject('${project.id}')" 
+                        style="background: ${isMatured || !isLocked ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' : 'linear-gradient(135deg, #e53e3e 0%, #c53030 100%)'};">
+                    ${isMatured || !isLocked ? '💸 Withdraw' : '⚠️ Emergency'}
+                </button>
+                <button class="btn" onclick="shareProject('${project.id}')" 
+                        style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    👥 Share
+                </button>
+            ` : `
+                <button class="btn" onclick="viewChallengeLeaderboard('${project.id}')" 
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    🏆 Challenges
+                </button>
+            `}
         </div>
 
         <!-- Project Timeline -->
@@ -4361,12 +6251,48 @@ window.viewProjectDetails = async function(projectId) {
                 <strong>Contributions Made:</strong> ${project.contributions?.length || 0}
             </div>
         </div>
+
+        <!-- Milestones -->
+        ${addMilestonesSection(project)}
+
+        <!-- Monthly Reminders (Only for owners) -->
+        ${isOwner ? addReminderSection(project.id) : ''}
+
+        <!-- Auto-Contribution (Only for owners) -->
+        ${isOwner ? addAutoContributionSection(project.id) : ''}
+
+        <!-- Interest Projection -->
+        ${showInterestBreakdown(project)}
     `;
     
     document.getElementById('project-details-content').innerHTML = content;
     document.getElementById('modal-project-title').textContent = project.title;
     document.getElementById('project-details-modal').style.display = 'block';
 };
+
+// Add milestones section function
+function addMilestonesSection(project) {
+    const milestones = calculateProjectMilestones(project);
+    
+    return `
+        <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e2e8f0;">
+            <h4 style="color: #4a5568; margin-bottom: 15px;">🏆 Achievement Milestones</h4>
+            <div style="display: grid; gap: 12px;">
+                ${milestones.map(milestone => `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: ${milestone.achieved ? '#f0fff4' : '#f7fafc'}; border-radius: 8px; border-left: 4px solid ${milestone.achieved ? '#48bb78' : '#cbd5e0'};">
+                        <span class="milestone-dot ${milestone.achieved ? '' : 'pending'}"></span>
+                        <span style="font-size: 1.5rem;">${milestone.icon}</span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: ${milestone.achieved ? '#22543d' : '#718096'};">${milestone.label}</div>
+                            <div style="font-size: 0.85rem; color: #718096;">${milestone.percent}% of goal</div>
+                        </div>
+                        ${milestone.achieved ? '<span style="color: #48bb78; font-size: 1.2rem;">✓</span>' : ''}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
 
 // Close project details modal
 document.getElementById('close-project-details')?.addEventListener('click', () => {
@@ -6233,13 +8159,16 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
     if (userDoc.exists()) {
         userData = userDoc.data();
         
-        // MIGRATION: Ensure referral code exists
+        // Existing migrations
         await ensureReferralCode();
-        
-        // FIX: Load and update referral count
         await loadReferralCount();
-        
         await updateBiometricStatus();
+        
+        // NEW: Load all Future Project features
+        await loadContributionReminders();
+        await loadAutoContributionSettings();
+        await loadProjectInvitations();
+        await loadSavingsChallenges();
         
         const newVIPLevel = calculateVIPLevel(userData.totalContributions || 0, userData.kycStatus);
         if (newVIPLevel !== userData.vipLevel) {
@@ -6828,28 +8757,7 @@ function calculateProjectMilestones(project) {
 }
 
 // Add this to the viewProjectDetails function after the timeline section:
-function addMilestonesSection(project) {
-    const milestones = calculateProjectMilestones(project);
-    
-    return `
-        <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid #e2e8f0;">
-            <h4 style="color: #4a5568; margin-bottom: 15px;">🏆 Milestones</h4>
-            <div style="display: grid; gap: 12px;">
-                ${milestones.map(milestone => `
-                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: ${milestone.achieved ? '#f0fff4' : '#f7fafc'}; border-radius: 8px; border-left: 4px solid ${milestone.achieved ? '#48bb78' : '#cbd5e0'};">
-                        <span class="milestone-dot ${milestone.achieved ? '' : 'pending'}"></span>
-                        <span style="font-size: 1.5rem;">${milestone.icon}</span>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; color: ${milestone.achieved ? '#22543d' : '#718096'};">${milestone.label}</div>
-                            <div style="font-size: 0.85rem; color: #718096;">${milestone.percent}% of goal</div>
-                        </div>
-                        ${milestone.achieved ? '<span style="color: #48bb78; font-size: 1.2rem;">✓</span>' : ''}
-                    </div>
-                `).join('')}
-            </div>
-        </div>
-    `;
-}
+
 // ==========================================
 // AUTOMATIC MATURITY CHECKER
 // ==========================================
@@ -9391,6 +11299,199 @@ document.querySelectorAll('.currency-quick-select').forEach(btn => {
         document.querySelector('.converter-card').scrollIntoView({ behavior: 'smooth' });
     });
 });
+// ==========================================
+// SUCCESS ANIMATIONS & CELEBRATIONS
+// ==========================================
+
+// Celebrate project creation
+function celebrateProjectCreation() {
+    if (typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ['#667eea', '#764ba2', '#48bb78', '#f093fb']
+        });
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 100,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 }
+            });
+        }, 200);
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 100,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 }
+            });
+        }, 400);
+    }
+}
+
+// Celebrate milestone achievement
+function celebrateMilestone(milestonePercent) {
+    if (typeof confetti !== 'undefined') {
+        const colors = milestonePercent === 25 ? ['#667eea', '#764ba2'] :
+                      milestonePercent === 50 ? ['#48bb78', '#38a169'] :
+                      milestonePercent === 75 ? ['#f6cc33', '#f39c12'] :
+                      ['#f093fb', '#f5576c'];
+        
+        confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+            colors: colors
+        });
+    }
+    
+    // Play success sound
+    playSuccessSound();
+}
+
+// Celebrate project maturity
+function celebrateMaturity(projectTitle, totalAmount) {
+    if (typeof confetti !== 'undefined') {
+        // Multiple confetti bursts
+        const duration = 3000;
+        const animationEnd = Date.now() + duration;
+        
+        const interval = setInterval(() => {
+            const timeLeft = animationEnd - Date.now();
+            
+            if (timeLeft <= 0) {
+                clearInterval(interval);
+                return;
+            }
+            
+            const particleCount = 50 * (timeLeft / duration);
+            
+            confetti({
+                particleCount,
+                startVelocity: 30,
+                spread: 360,
+                origin: {
+                    x: Math.random(),
+                    y: Math.random() - 0.2
+                },
+                colors: ['#FFD700', '#FFA500', '#FF6347', '#667eea', '#48bb78']
+            });
+        }, 250);
+    }
+    
+    // Show celebration modal
+    showMaturityCelebrationModal(projectTitle, totalAmount);
+}
+
+// Maturity celebration modal
+function showMaturityCelebrationModal(projectTitle, totalAmount) {
+    const modalHTML = `
+        <div class="modal" id="maturity-celebration-modal" style="display: block; background: rgba(0, 0, 0, 0.9);">
+            <div class="modal-content" style="max-width: 600px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 60px 40px;">
+                <div style="font-size: 6rem; margin-bottom: 20px; animation: pulse 2s infinite;">🎉</div>
+                <h1 style="color: white; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    Congratulations!
+                </h1>
+                <h2 style="color: white; font-size: 1.8rem; margin-bottom: 30px; font-weight: 400;">
+                    "${projectTitle}" has matured!
+                </h2>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                    <div style="font-size: 1.2rem; opacity: 0.95; margin-bottom: 10px;">Your Total Amount</div>
+                    <div style="font-size: 4rem; font-weight: 700; text-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                        ${formatCurrency(totalAmount)}
+                    </div>
+                    <div style="font-size: 1.1rem; opacity: 0.9; margin-top: 15px;">
+                        Including 20% interest earned! 💰
+                    </div>
+                </div>
+                
+                <p style="font-size: 1.2rem; line-height: 1.8; opacity: 0.95; margin-bottom: 30px;">
+                    You've successfully completed your 3-year savings journey!<br>
+                    Your discipline and commitment have paid off. 🌟
+                </p>
+                
+                <button class="btn" onclick="closeMaturityCelebration()" 
+                        style="background: white; color: #667eea; padding: 15px 40px; font-size: 1.1rem; font-weight: 700;">
+                    Claim Your Funds 💸
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+window.closeMaturityCelebration = function() {
+    const modal = document.getElementById('maturity-celebration-modal');
+    if (modal) modal.remove();
+};
+
+// Play success sound
+function playSuccessSound() {
+    const audio = new Audio('data:audio/wav;base64,UklGRhIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZSA0PVqzn77BdGAg+ltryxnMpBSuBzvLZiTYIG2a/7OObTgwNUKXi8LViFgY5kdXzzHorBSB2x+/dkT8KFF+x6OyrVhUJR6Hf8r9vIAU0iNHz04MzBiBuwfDjmUkODlWs5++xXRgIP5XX8sV0KAUrgc7y2Yk2CBtmv+zjm04MDVCl4vC1YhYGOZHV88x6KwUgdsfw3ZI/ChVfsejrq1cVCUih3/K/cCEFM4nQ89GDMwYfb8Hw4ppJDg5VrOXwsV4YCECVWPLGdCcFKoHO8tqKNggbZr/s45tODA1QpOLxtWIWBjmS1fTMeywGIHbH8N6SPwoVX7Ho66tYFgpIot/yv3EgBTPJ0PPRhDMGH2/B8OKaSQ4PVqzl8LFeFwhAlVnyw3YnBSqBzvLaijUIHGa+7OSbTQwOUKPh8LVjFgc5ktX0zHsrBiF2xu/ekTwLFV+v6OuqWBcKSKHh8sFwIAU0yM/z0oQzBx9uwfDimUkOD1as5fCxYBgHQJVZ8sN2JwUqgc7y2og1CRtkv+3km04ND1Ck4vG1YhYHOpLV9Mx7KwUhdsXv3pE8CxVgr+frqlgXCkii4PK/cCEFNMjQ89KEMwcfbsLw4plJDw5WrOXwsV8YCECVWfLEdicFKoHO8tqINQkbZL/s5ZxPDQ5QpOLxtWMXCDqS1PTNeysFIXbF796RPAsVYK/n66pZFwpIouDyv3AhBTTI0PPShDQHH27C8OKZSg4OVqzm8LFgGAhAlVnyw3YnBSqBzvLZiTUIHGa+7OSbTw0OUKPi8LVjFwg6kdX0zHwrBSJ2xe/ekj0LFWCw6OuqWRcKSKLg8r9xIQU0yNDz0oQ0Bx9uwu/hmUoODlat5fCxYBgIQJVZ8sR2JgYqgc7y2Yk1CB1lvu/jnE4OEE+i4vG1YxcJOpHV9M18KgUidcbw3pE9CxZfs+jqqlobC0ih4fK/cyAGM8nQ89KFMwgfb8Lx4ppKDw5WrOXwsWAYCUCUWPLEdicGK4DN8tqJNQgdZb7v45xODhBPo+LxtWMXCTqS1fPPfCsGI3bG796SPQsWX7To7KpZGwtIoOH ');
+    audio.volume = 0.4;
+    audio.play().catch(e => console.log('Could not play sound:', e));
+}
+
+// Celebrate challenge win
+function celebrateChallengeWin(position, prize) {
+    if (typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#FFD700', '#FFA500', '#FF6347']
+        });
+    }
+    
+    showChallengeWinModal(position, prize);
+}
+
+// Challenge win modal
+function showChallengeWinModal(position, prize) {
+    const trophy = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : '🏅';
+    
+    const modalHTML = `
+        <div class="modal" id="challenge-win-modal" style="display: block;">
+            <div class="modal-content" style="max-width: 550px; text-align: center;">
+                <div style="font-size: 6rem; margin-bottom: 20px; animation: pulse 2s infinite;">${trophy}</div>
+                <h2 style="color: #4a5568; font-size: 2.5rem; margin-bottom: 15px;">
+                    You Won ${position}${position === 1 ? 'st' : position === 2 ? 'nd' : position === 3 ? 'rd' : 'th'} Place!
+                </h2>
+                <p style="color: #718096; font-size: 1.2rem; margin-bottom: 25px;">
+                    Congratulations on your amazing achievement!
+                </p>
+                
+                <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; border-radius: 15px; margin-bottom: 25px;">
+                    <div style="font-size: 1rem; opacity: 0.95; margin-bottom: 10px;">Your Prize</div>
+                    <div style="font-size: 2.5rem; font-weight: 700;">${prize}</div>
+                </div>
+                
+                <p style="color: #718096; margin-bottom: 25px;">
+                    Prize will be credited to your account within 7 days.
+                </p>
+                
+                <button class="btn" onclick="closeChallengeWinModal()">
+                    🎉 Awesome!
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+window.closeChallengeWinModal = function() {
+    const modal = document.getElementById('challenge-win-modal');
+    if (modal) modal.remove();
+};
+
+console.log('✅ Success animations and celebrations loaded');
 
 
         console.log('SusuPay Enhanced System Initialized - All Features Loaded ✅');
@@ -9402,6 +11503,34 @@ console.log('Pages check:', {
     settings: !!document.getElementById('settings-page'),
     report: !!document.getElementById('report-page')
 });
+// Debug helper for Future Projects
+window.debugFutureProjects = async function() {
+    console.log('=== FUTURE PROJECTS DEBUG ===');
+    console.log('Current User:', currentUser?.uid);
+    console.log('User Data:', userData);
+    console.log('KYC Status:', userData?.kycStatus);
+    console.log('Active Projects:', activeProjects);
+    
+    if (currentUser) {
+        try {
+            const q = query(
+                collection(db, 'future_projects'),
+                where('userId', '==', currentUser.uid)
+            );
+            const snapshot = await getDocs(q);
+            console.log('Firestore Projects Count:', snapshot.size);
+            snapshot.forEach(doc => {
+                console.log('Project:', doc.id, doc.data());
+            });
+        } catch (error) {
+            console.error('Firestore Query Error:', error);
+        }
+    }
+    
+    console.log('=== END DEBUG ===');
+};
+
+console.log('💡 Run window.debugFutureProjects() in console to debug');
     </script>
 </body>
 </html>
