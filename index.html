@@ -5358,6 +5358,144 @@ function stopTransactionMonitoring() {
         console.log('Transaction monitoring stopped');
     }
 }
+// ==========================================
+// REAL-TIME FUTURE PROJECT MONITORING
+// ==========================================
+
+let projectTransactionUnsubscribe = null;
+
+async function startProjectTransactionMonitoring() {
+    if (!currentUser || projectTransactionUnsubscribe) return;
+    
+    try {
+        const q = query(
+            collection(db, 'transactions'),
+            where('userId', '==', currentUser.uid),
+            where('type', '==', 'future_project_contribution'),
+            where('status', '==', 'approved')
+        );
+        
+        projectTransactionUnsubscribe = onSnapshot(q, async (snapshot) => {
+            console.log('🎯 Future Project contribution update detected');
+            
+            // Group contributions by project
+            const projectTotals = {};
+            
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const projectId = data.projectId;
+                const amount = data.amount || 0;
+                
+                if (!projectTotals[projectId]) {
+                    projectTotals[projectId] = 0;
+                }
+                projectTotals[projectId] += amount;
+            });
+            
+            // Update each project in Firestore
+            for (const projectId in projectTotals) {
+                try {
+                    const projectRef = doc(db, 'future_projects', projectId);
+                    const projectDoc = await getDoc(projectRef);
+                    
+                    if (projectDoc.exists()) {
+                        const currentAmount = projectTotals[projectId];
+                        const oldAmount = projectDoc.data().currentAmount || 0;
+                        
+                        // Only update if amount changed
+                        if (currentAmount !== oldAmount) {
+                            console.log(`💰 Updating project ${projectId}: ${oldAmount} → ${currentAmount}`);
+                            
+                            await updateDoc(projectRef, {
+                                currentAmount: currentAmount,
+                                lastContributionDate: serverTimestamp()
+                            });
+                            
+                            // Update local activeProjects array
+                            const localProject = activeProjects.find(p => p.id === projectId);
+                            if (localProject) {
+                                localProject.currentAmount = currentAmount;
+                                localProject.lastContributionDate = new Date();
+                            }
+                            
+                            // Show success notification
+                            const project = projectDoc.data();
+                            await createNotification(
+                                'Project Updated!',
+                                `${formatCurrency(currentAmount - oldAmount)} added to "${project.title}"`,
+                                'success'
+                            );
+                            
+                            // Check if milestone reached
+                            checkProjectMilestone(projectId, oldAmount, currentAmount, project.goalAmount);
+                        }
+                    }
+                } catch (error) {
+                    console.error(`Error updating project ${projectId}:`, error);
+                }
+            }
+            
+            // Refresh project display
+            renderActiveProjects();
+            updateDashboardFutureProjects();
+            
+        }, (error) => {
+            console.error('❌ Project transaction monitoring error:', error);
+        });
+        
+        console.log('✅ Future Project transaction monitoring started');
+        
+    } catch (error) {
+        console.error('❌ Error starting project transaction monitoring:', error);
+    }
+}
+
+function stopProjectTransactionMonitoring() {
+    if (projectTransactionUnsubscribe) {
+        projectTransactionUnsubscribe();
+        projectTransactionUnsubscribe = null;
+        console.log('Future Project transaction monitoring stopped');
+    }
+}
+
+// Check and celebrate milestones
+function checkProjectMilestone(projectId, oldAmount, newAmount, goalAmount) {
+    const milestones = [
+        { percent: 25, label: 'Quarter Way There!' },
+        { percent: 50, label: 'Halfway Milestone!' },
+        { percent: 75, label: 'Almost There!' },
+        { percent: 100, label: 'Goal Achieved!' }
+    ];
+    
+    const oldProgress = (oldAmount / goalAmount) * 100;
+    const newProgress = (newAmount / goalAmount) * 100;
+    
+    // Check if any milestone was just crossed
+    milestones.forEach(milestone => {
+        if (oldProgress < milestone.percent && newProgress >= milestone.percent) {
+            console.log(`🎉 Milestone reached: ${milestone.label}`);
+            
+            // Show celebration
+            showAlert(`🎉 ${milestone.label} - ${milestone.percent}% of goal reached!`, 'success');
+            
+            // Trigger confetti
+            if (typeof confetti !== 'undefined') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+            
+            // Create notification
+            createNotification(
+                `Milestone: ${milestone.label}`,
+                `You've reached ${milestone.percent}% of your project goal!`,
+                'success'
+            );
+        }
+    });
+}
 // Show invitation badge on Future Project nav item
 function showProjectInvitationBadge() {
     const navItem = document.querySelector('[data-page="future-project"]');
@@ -5586,11 +5724,15 @@ console.log('✅ Monthly contribution reminders system loaded');
 // ==========================================
 
 // Initialize Future Project Page
-// Initialize Future Project Page (FIXED VERSION)
+
 async function initFutureProjectPage() {
+    // Ensure project monitoring is active
+    if (currentUser && !projectTransactionUnsubscribe) {
+        startProjectTransactionMonitoring();
+    }
+    
     // Check KYC status
-    if (!userData || userData.kycStatus !== 'approved') {
-        document.getElementById('future-project-page').innerHTML = `
+    if (!userData || userData.kycStatus !== 'approved') {        document.getElementById('future-project-page').innerHTML = `
             <h2 style="margin-bottom: 20px; color: #ffffff;">🎯 Future Project Savings</h2>
             <div class="card" style="text-align: center; padding: 60px 20px;">
                 <div style="font-size: 5rem; margin-bottom: 20px;">🔒</div>
@@ -8260,6 +8402,7 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
 
 // Start real-time transaction monitoring
 startTransactionMonitoring();
+startProjectTransactionMonitoring();
 
 if (userData.notifications?.security) {
     await createNotification(
@@ -8495,6 +8638,7 @@ async function loadReferralCount() {
     
     stopInactivityMonitoring();
     stopTransactionMonitoring(); 
+    stopProjectTransactionMonitoring(); 
     
     currentUser = null;
     userData = null;
