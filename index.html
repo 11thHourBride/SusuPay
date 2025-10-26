@@ -312,9 +312,9 @@
             gap: 5px;
         }
 
-        .vip-badge.vip0 { background: linear-gradient(135deg, #a8a8a8 0%, #8c8c8c 100%); }
-        .vip-badge.vip1 { background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%); }
-        .vip-badge.vip2 { background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%); }
+        .vip-badge.vip0 { background: linear-gradient(135deg, #2bc244 0%, #0a5301 100%); }
+        .vip-badge.vip1 { background: linear-gradient(135deg, #CD7F32 0%, #b80b0b 100%); }
+        .vip-badge.vip2 { background: linear-gradient(135deg, #0f1179 0%, #06255e 100%); }
         .vip-badge.vip3 { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); }
         .vip-badge.vip4 { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
         .vip-badge.vip5 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
@@ -2240,6 +2240,27 @@
                 <h3 style="margin-bottom: 15px; color: #4a5568;">🎯 VIP Level Progress</h3>
                 <div id="vip-progress-content"></div>
             </div>
+            <!-- Add this after the VIP progress card on dashboard -->
+<div class="card" style="background: #f7fafc; border-left: 4px solid #667eea;">
+    <h4 style="color: #4a5568; margin-bottom: 15px;">🔄 VIP System Status</h4>
+    <div style="display: grid; gap: 10px; margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+            <span style="color: #718096;">Current VIP Level:</span>
+            <strong style="color: #667eea;" id="debug-vip-level">-</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+            <span style="color: #718096;">Total Contributions:</span>
+            <strong style="color: #48bb78;" id="debug-total-contributions">₵0.00</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+            <span style="color: #718096;">Calculated Level:</span>
+            <strong style="color: #f6cc33;" id="debug-calculated-level">-</strong>
+        </div>
+    </div>
+    <button class="btn" onclick="manualVIPCheck()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        🔄 Check VIP Status Now
+    </button>
+</div>
             <!-- Future Projects Summary Widget -->
 <div class="card" id="future-projects-widget" style="display: none;">
     <h3 style="margin-bottom: 20px; color: #4a5568;">🎯 Your Future Projects</h3>
@@ -3822,21 +3843,21 @@
             GoogleAuthProvider,
             signInWithPopup
         } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            updateDoc, 
-            collection, 
-            addDoc, 
-            query, 
-            where, 
-            getDocs, 
-            serverTimestamp,
-            orderBy
-        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
+       import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    getDoc, 
+    updateDoc, 
+    collection, 
+    addDoc, 
+    query, 
+    where, 
+    getDocs, 
+    serverTimestamp,
+    orderBy,
+    onSnapshot
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         const firebaseConfig = {
             apiKey: "AIzaSyAoomGKHjU2iUJjjMxEDGCsLzRtIkHtqhY",
             authDomain: "susupay-5286e.firebaseapp.com",
@@ -5282,6 +5303,61 @@ window.withdrawFromChallenge = async function(challengeId) {
 };
 
 console.log('✅ Savings challenges system loaded');
+// ==========================================
+// REAL-TIME TRANSACTION MONITORING FOR VIP
+// ==========================================
+
+let transactionUnsubscribe = null;
+
+async function startTransactionMonitoring() {
+    if (!currentUser || transactionUnsubscribe) return;
+    
+    try {
+        const q = query(
+            collection(db, 'transactions'),
+            where('userId', '==', currentUser.uid),
+            where('type', '==', 'contribution'),
+            where('status', '==', 'approved')
+        );
+        
+        transactionUnsubscribe = onSnapshot(q, async (snapshot) => {
+            console.log('📊 Transaction update detected');
+            
+            let totalContributions = 0;
+            snapshot.forEach(doc => {
+                totalContributions += doc.data().amount || 0;
+            });
+            
+            if (totalContributions !== userData.totalContributions) {
+                console.log(`💰 Total contributions updated: ${totalContributions}`);
+                
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    totalContributions: totalContributions,
+                    balance: totalContributions
+                });
+                
+                userData.totalContributions = totalContributions;
+                userData.balance = totalContributions;
+                
+                await checkAndPromoteVIP();
+                updateDashboard();
+            }
+        });
+        
+        console.log('✅ Transaction monitoring started');
+        
+    } catch (error) {
+        console.error('❌ Error starting transaction monitoring:', error);
+    }
+}
+
+function stopTransactionMonitoring() {
+    if (transactionUnsubscribe) {
+        transactionUnsubscribe();
+        transactionUnsubscribe = null;
+        console.log('Transaction monitoring stopped');
+    }
+}
 // Show invitation badge on Future Project nav item
 function showProjectInvitationBadge() {
     const navItem = document.querySelector('[data-page="future-project"]');
@@ -8181,14 +8257,17 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
         
         updateDashboard();
         await loadNotifications();
-        
-        if (userData.notifications?.security) {
-            await createNotification(
-                'New Login',
-                `Login detected at ${new Date().toLocaleString()}`,
-                'security'
-            );
-        }
+
+// Start real-time transaction monitoring
+startTransactionMonitoring();
+
+if (userData.notifications?.security) {
+    await createNotification(
+        'New Login',
+        `Login detected at ${new Date().toLocaleString()}`,
+        'security'
+    );
+}
         
         const hasSeenReferral = localStorage.getItem(`referral_seen_${currentUser.uid}`);
         if (!hasSeenReferral && userData.referralCode) {
@@ -8199,6 +8278,137 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
         }
     }
 }
+// Automatically check and promote VIP level
+async function checkAndPromoteVIP() {
+    if (!currentUser || !userData) return;
+    
+    const currentLevel = userData.vipLevel;
+    const currentContributions = userData.totalContributions || 0;
+    const newLevel = calculateVIPLevel(currentContributions, userData.kycStatus);
+    
+    // Check if user should be promoted
+    if (newLevel > currentLevel) {
+        console.log(`🎉 VIP Promotion detected: ${currentLevel} → ${newLevel}`);
+        
+        try {
+            // Update in Firebase
+            await updateDoc(doc(db, 'users', currentUser.uid), {
+                vipLevel: newLevel
+            });
+            
+            // Update local data
+            userData.vipLevel = newLevel;
+            
+            // Get new level info
+            const newBenefits = getVIPBenefits(newLevel);
+            
+            // Show celebration
+            celebrateVIPPromotion(newLevel, newBenefits);
+            
+            // Create notification
+            await createNotification(
+                '🎉 VIP Level Up!',
+                `Congratulations! You've been promoted to ${newBenefits.name}!`,
+                'success'
+            );
+            
+            // Update dashboard
+            updateDashboard();
+            
+            console.log('✅ VIP promotion completed');
+            
+        } catch (error) {
+            console.error('❌ Error promoting VIP:', error);
+        }
+    }
+}
+
+// Celebration for VIP promotion
+function celebrateVIPPromotion(newLevel, benefits) {
+    // Confetti celebration
+    if (typeof confetti !== 'undefined') {
+        confetti({
+            particleCount: 150,
+            spread: 80,
+            origin: { y: 0.6 },
+            colors: ['#667eea', '#764ba2', '#FFD700', '#48bb78']
+        });
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 100,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors: ['#FFD700', '#FFA500']
+            });
+        }, 200);
+        
+        setTimeout(() => {
+            confetti({
+                particleCount: 100,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors: ['#FFD700', '#FFA500']
+            });
+        }, 400);
+    }
+    
+    // Show promotion modal
+    const modalHTML = `
+        <div class="modal" id="vip-promotion-modal" style="display: block; background: rgba(0, 0, 0, 0.9);">
+            <div class="modal-content" style="max-width: 600px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 60px 40px;">
+                <div style="font-size: 6rem; margin-bottom: 20px; animation: pulse 2s infinite;">
+                    ${newLevel === 7 ? '👑' : '⭐'}
+                </div>
+                <h1 style="color: white; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                    Promoted!
+                </h1>
+                <h2 style="color: white; font-size: 2rem; margin-bottom: 30px; font-weight: 400;">
+                    You are now ${benefits.name}!
+                </h2>
+                
+                <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 30px; border-radius: 20px; margin-bottom: 30px;">
+                    <div style="font-size: 1.2rem; opacity: 0.95; margin-bottom: 15px;">🎁 New Benefits Unlocked:</div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 1.1rem; line-height: 2;">
+                        ${benefits.features.map(f => `<li>✓ ${f}</li>`).join('')}
+                    </ul>
+                </div>
+                
+                <p style="font-size: 1.1rem; line-height: 1.8; opacity: 0.95; margin-bottom: 30px;">
+                    Keep contributing to unlock even more benefits!
+                </p>
+                
+                <button class="btn" onclick="closeVIPPromotionModal()" 
+                        style="background: white; color: #667eea; padding: 15px 40px; font-size: 1.1rem; font-weight: 700;">
+                    Awesome! 🎉
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('vip-promotion-modal');
+    if (existingModal) existingModal.remove();
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+window.closeVIPPromotionModal = function() {
+    const modal = document.getElementById('vip-promotion-modal');
+    if (modal) modal.remove();
+};
+// Force immediate header update after closing promotion modal
+const originalClose = window.closeVIPPromotionModal;
+window.closeVIPPromotionModal = function() {
+    originalClose();
+    // Update header badge immediately
+    const userName = document.getElementById('user-name');
+    if (userName && userData) {
+        userName.innerHTML = `${userData.firstName} ${userData.surname} ${getVIPBadgeHTML(userData.vipLevel)}`;
+    }
+};
         // Migration function to add referral codes to existing users
 async function ensureReferralCode() {
     if (!userData.referralCode) {
@@ -8277,16 +8487,15 @@ async function loadReferralCount() {
     }
 }
 
-     function showAuth() {
+    function showAuth() {
     document.getElementById('auth-wrapper').classList.remove('hidden');
     document.getElementById('app-header').classList.add('hidden');
     document.getElementById('sidebar').classList.add('hidden');
     document.getElementById('main-content').classList.add('hidden');
     
-    // IMPORTANT: Stop inactivity monitoring when user is logged out
     stopInactivityMonitoring();
+    stopTransactionMonitoring(); 
     
-    // Reset variables
     currentUser = null;
     userData = null;
     lastActivityTime = 0;
@@ -8311,6 +8520,13 @@ function updateDashboard() {
     document.getElementById('referral-count').textContent = userData.referralCount || (userData.referrals || []).length;
     document.getElementById('dashboard-referral-code').textContent = userData.referralCode || 'N/A';
     document.getElementById('dashboard-referral-count').textContent = userData.referralCount || (userData.referrals || []).length;
+    
+    // ✅ UPDATE HEADER VIP BADGE
+    const userName = document.getElementById('user-name');
+    if (userName) {
+        userName.innerHTML = `${userData.firstName} ${userData.surname} ${getVIPBadgeHTML(userData.vipLevel)}`;
+    }
+    
     updateVIPProgress();
     updateReferralPage();
     updateStakingBenefits();
@@ -8347,48 +8563,148 @@ function updateDashboard() {
         }
 
         function updateVIPProgress() {
+    const currentLevel = userData.vipLevel;
+    const currentContributions = userData.totalContributions || 0;
+    const benefits = getVIPBenefits(currentLevel);
+    
+    let progressHTML = '';
+    
+    if (currentLevel === 7) {
+        progressHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">👑</div>
+                <h4 style="color: #4a5568; margin-bottom: 10px;">Maximum VIP Level Achieved!</h4>
+                <p style="color: #718096;">You have reached the highest VIP level with all benefits unlocked.</p>
+            </div>
+        `;
+    } else if (currentLevel === -1) {
+        // Not VIP yet (KYC not approved)
+        progressHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+                <h4 style="color: #4a5568; margin-bottom: 10px;">Complete KYC to Become VIP</h4>
+                <p style="color: #718096; margin-bottom: 20px;">
+                    You need to complete KYC verification to access VIP benefits and start earning higher referral bonuses.
+                </p>
+                <button class="btn" onclick="document.querySelector('[data-page=kyc]').click()" style="width: auto; padding: 10px 25px;">
+                    Complete KYC Now
+                </button>
+            </div>
+        `;
+    } else {
+        const nextLevelRequired = benefits.required;
+        const progress = (currentContributions / nextLevelRequired) * 100;
+        const remaining = nextLevelRequired - currentContributions;
+        
+        progressHTML = `
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-weight: 600; color: #4a5568;">Progress to ${benefits.nextLevel}</span>
+                    <span style="color: #667eea; font-weight: 700; font-size: 1.1rem;">${Math.min(progress, 100).toFixed(1)}%</span>
+                </div>
+                <div style="width: 100%; height: 12px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-bottom: 10px;">
+                    <div style="width: ${Math.min(progress, 100)}%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: width 0.5s ease; border-radius: 10px;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
+                        <div style="font-size: 0.8rem; color: #718096; margin-bottom: 5px;">Current Total</div>
+                        <div style="font-weight: 700; color: #4a5568; font-size: 1.2rem;">${formatCurrency(currentContributions)}</div>
+                    </div>
+                    <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
+                        <div style="font-size: 0.8rem; color: #718096; margin-bottom: 5px;">Remaining</div>
+                        <div style="font-weight: 700; color: #f6cc33; font-size: 1.2rem;">${formatCurrency(remaining)}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #ebf8ff 0%, #e6fffa 100%); padding: 20px; border-radius: 12px; border-left: 4px solid #3182ce; margin-bottom: 20px;">
+                <h4 style="color: #2c5282; margin-bottom: 12px;">🎯 Current Level: ${benefits.name}</h4>
+                <div style="color: #2c5282; font-size: 0.9rem; line-height: 1.8;">
+                    <strong>Your Benefits:</strong>
+                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                        ${benefits.features.map(f => `<li>${f}</li>`).join('')}
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="background: #fff5f5; padding: 20px; border-radius: 12px; border-left: 4px solid #f6cc33;">
+                <h4 style="color: #744210; margin-bottom: 12px;">✨ Next Level Benefits: ${benefits.nextLevel}</h4>
+                <div style="color: #744210; font-size: 0.9rem; line-height: 1.8;">
+                    ${getNextLevelBenefits(currentLevel)}
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid rgba(244, 66, 16, 0.2);">
+                    <strong>💰 Required: ${formatCurrency(nextLevelRequired)} total contributions</strong>
+                </div>
+            </div>
+        `;
+    }
+    
+    const container = document.getElementById('vip-progress-content');
+    if (container) {
+        container.innerHTML = progressHTML;
+    }
+}
+// Manual VIP check (for testing)
+window.manualVIPCheck = async function() {
+    if (!currentUser || !userData) {
+        showAlert('Please log in first', 'error');
+        return;
+    }
+    
+    showLoader('Checking VIP status');
+    
+    try {
+        // Refresh user data from Firebase
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        if (userDoc.exists()) {
+            userData = userDoc.data();
+            
             const currentLevel = userData.vipLevel;
-            const benefits = getVIPBenefits(currentLevel);
-            const currentContributions = userData.totalContributions || 0;
+            const totalContributions = userData.totalContributions || 0;
+            const calculatedLevel = calculateVIPLevel(totalContributions, userData.kycStatus);
             
-            let progressHTML = '';
+            // Update debug display
+            document.getElementById('debug-vip-level').textContent = getVIPBenefits(currentLevel).name;
+            document.getElementById('debug-total-contributions').textContent = formatCurrency(totalContributions);
+            document.getElementById('debug-calculated-level').textContent = getVIPBenefits(calculatedLevel).name;
             
-            if (currentLevel === 7) {
-                progressHTML = `
-                    <div style="text-align: center; padding: 20px;">
-                        <div style="font-size: 3rem; margin-bottom: 10px;">👑</div>
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">Maximum VIP Level Achieved!</h4>
-                        <p style="color: #718096;">You have reached the highest VIP level with all benefits unlocked.</p>
-                    </div>
-                `;
+            hideLoader();
+            
+            if (calculatedLevel > currentLevel) {
+                showAlert(`🎉 VIP Promotion Available! ${getVIPBenefits(currentLevel).name} → ${getVIPBenefits(calculatedLevel).name}`, 'success');
+                await checkAndPromoteVIP();
+            } else if (calculatedLevel === currentLevel) {
+                showAlert('✅ VIP level is up to date!', 'success');
             } else {
-                const nextLevelRequired = benefits.required;
-                const progress = currentLevel < 0 ? 0 : (currentContributions / nextLevelRequired) * 100;
-                
-                progressHTML = `
-                    <div style="margin-bottom: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="font-weight: 600; color: #4a5568;">Progress to ${benefits.nextLevel}</span>
-                            <span style="color: #667eea; font-weight: 600;">${Math.min(progress, 100).toFixed(1)}%</span>
-                        </div>
-                        <div style="width: 100%; height: 10px; background: #e2e8f0; border-radius: 10px; overflow: hidden;">
-                            <div style="width: ${Math.min(progress, 100)}%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: width 0.5s ease;"></div>
-                        </div>
-                        <div style="margin-top: 10px; color: #718096; font-size: 0.9rem;">
-                            ${formatCurrency(currentContributions)} / ${formatCurrency(nextLevelRequired)} contributions needed
-                        </div>
-                    </div>
-                    <div style="background: #f7fafc; padding: 15px; border-radius: 8px;">
-                        <h4 style="color: #4a5568; margin-bottom: 10px;">Current Benefits:</h4>
-                        <ul style="color: #718096; line-height: 1.8; padding-left: 20px;">
-                            ${benefits.features.map(f => `<li>${f}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
+                showAlert('⚠️ VIP level mismatch detected. Updating...', 'info');
+                await updateDoc(doc(db, 'users', currentUser.uid), {
+                    vipLevel: calculatedLevel
+                });
+                userData.vipLevel = calculatedLevel;
+                updateDashboard();
+                showAlert('VIP level corrected', 'success');
             }
-            
-            document.getElementById('vip-progress-content').innerHTML = progressHTML;
         }
+        
+    } catch (error) {
+        hideLoader();
+        console.error('Error checking VIP:', error);
+        showAlert('Error checking VIP status: ' + error.message, 'error');
+    }
+};
+// Get next level benefits preview
+function getNextLevelBenefits(currentLevel) {
+    const nextLevel = currentLevel + 1;
+    if (nextLevel > 7) return 'You are at maximum level!';
+    
+    const nextBenefits = getVIPBenefits(nextLevel);
+    
+    return `
+        <ul style="margin: 10px 0 0 20px; padding: 0;">
+            ${nextBenefits.features.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+    `;
+}
 
    async function updateReferralPage() {
     document.getElementById('user-referral-code').textContent = userData.referralCode || 'N/A';
@@ -9104,8 +9420,15 @@ async function calculateReferralEarnings() {
         document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
         document.getElementById('payment-details').classList.add('hidden');
         
-        showAlert('Payment submitted! Under review.', 'success');
-        renderContributionGrid();
+       showAlert('Payment submitted! Under review.', 'success');
+
+// Check VIP after contribution
+setTimeout(async () => {
+    await loadUserData();
+    await checkAndPromoteVIP();
+}, 1000);
+
+renderContributionGrid();
     } catch (error) {
         hideLoader();
         showAlert('Error: ' + error.message, 'error');
