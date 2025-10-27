@@ -313,7 +313,7 @@
         }
 
         .vip-badge.vip0 { background: linear-gradient(135deg, #2bc244 0%, #0a5301 100%); }
-        .vip-badge.vip1 { background: linear-gradient(135deg, #CD7F32 0%, #b80b0b 100%); }
+        .vip-badge.vip1 { background: linear-gradient(135deg, #001d9c 0%, #b80b0b 100%); }
         .vip-badge.vip2 { background: linear-gradient(135deg, #0f1179 0%, #06255e 100%); }
         .vip-badge.vip3 { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); }
         .vip-badge.vip4 { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
@@ -358,7 +358,7 @@
         .notification-badge {
             position: relative;
             cursor: pointer;
-            padding: 5px;
+            padding: 10px;
         }
 
         .notification-badge .badge-count {
@@ -723,7 +723,36 @@
             transition: all 0.2s ease;
             background-color: #fff;
         }
+.password-input-wrapper {
+            position: relative;
+            width: 100%;
+        }
 
+        .password-input-wrapper input {
+            padding-right: 45px;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #718096;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .password-toggle-btn:hover {
+            color: #667eea;
+            transform: translateY(-50%) scale(1.1);
+        }
         .form-group input:focus, 
         .form-group select:focus, 
         .form-group textarea:focus {
@@ -1578,6 +1607,140 @@
     background: #e53e3e;
     color: white;
 }
+/* Announcement Styles */
+        .announcement-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .announcement-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .announcement-card.update {
+            border-left-color: #3182ce;
+            background: linear-gradient(to right, #ebf8ff 0%, white 10%);
+        }
+
+        .announcement-card.maintenance {
+            border-left-color: #f6cc33;
+            background: linear-gradient(to right, #fef5e7 0%, white 10%);
+        }
+
+        .announcement-card.feature {
+            border-left-color: #48bb78;
+            background: linear-gradient(to right, #f0fff4 0%, white 10%);
+        }
+
+        .announcement-card.promotion {
+            border-left-color: #f093fb;
+            background: linear-gradient(to right, #fce7f3 0%, white 10%);
+        }
+
+        .announcement-card.alert {
+            border-left-color: #e53e3e;
+            background: linear-gradient(to right, #fff5f5 0%, white 10%);
+        }
+
+        .announcement-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .announcement-badge.update {
+            background: #3182ce;
+            color: white;
+        }
+
+        .announcement-badge.maintenance {
+            background: #f6cc33;
+            color: #744210;
+        }
+
+        .announcement-badge.feature {
+            background: #48bb78;
+            color: white;
+        }
+
+        .announcement-badge.promotion {
+            background: #f093fb;
+            color: white;
+        }
+
+        .announcement-badge.alert {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .announcement-new-badge {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: #e53e3e;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        }
+
+        .announcement-filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .announcement-filter-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border-color: transparent !important;
+        }
+        /* Working Hours Styles */
+        .status-open {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+
+        .status-closed {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+        }
+
+        .status-opening-soon {
+            background: linear-gradient(135deg, #f6cc33 0%, #f39c12 100%);
+            color: #744210;
+        }
+
+        .status-closing-soon {
+            background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+            color: white;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .status-pulse {
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            #working-hours-display {
+                display: none !important;
+            }
+        }
 /* Professional Loader Styles */
 .susupay-loader-overlay {
     position: fixed;
@@ -1585,7 +1748,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #090dcf 0%, #9c2212 100%);
+    background: linear-gradient(135deg, #272068 0%, slateblue 50%, #2a0386 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1790,7 +1953,7 @@
     <div class="loader-particles" id="loader-particles"></div>
     <div class="loader-content">
         <div class="loader-logo">🏦</div>
-        <div class="loader-text">SusuPay</div>
+        <div class="loader-text">SusuPay<p style="font-size: x-small;"><i>caring beyond susu</i></p></div>
         <div class="loader-spinner"></div>
         <div class="loader-message" id="loader-message">
             Processing<span class="loader-dots"></span>
@@ -1816,9 +1979,12 @@
                     <label for="signin-email">Email Address</label>
                     <input type="email" id="signin-email" required placeholder="your@email.com">
                 </div>
-                <div class="form-group">
+               <div class="form-group">
                     <label for="signin-password">Password</label>
-                    <input type="password" id="signin-password" required placeholder="Enter your password">
+                    <div class="password-input-wrapper">
+                        <input type="password" id="signin-password" required placeholder="Enter your password">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('signin-password', this)">👁️</button>
+                    </div>
                 </div>
                 <button type="submit" class="btn">Sign In</button>
                 
@@ -1862,11 +2028,17 @@
                 </div>
                 <div class="form-group">
                     <label for="signup-password">Password *</label>
-                    <input type="password" id="signup-password" required minlength="6" placeholder="Minimum 6 characters">
+                    <div class="password-input-wrapper">
+                        <input type="password" id="signup-password" required minlength="6" placeholder="Minimum 6 characters">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('signup-password', this)">👁️</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">Confirm Password *</label>
-                    <input type="password" id="confirm-password" required minlength="6" placeholder="Re-enter password">
+                    <div class="password-input-wrapper">
+                        <input type="password" id="confirm-password" required minlength="6" placeholder="Re-enter password">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirm-password', this)">👁️</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="referral-code-input">Referral Code (Optional)</label>
@@ -2125,12 +2297,24 @@
                 <div id="user-email" style="font-size: 0.8rem; color: #718096;"></div>
             </div>
             
+            <div id="working-hours-display" style="display: flex; align-items: center; gap: 15px; margin-right: 15px; padding: 8px 15px; background: #f7fafc; border-radius: 8px; border: 2px solid #e2e8f0;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div id="current-time" style="font-size: 1.1rem; font-weight: 700; color: #4a5568;">--:--:--</div>
+                    <div id="current-date" style="font-size: 0.75rem; color: #718096;">Loading...</div>
+                </div>
+                <div id="status-indicator" style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 0.85rem;">
+                    <span id="status-icon">⏳</span>
+                    <span id="status-text">Checking...</span>
+                </div>
+            </div>
+            
             <div id="session-timer" style="display: none; color: #718096; font-size: 0.85rem; margin-right: 15px;">
                 <span style="margin-right: 5px;">⏱️</span>
                 <span id="timer-display">5:00</span>
             </div>
             
             <button class="btn" id="logout-btn" style="width: auto; padding: 8px 20px; font-size: 0.9rem; background: #e53e3e;">Logout</button>
+    
         </div>
         
         <div class="notification-tooltip" id="notification-tooltip">
@@ -2202,6 +2386,10 @@
                 <span class="nav-icon">⚙️</span>
                 <span>Settings</span>
             </div>
+            <div class="nav-item" data-page="announcements">
+                <span class="nav-icon">📢</span>
+                <span>Announcements</span>
+            </div>
             <div class="nav-item" data-page="report">
                 <span class="nav-icon">🚨</span>
                 <span>Report a Problem</span>
@@ -2239,6 +2427,49 @@
             <div class="card" id="vip-progress-card">
                 <h3 style="margin-bottom: 15px; color: #4a5568;">🎯 VIP Level Progress</h3>
                 <div id="vip-progress-content"></div>
+            </div>
+            <!-- Working Hours Card -->
+            <div class="card" id="working-hours-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <h3 style="color: white; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">⏰</span> Working Hours & Support
+                </h3>
+                
+                <div id="detailed-status" style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 5px;">Current Status</div>
+                            <div id="dashboard-status-text" style="font-size: 1.8rem; font-weight: 700;">Checking...</div>
+                        </div>
+                        <div id="dashboard-status-icon" style="font-size: 3rem;">⏳</div>
+                    </div>
+                    
+                    <div id="countdown-timer" style="display: none; padding: 15px; background: rgba(0, 0, 0, 0.2); border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px;" id="countdown-label">Opens in</div>
+                        <div style="font-size: 1.5rem; font-weight: 700;" id="countdown-display">--:--:--</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); padding: 20px; border-radius: 12px;">
+                    <h4 style="color: white; margin-bottom: 15px; font-size: 1.1rem;">📅 Office Hours</h4>
+                    
+                    <div style="display: grid; gap: 10px;">
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
+                            <span style="font-weight: 600;">Monday - Saturday</span>
+                            <span style="font-weight: 700;">8:00 AM - 6:00 PM GMT</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px; background: rgba(229, 62, 62, 0.3); border-radius: 8px; border: 2px solid rgba(229, 62, 62, 0.5);">
+                            <span style="font-weight: 600;">Sunday</span>
+                            <span style="font-weight: 700; color: #fed7d7;">CLOSED</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; border-left: 4px solid rgba(255, 255, 255, 0.5);">
+                    <div style="font-size: 0.9rem; line-height: 1.8; opacity: 0.95;">
+                        <strong>⚠️ Important:</strong> Contributions, withdrawals, and support requests are processed during working hours. 
+                        Requests made outside these hours will be handled on the next working day.
+                    </div>
+                </div>
             </div>
             <!-- Add this after the VIP progress card on dashboard -->
 <div class="card" style="background: #f7fafc; border-left: 4px solid #667eea;">
@@ -2716,7 +2947,10 @@
 
                 <div class="form-group" id="password-auth-container">
                     <label for="withdrawal-password">Withdrawal Password</label>
-                    <input type="password" id="withdrawal-password" placeholder="Enter your withdrawal password">
+                    <div class="password-input-wrapper">
+                        <input type="password" id="withdrawal-password" placeholder="Enter your withdrawal password">
+                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('withdrawal-password', this)">👁️</button>
+                    </div>
                 </div>
 
                 <div id="fingerprint-auth-container" style="display: none;">
@@ -3716,7 +3950,57 @@
                 </div>
             </div>
         </div>
+        <!-- Announcements Page -->
+        <div id="announcements-page" class="page-content hidden">
+            <h2 style="margin-bottom: 20px; color: #ffffff;">📢 Announcements</h2>
+            
+            <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-align: center; padding: 40px 30px; margin-bottom: 25px;">
+                <div style="font-size: 4rem; margin-bottom: 15px;">📢</div>
+                <h3 style="color: white; margin-bottom: 15px; font-size: 2rem;">Stay Updated!</h3>
+                <p style="font-size: 1.1rem; opacity: 0.95; line-height: 1.6;">
+                    Get the latest news, updates, and important information from SusuPay
+                </p>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+                <button class="announcement-filter-btn active" data-filter="all" 
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                    All
+                </button>
+                <button class="announcement-filter-btn" data-filter="update" 
+                        style="background: white; color: #4a5568; border: 2px solid #e2e8f0; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                    🔄 Updates
+                </button>
+                <button class="announcement-filter-btn" data-filter="maintenance" 
+                        style="background: white; color: #4a5568; border: 2px solid #e2e8f0; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                    🔧 Maintenance
+                </button>
+                <button class="announcement-filter-btn" data-filter="feature" 
+                        style="background: white; color: #4a5568; border: 2px solid #e2e8f0; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                    ✨ New Features
+                </button>
+                <button class="announcement-filter-btn" data-filter="promotion" 
+                        style="background: white; color: #4a5568; border: 2px solid #e2e8f0; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                    🎁 Promotions
+                </button>
+                <button class="announcement-filter-btn" data-filter="alert" 
+                        style="background: white; color: #4a5568; border: 2px solid #e2e8f0; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;">
+                    ⚠️ Alerts
+                </button>
+            </div>
+
+            <!-- Announcements List -->
+            <div id="announcements-list">
+                <div style="text-align: center; color: #718096; padding: 60px 20px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📭</div>
+                    <h3 style="color: #4a5568; margin-bottom: 10px;">No Announcements Yet</h3>
+                    <p>Check back later for important updates and news!</p>
+                </div>
+            </div>
+        </div>
     </main>
+  
 
     <!-- Payment Modal -->
     <div class="modal" id="payment-modal">
@@ -8403,6 +8687,8 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
 // Start real-time transaction monitoring
 startTransactionMonitoring();
 startProjectTransactionMonitoring();
+// Check for new announcements
+checkNewAnnouncements();
 
 if (userData.notifications?.security) {
     await createNotification(
@@ -8419,6 +8705,64 @@ if (userData.notifications?.security) {
                 localStorage.setItem(`referral_seen_${currentUser.uid}`, 'true');
             }, 2000);
         }
+    }
+}
+// Check for new announcements and show badge
+async function checkNewAnnouncements() {
+    try {
+        const q = query(
+            collection(db, 'announcements'),
+            orderBy('createdAt', 'desc')
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) return;
+        
+        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const lastRead = userDoc.data()?.lastAnnouncementRead?.toDate() || new Date(0);
+        
+        let newCount = 0;
+        snapshot.forEach(doc => {
+            const announcementDate = doc.data().createdAt?.toDate() || new Date();
+            if (announcementDate > lastRead) {
+                newCount++;
+            }
+        });
+        
+        if (newCount > 0) {
+            // Add badge to announcements nav item
+            const navItem = document.querySelector('[data-page="announcements"]');
+            if (navItem) {
+                const existingBadge = navItem.querySelector('.new-announcement-badge');
+                if (existingBadge) existingBadge.remove();
+                
+                const badge = document.createElement('span');
+                badge.className = 'new-announcement-badge';
+                badge.style.cssText = `
+                    background: #e53e3e;
+                    color: white;
+                    border-radius: 50%;
+                    width: 20px;
+                    height: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.7rem;
+                    font-weight: bold;
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                `;
+                badge.textContent = newCount;
+                
+                navItem.style.position = 'relative';
+                navItem.appendChild(badge);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error checking new announcements:', error);
     }
 }
 // Automatically check and promote VIP level
@@ -8637,8 +8981,9 @@ async function loadReferralCount() {
     document.getElementById('main-content').classList.add('hidden');
     
     stopInactivityMonitoring();
-    stopTransactionMonitoring(); 
-    stopProjectTransactionMonitoring(); 
+    stopTransactionMonitoring();
+    stopProjectTransactionMonitoring();
+    stopWorkingHoursDisplay(); 
     
     currentUser = null;
     userData = null;
@@ -8655,8 +9000,11 @@ async function loadReferralCount() {
     
     // IMPORTANT: Start inactivity monitoring when user enters dashboard
     startInactivityMonitoring();
+    
+    // Start working hours display
+    initWorkingHoursDisplay();
 }
-      
+     
 function updateDashboard() {
     document.getElementById('total-balance').textContent = formatCurrency(userData.balance || 0);
     document.getElementById('total-contributions').textContent = formatCurrency(userData.totalContributions || 0);
@@ -9188,6 +9536,10 @@ else if (page === 'settings') loadSettings();
 else if (page === 'converter') initConverter();
 else if (page === 'referrals') renderReferralsList();
 else if (page === 'future-project') initFutureProjectPage();
+else if (page === 'announcements') {
+    loadAnnouncements();
+    setupAnnouncementFilters();
+}
                 
                 if (window.innerWidth <= 768) {
                     toggleSidebar();
@@ -11999,6 +12351,471 @@ window.debugFutureProjects = async function() {
 };
 
 console.log('💡 Run window.debugFutureProjects() in console to debug');
+// ==========================================
+// PASSWORD VISIBILITY TOGGLE
+// ==========================================
+
+window.togglePasswordVisibility = function(inputId, button) {
+    const input = document.getElementById(inputId);
+    
+    if (!input) return;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        button.textContent = '🙈';
+        button.title = 'Hide password';
+    } else {
+        input.type = 'password';
+        button.textContent = '👁️';
+        button.title = 'Show password';
+    }
+};
+// ==========================================
+// ANNOUNCEMENTS SYSTEM
+// ==========================================
+
+let announcements = [];
+let currentAnnouncementFilter = 'all';
+
+// Load announcements from Firestore
+async function loadAnnouncements() {
+    if (!currentUser) return;
+    
+    try {
+        showLoader('Loading announcements');
+        
+        const q = query(
+            collection(db, 'announcements'),
+            orderBy('createdAt', 'desc')
+        );
+        
+        const snapshot = await getDocs(q);
+        
+        announcements = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: doc.data().createdAt?.toDate() || new Date()
+        }));
+        
+        hideLoader();
+        
+        renderAnnouncements();
+        
+        // Mark all as read after viewing
+        markAnnouncementsAsRead();
+        
+        console.log(`✅ Loaded ${announcements.length} announcements`);
+        
+    } catch (error) {
+        hideLoader();
+        console.error('❌ Error loading announcements:', error);
+        
+        // Show sample announcements if Firebase fails
+        loadSampleAnnouncements();
+    }
+}
+
+// Load sample announcements (fallback)
+function loadSampleAnnouncements() {
+    announcements = [
+        {
+            id: '1',
+            type: 'feature',
+            title: 'New Feature: Future Projects!',
+            message: 'We\'re excited to announce Future Projects - save for long-term goals with 20% interest! Lock your savings for 3 years and watch your money grow. Visit the Future Projects page to get started.',
+            createdAt: new Date(),
+            isNew: true
+        },
+        {
+            id: '2',
+            type: 'update',
+            title: 'Real-Time VIP Updates',
+            message: 'Your VIP level now updates automatically when contributions are approved! No need to refresh the page. Watch for confetti celebrations when you get promoted! 🎉',
+            createdAt: new Date(Date.now() - 86400000),
+            isNew: true
+        },
+        {
+            id: '3',
+            type: 'promotion',
+            title: 'Referral Bonus Increase!',
+            message: 'Great news! We\'ve increased referral bonuses for all VIP levels. VIP 7 members now earn 6% on referrals. Share your code and start earning more today!',
+            createdAt: new Date(Date.now() - 172800000),
+            isNew: false
+        },
+        {
+            id: '4',
+            type: 'maintenance',
+            title: 'Scheduled Maintenance',
+            message: 'SusuPay will undergo maintenance on Sunday, November 3rd from 2:00 AM - 4:00 AM GMT. The platform will be temporarily unavailable. We apologize for any inconvenience.',
+            createdAt: new Date(Date.now() - 259200000),
+            isNew: false
+        },
+        {
+            id: '5',
+            type: 'alert',
+            title: 'Security Reminder',
+            message: 'Never share your withdrawal password with anyone! SusuPay support will NEVER ask for your password. If you receive suspicious messages, report them immediately.',
+            createdAt: new Date(Date.now() - 345600000),
+            isNew: false
+        }
+    ];
+    
+    renderAnnouncements();
+}
+
+// Render announcements
+function renderAnnouncements() {
+    const container = document.getElementById('announcements-list');
+    
+    if (!container) return;
+    
+    // Filter announcements
+    let filtered = announcements;
+    if (currentAnnouncementFilter !== 'all') {
+        filtered = announcements.filter(a => a.type === currentAnnouncementFilter);
+    }
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: #718096; padding: 60px 20px;">
+                <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;">📭</div>
+                <h3 style="color: #4a5568; margin-bottom: 10px;">No ${currentAnnouncementFilter === 'all' ? '' : currentAnnouncementFilter} announcements</h3>
+                <p>Check back later for updates!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(announcement => {
+        const icons = {
+            update: '🔄',
+            maintenance: '🔧',
+            feature: '✨',
+            promotion: '🎁',
+            alert: '⚠️'
+        };
+        
+        const icon = icons[announcement.type] || '📢';
+        const daysAgo = Math.floor((new Date() - announcement.createdAt) / (1000 * 60 * 60 * 24));
+        const timeText = daysAgo === 0 ? 'Today' : 
+                        daysAgo === 1 ? 'Yesterday' : 
+                        `${daysAgo} days ago`;
+        
+        return `
+            <div class="announcement-card ${announcement.type}">
+                ${announcement.isNew ? '<span class="announcement-new-badge">NEW</span>' : ''}
+                
+                <div style="margin-bottom: 15px;">
+                    <span class="announcement-badge ${announcement.type}">
+                        ${icon} ${announcement.type.toUpperCase()}
+                    </span>
+                </div>
+                
+                <h3 style="color: #4a5568; margin-bottom: 12px; font-size: 1.3rem; font-weight: 700;">
+                    ${announcement.title}
+                </h3>
+                
+                <p style="color: #718096; line-height: 1.8; margin-bottom: 15px; font-size: 1rem;">
+                    ${announcement.message}
+                </p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #e2e8f0;">
+                    <div style="font-size: 0.85rem; color: #a0aec0;">
+                        📅 ${announcement.createdAt.toLocaleDateString()} • ${timeText}
+                    </div>
+                    ${announcement.actionLink ? `
+                        <button onclick="window.location.href='${announcement.actionLink}'" 
+                                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            ${announcement.actionText || 'Learn More'}
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Filter buttons
+function setupAnnouncementFilters() {
+    document.querySelectorAll('.announcement-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            document.querySelectorAll('.announcement-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Set filter
+            currentAnnouncementFilter = btn.dataset.filter;
+            
+            // Re-render
+            renderAnnouncements();
+        });
+    });
+}
+
+// Mark announcements as read
+async function markAnnouncementsAsRead() {
+    if (!currentUser) return;
+    
+    try {
+        const unreadIds = announcements.filter(a => a.isNew).map(a => a.id);
+        
+        if (unreadIds.length === 0) return;
+        
+        await updateDoc(doc(db, 'users', currentUser.uid), {
+            lastAnnouncementRead: serverTimestamp(),
+            readAnnouncements: unreadIds
+        });
+        
+        console.log('✅ Marked announcements as read');
+        
+    } catch (error) {
+        console.error('Error marking announcements as read:', error);
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    setupAnnouncementFilters();
+});
+
+console.log('✅ Announcements system loaded');
+// ==========================================
+// WORKING HOURS & LIVE TIME SYSTEM
+// ==========================================
+
+const WORKING_HOURS = {
+    start: 8,  // 8:00 AM
+    end: 18,   // 6:00 PM
+    timezone: 'GMT',
+    workingDays: [1, 2, 3, 4, 5, 6], // Monday to Saturday (0 = Sunday)
+    closedDays: [0] // Sunday
+};
+
+let timeUpdateInterval = null;
+
+// Initialize time display
+function initWorkingHoursDisplay() {
+    // Start updating time every second
+    updateTimeAndStatus();
+    timeUpdateInterval = setInterval(updateTimeAndStatus, 1000);
+    
+    console.log('✅ Working hours display initialized');
+}
+
+// Update time and working status
+function updateTimeAndStatus() {
+    const now = new Date();
+    
+    // Update time display
+    updateTimeDisplay(now);
+    
+    // Update status
+    updateWorkingStatus(now);
+}
+
+// Update time display in header
+function updateTimeDisplay(now) {
+    const timeEl = document.getElementById('current-time');
+    const dateEl = document.getElementById('current-date');
+    
+    if (!timeEl || !dateEl) return;
+    
+    // Format time (HH:MM:SS)
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    timeEl.textContent = `${hours}:${minutes}:${seconds}`;
+    
+    // Format date
+    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+    dateEl.textContent = now.toLocaleDateString('en-US', options);
+}
+
+// Update working status
+function updateWorkingStatus(now) {
+    const currentDay = now.getDay();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour + (currentMinute / 60);
+    
+    let status, icon, text, statusClass;
+    
+    // Check if Sunday (closed)
+    if (WORKING_HOURS.closedDays.includes(currentDay)) {
+        status = 'closed';
+        icon = '🔴';
+        text = 'CLOSED (Sunday)';
+        statusClass = 'status-closed';
+    }
+    // Check if working day
+    else if (WORKING_HOURS.workingDays.includes(currentDay)) {
+        // Check if within working hours
+        if (currentTime >= WORKING_HOURS.start && currentTime < WORKING_HOURS.end) {
+            // Check if closing soon (within 1 hour)
+            if (currentTime >= WORKING_HOURS.end - 1) {
+                status = 'closing-soon';
+                icon = '🟠';
+                text = 'CLOSING SOON';
+                statusClass = 'status-closing-soon status-pulse';
+            } else {
+                status = 'open';
+                icon = '🟢';
+                text = 'OPEN';
+                statusClass = 'status-open';
+            }
+        }
+        // Check if opening soon (within 1 hour before start)
+        else if (currentTime >= WORKING_HOURS.start - 1 && currentTime < WORKING_HOURS.start) {
+            status = 'opening-soon';
+            icon = '🟡';
+            text = 'OPENING SOON';
+            statusClass = 'status-opening-soon status-pulse';
+        }
+        // Otherwise closed
+        else {
+            status = 'closed';
+            icon = '🔴';
+            text = 'CLOSED';
+            statusClass = 'status-closed';
+        }
+    }
+    
+    // Update header status
+    const statusIndicator = document.getElementById('status-indicator');
+    const statusIcon = document.getElementById('status-icon');
+    const statusText = document.getElementById('status-text');
+    
+    if (statusIndicator && statusIcon && statusText) {
+        statusIndicator.className = statusClass;
+        statusIcon.textContent = icon;
+        statusText.textContent = text;
+    }
+    
+    // Update dashboard status
+    const dashboardStatusText = document.getElementById('dashboard-status-text');
+    const dashboardStatusIcon = document.getElementById('dashboard-status-icon');
+    
+    if (dashboardStatusText && dashboardStatusIcon) {
+        dashboardStatusText.textContent = text;
+        dashboardStatusIcon.textContent = icon;
+    }
+    
+    // Update countdown timer
+    updateCountdownTimer(now, status);
+}
+
+// Update countdown timer
+function updateCountdownTimer(now, status) {
+    const countdownTimer = document.getElementById('countdown-timer');
+    const countdownLabel = document.getElementById('countdown-label');
+    const countdownDisplay = document.getElementById('countdown-display');
+    
+    if (!countdownTimer || !countdownLabel || !countdownDisplay) return;
+    
+    const currentDay = now.getDay();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentSecond = now.getSeconds();
+    
+    let targetTime = null;
+    let labelText = '';
+    
+    if (status === 'closed') {
+        // If Sunday, show opens Monday
+        if (currentDay === 0) {
+            targetTime = new Date(now);
+            targetTime.setDate(targetTime.getDate() + 1); // Monday
+            targetTime.setHours(WORKING_HOURS.start, 0, 0, 0);
+            labelText = 'Opens on Monday in';
+        }
+        // If closed on working day
+        else if (currentHour < WORKING_HOURS.start) {
+            // Opens today
+            targetTime = new Date(now);
+            targetTime.setHours(WORKING_HOURS.start, 0, 0, 0);
+            labelText = 'Opens today in';
+        } else {
+            // Opens next working day
+            targetTime = new Date(now);
+            targetTime.setDate(targetTime.getDate() + 1);
+            // Skip Sunday
+            if (targetTime.getDay() === 0) {
+                targetTime.setDate(targetTime.getDate() + 1);
+            }
+            targetTime.setHours(WORKING_HOURS.start, 0, 0, 0);
+            labelText = 'Opens tomorrow in';
+        }
+    } else if (status === 'opening-soon') {
+        targetTime = new Date(now);
+        targetTime.setHours(WORKING_HOURS.start, 0, 0, 0);
+        labelText = 'Opens in';
+    } else if (status === 'open' || status === 'closing-soon') {
+        targetTime = new Date(now);
+        targetTime.setHours(WORKING_HOURS.end, 0, 0, 0);
+        labelText = 'Closes in';
+    }
+    
+    if (targetTime) {
+        const diff = targetTime - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        countdownLabel.textContent = labelText;
+        countdownDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        countdownTimer.style.display = 'block';
+    } else {
+        countdownTimer.style.display = 'none';
+    }
+}
+
+// Stop time updates
+function stopWorkingHoursDisplay() {
+    if (timeUpdateInterval) {
+        clearInterval(timeUpdateInterval);
+        timeUpdateInterval = null;
+    }
+}
+
+// Check if currently in working hours
+function isWithinWorkingHours() {
+    const now = new Date();
+    const currentDay = now.getDay();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour + (currentMinute / 60);
+    
+    // Check if not Sunday and within working hours
+    return !WORKING_HOURS.closedDays.includes(currentDay) &&
+           WORKING_HOURS.workingDays.includes(currentDay) &&
+           currentTime >= WORKING_HOURS.start &&
+           currentTime < WORKING_HOURS.end;
+}
+
+// Get next opening time
+function getNextOpeningTime() {
+    const now = new Date();
+    const nextOpen = new Date(now);
+    
+    // If Sunday, open Monday
+    if (now.getDay() === 0) {
+        nextOpen.setDate(nextOpen.getDate() + 1);
+    }
+    // If after hours, open tomorrow
+    else if (now.getHours() >= WORKING_HOURS.end) {
+        nextOpen.setDate(nextOpen.getDate() + 1);
+        // Skip Sunday
+        if (nextOpen.getDay() === 0) {
+            nextOpen.setDate(nextOpen.getDate() + 1);
+        }
+    }
+    
+    nextOpen.setHours(WORKING_HOURS.start, 0, 0, 0);
+    return nextOpen;
+}
+
+console.log('✅ Working hours system loaded');
     </script>
 </body>
 </html>
