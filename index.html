@@ -314,9 +314,9 @@
 
         .vip-badge.vip0 { background: linear-gradient(135deg, #2bc244 0%, #0a5301 100%); }
         .vip-badge.vip1 { background: linear-gradient(135deg, #001d9c 0%, #b80b0b 100%); }
-        .vip-badge.vip2 { background: linear-gradient(135deg, #0f1179 0%, #06255e 100%); }
+        .vip-badge.vip2 { background: linear-gradient(135deg, #12c02f 0%, #8304b6 100%); }
         .vip-badge.vip3 { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); }
-        .vip-badge.vip4 { background: linear-gradient(135deg, #48bb78 0%, #38a169 100%); }
+        .vip-badge.vip4 { background: linear-gradient(135deg, #880617 0%, #38a169 100%); }
         .vip-badge.vip5 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .vip-badge.vip6 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .vip-badge.vip7 {
@@ -358,7 +358,7 @@
         .notification-badge {
             position: relative;
             cursor: pointer;
-            padding: 10px;
+            padding: 5px;
         }
 
         .notification-badge .badge-count {
@@ -2529,10 +2529,12 @@
                 <span class="nav-icon">⚙️</span>
                 <span>Settings</span>
             </div>
-            <div class="nav-item" data-page="announcements">
-                <span class="nav-icon">📢</span>
-                <span>Announcements</span>
-            </div>
+           <!-- In the sidebar navigation -->
+<div class="nav-item" data-page="announcements">
+    <span class="nav-icon">📢</span>
+    <span>Announcements</span>
+    <span class="new-badge" id="new-announcements-badge" style="display: none;">NEW</span>
+</div>
            
             <div class="nav-item" data-page="report">
                 <span class="nav-icon">🚨</span>
@@ -2566,6 +2568,14 @@
                     <h3 id="referral-count">0</h3>
                     <p style="color: #718096; font-size: 0.9rem;">Total Referrals</p>
                 </div>
+            </div>
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: #4a5568;">Set Monthly Rate</h3>
+                <div class="form-group">
+                    <label for="rate-input">Monthly Rate (GH₵)</label>
+                    <input type="number" id="rate-input" placeholder="Enter your monthly contribution rate" min="1">
+                </div>
+                <button class="btn" id="set-rate-btn">Set Rate</button>
             </div>
 
             <div class="card" id="vip-progress-card">
@@ -2615,41 +2625,14 @@
                     </div>
                 </div>
             </div>
-            <!-- Add this after the VIP progress card on dashboard -->
-<div class="card" style="background: #f7fafc; border-left: 4px solid #667eea;">
-    <h4 style="color: #4a5568; margin-bottom: 15px;">🔄 VIP System Status</h4>
-    <div style="display: grid; gap: 10px; margin-bottom: 15px;">
-        <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
-            <span style="color: #718096;">Current VIP Level:</span>
-            <strong style="color: #667eea;" id="debug-vip-level">-</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
-            <span style="color: #718096;">Total Contributions:</span>
-            <strong style="color: #48bb78;" id="debug-total-contributions">₵0.00</strong>
-        </div>
-        <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
-            <span style="color: #718096;">Calculated Level:</span>
-            <strong style="color: #f6cc33;" id="debug-calculated-level">-</strong>
-        </div>
-    </div>
-    <button class="btn" onclick="manualVIPCheck()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        🔄 Check VIP Status Now
-    </button>
-</div>
+ 
             <!-- Future Projects Summary Widget -->
 <div class="card" id="future-projects-widget" style="display: none;">
     <h3 style="margin-bottom: 20px; color: #4a5568;">🎯 Your Future Projects</h3>
     <div id="future-projects-widget-content"></div>
 </div>
 
-            <div class="card">
-                <h3 style="margin-bottom: 20px; color: #4a5568;">Set Monthly Rate</h3>
-                <div class="form-group">
-                    <label for="rate-input">Monthly Rate (GH₵)</label>
-                    <input type="number" id="rate-input" placeholder="Enter your monthly contribution rate" min="1">
-                </div>
-                <button class="btn" id="set-rate-btn">Set Rate</button>
-            </div>
+            
 
             <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
                 <h3 style="margin-bottom: 15px; color: white;">👥 Your Referral Code</h3>
@@ -9501,54 +9484,7 @@ function updateDashboard() {
         container.innerHTML = progressHTML;
     }
 }
-// Manual VIP check (for testing)
-window.manualVIPCheck = async function() {
-    if (!currentUser || !userData) {
-        showAlert('Please log in first', 'error');
-        return;
-    }
-    
-    showLoader('Checking VIP status');
-    
-    try {
-        // Refresh user data from Firebase
-        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-        if (userDoc.exists()) {
-            userData = userDoc.data();
-            
-            const currentLevel = userData.vipLevel;
-            const totalContributions = userData.totalContributions || 0;
-            const calculatedLevel = calculateVIPLevel(totalContributions, userData.kycStatus);
-            
-            // Update debug display
-            document.getElementById('debug-vip-level').textContent = getVIPBenefits(currentLevel).name;
-            document.getElementById('debug-total-contributions').textContent = formatCurrency(totalContributions);
-            document.getElementById('debug-calculated-level').textContent = getVIPBenefits(calculatedLevel).name;
-            
-            hideLoader();
-            
-            if (calculatedLevel > currentLevel) {
-                showAlert(`🎉 VIP Promotion Available! ${getVIPBenefits(currentLevel).name} → ${getVIPBenefits(calculatedLevel).name}`, 'success');
-                await checkAndPromoteVIP();
-            } else if (calculatedLevel === currentLevel) {
-                showAlert('✅ VIP level is up to date!', 'success');
-            } else {
-                showAlert('⚠️ VIP level mismatch detected. Updating...', 'info');
-                await updateDoc(doc(db, 'users', currentUser.uid), {
-                    vipLevel: calculatedLevel
-                });
-                userData.vipLevel = calculatedLevel;
-                updateDashboard();
-                showAlert('VIP level corrected', 'success');
-            }
-        }
-        
-    } catch (error) {
-        hideLoader();
-        console.error('Error checking VIP:', error);
-        showAlert('Error checking VIP status: ' + error.message, 'error');
-    }
-};
+
 // Get next level benefits preview
 function getNextLevelBenefits(currentLevel) {
     const nextLevel = currentLevel + 1;
@@ -13180,9 +13116,8 @@ function getNextOpeningTime() {
     return nextOpen;
 }
 
-console.log('✅ Working hours system loaded');
-// ==========================================
-// GROUP SUSU SYSTEM
+console.log('✅ Working hours system loaded');// ==========================================
+// GROUP SUSU SYSTEM - FIXED VERSION
 // ==========================================
 
 let myGroups = [];
@@ -13212,18 +13147,40 @@ async function loadMyGroups() {
     if (!currentUser) return;
     
     try {
+        // Query groups where user is in members array
         const q = query(
             collection(db, 'group_susu'),
-            where('members', 'array-contains', currentUser.uid)
+            where('members', 'array-contains', {
+                userId: currentUser.uid,
+                joinedAt: null,
+                position: 0,
+                hasReceived: false,
+                lastContribution: null
+            })
         );
         
-        const snapshot = await getDocs(q);
+        // Fallback: Get all groups and filter manually
+        const allGroupsQuery = query(collection(db, 'group_susu'));
+        const snapshot = await getDocs(allGroupsQuery);
         
-        myGroups = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            createdAt: doc.data().createdAt?.toDate() || new Date()
-        }));
+        myGroups = [];
+        
+        for (const docSnap of snapshot.docs) {
+            const groupData = docSnap.data();
+            
+            // Check if current user is in members array
+            const isMember = groupData.members?.some(member => 
+                member.userId === currentUser.uid
+            );
+            
+            if (isMember) {
+                myGroups.push({
+                    id: docSnap.id,
+                    ...groupData,
+                    createdAt: groupData.createdAt?.toDate ? groupData.createdAt.toDate() : new Date(groupData.createdAt || Date.now())
+                });
+            }
+        }
         
         renderMyGroups();
         
@@ -13231,7 +13188,8 @@ async function loadMyGroups() {
         console.error('Error loading my groups:', error);
         document.getElementById('my-groups-list').innerHTML = `
             <div style="text-align: center; color: #e53e3e; padding: 40px;">
-                Error loading your groups
+                <div style="font-size: 2rem; margin-bottom: 10px;">⚠️</div>
+                <div>Error loading your groups</div>
             </div>
         `;
     }
@@ -13247,11 +13205,24 @@ async function loadAvailableGroups() {
         
         const snapshot = await getDocs(q);
         
-        availableGroups = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-            createdAt: doc.data().createdAt?.toDate() || new Date()
-        })).filter(group => !group.members.includes(currentUser.uid));
+        availableGroups = [];
+        
+        for (const docSnap of snapshot.docs) {
+            const groupData = docSnap.data();
+            
+            // Check if current user is NOT already a member
+            const isMember = groupData.members?.some(member => 
+                member.userId === currentUser.uid
+            );
+            
+            if (!isMember) {
+                availableGroups.push({
+                    id: docSnap.id,
+                    ...groupData,
+                    createdAt: groupData.createdAt?.toDate ? groupData.createdAt.toDate() : new Date(groupData.createdAt || Date.now())
+                });
+            }
+        }
         
         renderAvailableGroups();
         
@@ -13259,7 +13230,8 @@ async function loadAvailableGroups() {
         console.error('Error loading available groups:', error);
         document.getElementById('available-groups-list').innerHTML = `
             <div style="text-align: center; color: #e53e3e; padding: 40px;">
-                Error loading available groups
+                <div style="font-size: 2rem; margin-bottom: 10px;">⚠️</div>
+                <div>Error loading available groups</div>
             </div>
         `;
     }
@@ -13280,30 +13252,31 @@ function renderMyGroups() {
     }
     
     container.innerHTML = myGroups.map(group => {
-        const isFull = group.members.length >= group.maxMembers;
-        const canStart = group.members.length >= 25;
+        const memberCount = group.members?.length || 0;
+        const isFull = memberCount >= group.maxMembers;
+        const canStart = memberCount >= 25;
         
         return `
             <div class="group-card ${group.status}" onclick="viewGroupDetails('${group.id}')">
-                <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
                     <div style="flex: 1;">
                         <h4 style="color: #4a5568; font-size: 1.2rem; margin-bottom: 5px;">
-                            ${group.name}
+                            ${group.groupName}
                             <span class="group-badge ${group.status}">${group.status.toUpperCase()}</span>
                             ${isFull ? '<span class="group-badge full">FULL</span>' : ''}
                         </h4>
-                        <p style="color: #718096; font-size: 0.9rem;">${group.description}</p>
+                        <p style="color: #718096; font-size: 0.9rem;">${group.description || 'No description'}</p>
                     </div>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 15px;">
                     <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
-                        <div style="font-size: 0.8rem; color: #718096;">Monthly Rate</div>
-                        <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${formatCurrency(group.rate)}</div>
+                        <div style="font-size: 0.8rem; color: #718096;">Contribution</div>
+                        <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${formatCurrency(group.contributionAmount)}</div>
                     </div>
                     <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
                         <div style="font-size: 0.8rem; color: #718096;">Members</div>
-                        <div style="font-weight: 700; color: #667eea; font-size: 1.1rem;">${group.members.length}/${group.maxMembers}</div>
+                        <div style="font-weight: 700; color: #667eea; font-size: 1.1rem;">${memberCount}/${group.maxMembers}</div>
                     </div>
                     <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
                         <div style="font-size: 0.8rem; color: #718096;">Current Pool</div>
@@ -13313,7 +13286,7 @@ function renderMyGroups() {
                 
                 ${group.status === 'forming' ? `
                     <div style="padding: 12px; background: ${canStart ? '#c6f6d5' : '#fef5e7'}; border-radius: 8px; text-align: center; color: ${canStart ? '#22543d' : '#744210'}; font-weight: 600;">
-                        ${canStart ? '✅ Ready to start!' : `⏳ Need ${25 - group.members.length} more members to start`}
+                        ${canStart ? '✅ Ready to start!' : `⏳ Need ${25 - memberCount} more members to start`}
                     </div>
                 ` : ''}
                 
@@ -13322,7 +13295,7 @@ function renderMyGroups() {
                         <span style="font-size: 1.5rem;">🎯</span>
                         <div style="flex: 1;">
                             <div style="font-size: 0.85rem; color: #2c5282;">Current Beneficiary</div>
-                            <div style="font-weight: 700; color: #2c5282;">${group.currentBeneficiary.name}</div>
+                            <div style="font-weight: 700; color: #2c5282;">${group.currentBeneficiary.name || 'TBD'}</div>
                         </div>
                     </div>
                 ` : ''}
@@ -13351,24 +13324,25 @@ function renderAvailableGroups() {
     }
     
     container.innerHTML = availableGroups.map(group => {
-        const spotsLeft = group.maxMembers - group.members.length;
+        const memberCount = group.members?.length || 0;
+        const spotsLeft = group.maxMembers - memberCount;
         
         return `
             <div class="group-card forming" onclick="showJoinGroupModal('${group.id}')">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
                     <div style="flex: 1;">
                         <h4 style="color: #4a5568; font-size: 1.2rem; margin-bottom: 5px;">
-                            ${group.name}
+                            ${group.groupName}
                             <span class="group-badge forming">FORMING</span>
                         </h4>
-                        <p style="color: #718096; font-size: 0.9rem;">${group.description}</p>
+                        <p style="color: #718096; font-size: 0.9rem;">${group.description || 'No description'}</p>
                     </div>
                 </div>
                 
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px;">
                     <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
-                        <div style="font-size: 0.8rem; color: #718096;">Monthly Rate</div>
-                        <div style="font-weight: 700; color: #4a5568;">${formatCurrency(group.rate)}</div>
+                        <div style="font-size: 0.8rem; color: #718096;">Contribution</div>
+                        <div style="font-weight: 700; color: #4a5568;">${formatCurrency(group.contributionAmount)}</div>
                     </div>
                     <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
                         <div style="font-size: 0.8rem; color: #718096;">Spots Left</div>
@@ -13376,7 +13350,7 @@ function renderAvailableGroups() {
                     </div>
                     <div style="text-align: center; padding: 12px; background: #f7fafc; border-radius: 8px;">
                         <div style="font-size: 0.8rem; color: #718096;">Members</div>
-                        <div style="font-weight: 700; color: #667eea;">${group.members.length}/${group.maxMembers}</div>
+                        <div style="font-weight: 700; color: #667eea;">${memberCount}/${group.maxMembers}</div>
                     </div>
                 </div>
                 
@@ -13387,13 +13361,17 @@ function renderAvailableGroups() {
         `;
     }).join('');
 }
+
 // Show create group modal
 window.showCreateGroupModal = function() {
     document.getElementById('create-group-modal').style.display = 'block';
     
     // Add event listeners for live calculation
-    document.getElementById('group-rate').addEventListener('input', updateGroupSummary);
-    document.getElementById('group-max-members').addEventListener('input', updateGroupSummary);
+    const rateInput = document.getElementById('group-rate');
+    const maxMembersInput = document.getElementById('group-max-members');
+    
+    if (rateInput) rateInput.addEventListener('input', updateGroupSummary);
+    if (maxMembersInput) maxMembersInput.addEventListener('input', updateGroupSummary);
     
     // Initial calculation
     updateGroupSummary();
@@ -13407,29 +13385,36 @@ window.closeCreateGroupModal = function() {
 
 // Update group creation summary
 function updateGroupSummary() {
-    const rate = parseFloat(document.getElementById('group-rate').value) || 0;
-    const maxMembers = parseInt(document.getElementById('group-max-members').value) || 0;
+    const rate = parseFloat(document.getElementById('group-rate')?.value) || 0;
+    const maxMembers = parseInt(document.getElementById('group-max-members')?.value) || 0;
     
     const totalPool = rate * maxMembers;
-    const payout = totalPool - rate; // Total pool minus one monthly rate as fee
+    const payout = totalPool - rate; // Total pool minus one contribution as fee
     const fee = rate;
     
-    document.getElementById('summary-rate').textContent = formatCurrency(rate);
-    document.getElementById('summary-members').textContent = maxMembers;
-    document.getElementById('summary-pool').textContent = formatCurrency(totalPool);
-    document.getElementById('summary-payout').textContent = formatCurrency(payout);
-    document.getElementById('summary-fee').textContent = formatCurrency(fee);
+    const summaryRate = document.getElementById('summary-rate');
+    const summaryMembers = document.getElementById('summary-members');
+    const summaryPool = document.getElementById('summary-pool');
+    const summaryPayout = document.getElementById('summary-payout');
+    const summaryFee = document.getElementById('summary-fee');
+    
+    if (summaryRate) summaryRate.textContent = formatCurrency(rate);
+    if (summaryMembers) summaryMembers.textContent = maxMembers;
+    if (summaryPool) summaryPool.textContent = formatCurrency(totalPool);
+    if (summaryPayout) summaryPayout.textContent = formatCurrency(payout);
+    if (summaryFee) summaryFee.textContent = formatCurrency(fee);
 }
 
 // Submit create group form
 window.submitCreateGroup = async function(event) {
     event.preventDefault();
     
-    const name = document.getElementById('group-name').value.trim();
+    const groupName = document.getElementById('group-name').value.trim();
     const description = document.getElementById('group-description').value.trim();
-    const rate = parseFloat(document.getElementById('group-rate').value);
+    const contributionAmount = parseFloat(document.getElementById('group-rate').value);
     const maxMembers = parseInt(document.getElementById('group-max-members').value);
     const password = document.getElementById('group-password').value;
+    const frequency = document.getElementById('group-frequency')?.value || 'monthly';
     const termsAccepted = document.getElementById('group-terms').checked;
     
     if (!termsAccepted) {
@@ -13437,8 +13422,8 @@ window.submitCreateGroup = async function(event) {
         return;
     }
     
-    if (rate < 50 || rate > 1000) {
-        showAlert('Monthly rate must be between ₵50 and ₵1000', 'error');
+    if (contributionAmount < 50 || contributionAmount > 1000) {
+        showAlert('Contribution amount must be between ₵50 and ₵1000', 'error');
         return;
     }
     
@@ -13459,30 +13444,26 @@ window.submitCreateGroup = async function(event) {
         // Generate unique group code
         const groupCode = generateGroupCode();
         
-        // Prepare group data
+        // Prepare group data - MATCHES ADMIN FORMAT
         const groupData = {
-            name,
+            groupName,
             description,
-            rate,
+            contributionAmount,
+            frequency,
             maxMembers,
             groupCode,
-            password: btoa(password),
-            creatorId: currentUser.uid,
-            creatorName: `${userData.firstName} ${userData.surname}`,
-            members: [currentUser.uid],
-            memberDetails: [{
+            password: btoa(password), // Encode password
+            createdBy: currentUser.uid, // FIXED: was creatorId
+            members: [{
                 userId: currentUser.uid,
-                name: `${userData.firstName} ${userData.surname}`,
-                email: userData.email,
                 joinedAt: new Date(),
+                position: 1,
                 hasReceived: false,
-                contributions: 0
+                lastContribution: null
             }],
             status: 'forming',
             totalPool: 0,
             currentCycle: 0,
-            currentBeneficiary: null,
-            beneficiaryHistory: [],
             createdAt: serverTimestamp()
         };
         
@@ -13491,13 +13472,13 @@ window.submitCreateGroup = async function(event) {
         // Create group document
         const docRef = await addDoc(collection(db, 'group_susu'), groupData);
         
-        console.log('Group created with ID:', docRef.id);
+        console.log('✅ Group created with ID:', docRef.id);
         
         hideLoader();
         
         closeCreateGroupModal();
         
-        showAlert(`✅ Group "${name}" created! Share code: ${groupCode}`, 'success');
+        showAlert(`✅ Group "${groupName}" created successfully! Share code: ${groupCode}`, 'success');
         
         // Confetti celebration
         if (typeof confetti !== 'undefined') {
@@ -13514,12 +13495,11 @@ window.submitCreateGroup = async function(event) {
         
     } catch (error) {
         hideLoader();
-        console.error('Error creating group:', error);
+        console.error('❌ Error creating group:', error);
         
         // More specific error messages
         if (error.code === 'permission-denied') {
-            showAlert('⚠️ Permission denied. Please contact support or check your account status.', 'error');
-            console.error('Firestore permission denied. Please update security rules.');
+            showAlert('⚠️ Permission denied. Please verify your KYC status or contact support.', 'error');
         } else if (error.code === 'unauthenticated') {
             showAlert('Please sign in again to create a group', 'error');
         } else {
@@ -13539,14 +13519,14 @@ function generateGroupCode() {
 }
 
 // Show join group modal
-window.showJoinGroupModal = function(groupId = null) {
+window.showJoinGroupModal = async function(groupId = null) {
     document.getElementById('join-group-modal').style.display = 'block';
     
     if (groupId) {
         const group = availableGroups.find(g => g.id === groupId);
         if (group) {
             document.getElementById('join-group-code').value = group.groupCode;
-            previewGroup(group);
+            await previewGroup(group);
         }
     }
 };
@@ -13563,20 +13543,33 @@ async function previewGroup(group) {
     const container = document.getElementById('group-preview-content');
     const preview = document.getElementById('group-preview');
     
-    const spotsLeft = group.maxMembers - group.members.length;
-    const totalPool = group.rate * group.maxMembers;
-    const payout = totalPool - group.rate;
+    const memberCount = group.members?.length || 0;
+    const spotsLeft = group.maxMembers - memberCount;
+    const totalPool = group.contributionAmount * group.maxMembers;
+    const payout = totalPool - group.contributionAmount;
+    
+    // Get creator info
+    let creatorName = 'Unknown';
+    try {
+        const creatorDoc = await getDoc(doc(db, 'users', group.createdBy));
+        if (creatorDoc.exists()) {
+            const creatorData = creatorDoc.data();
+            creatorName = `${creatorData.firstName} ${creatorData.surname}`;
+        }
+    } catch (error) {
+        console.error('Error loading creator:', error);
+    }
     
     container.innerHTML = `
         <div style="margin-bottom: 15px;">
-            <h4 style="color: #4a5568; font-size: 1.2rem; margin-bottom: 5px;">${group.name}</h4>
-            <p style="color: #718096; font-size: 0.9rem;">${group.description}</p>
+            <h4 style="color: #4a5568; font-size: 1.2rem; margin-bottom: 5px;">${group.groupName}</h4>
+            <p style="color: #718096; font-size: 0.9rem;">${group.description || 'No description'}</p>
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 15px;">
             <div style="padding: 12px; background: #f7fafc; border-radius: 8px; text-align: center;">
-                <div style="font-size: 0.8rem; color: #718096;">Monthly Rate</div>
-                <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${formatCurrency(group.rate)}</div>
+                <div style="font-size: 0.8rem; color: #718096;">Contribution</div>
+                <div style="font-weight: 700; color: #4a5568; font-size: 1.1rem;">${formatCurrency(group.contributionAmount)}</div>
             </div>
             <div style="padding: 12px; background: #f7fafc; border-radius: 8px; text-align: center;">
                 <div style="font-size: 0.8rem; color: #718096;">Spots Left</div>
@@ -13594,9 +13587,9 @@ async function previewGroup(group) {
         
         <div style="background: #ebf8ff; padding: 15px; border-radius: 8px; border-left: 4px solid #3182ce;">
             <div style="font-size: 0.85rem; color: #2c5282; line-height: 1.8;">
-                <strong>Creator:</strong> ${group.creatorName}<br>
+                <strong>Creator:</strong> ${creatorName}<br>
                 <strong>Created:</strong> ${group.createdAt.toLocaleDateString()}<br>
-                <strong>Members:</strong> ${group.members.length}/${group.maxMembers}
+                <strong>Members:</strong> ${memberCount}/${group.maxMembers}
             </div>
         </div>
     `;
@@ -13604,7 +13597,7 @@ async function previewGroup(group) {
     preview.style.display = 'block';
 }
 
-// Submit join group form
+// Submit join group form - SEND JOIN REQUEST
 window.submitJoinGroup = async function(event) {
     event.preventDefault();
     
@@ -13616,7 +13609,7 @@ window.submitJoinGroup = async function(event) {
         return;
     }
     
-    showLoader('Joining group');
+    showLoader('Submitting join request');
     
     try {
         // Find group by code
@@ -13644,7 +13637,8 @@ window.submitJoinGroup = async function(event) {
         }
         
         // Check if already a member
-        if (group.members.includes(currentUser.uid)) {
+        const isMember = group.members?.some(m => m.userId === currentUser.uid);
+        if (isMember) {
             hideLoader();
             showAlert('You are already a member of this group', 'info');
             return;
@@ -13657,45 +13651,24 @@ window.submitJoinGroup = async function(event) {
             return;
         }
         
-        // Add user to group
-        const updatedMembers = [...group.members, currentUser.uid];
-        const updatedMemberDetails = [...group.memberDetails, {
+        // Create join request
+        await setDoc(doc(collection(db, 'group_join_requests')), {
             userId: currentUser.uid,
-            name: `${userData.firstName} ${userData.surname}`,
-            email: userData.email,
-            joinedAt: new Date(),
-            hasReceived: false,
-            contributions: 0
-        }];
-        
-        await updateDoc(doc(db, 'group_susu', groupDoc.id), {
-            members: updatedMembers,
-            memberDetails: updatedMemberDetails
+            groupId: groupDoc.id,
+            groupName: group.groupName,
+            requestedAt: serverTimestamp(),
+            status: 'pending'
         });
         
         hideLoader();
-        
         closeJoinGroupModal();
         
-        showAlert(`✅ Successfully joined "${group.name}"!`, 'success');
-        
-        // Confetti
-        if (typeof confetti !== 'undefined') {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-        }
-        
-        // Reload groups
-        await loadMyGroups();
-        await loadAvailableGroups();
+        showAlert(`✅ Join request sent! Admin will review your request.`, 'success');
         
     } catch (error) {
         hideLoader();
-        console.error('Error joining group:', error);
-        showAlert('Error joining group: ' + error.message, 'error');
+        console.error('Error submitting join request:', error);
+        showAlert('Error sending join request: ' + error.message, 'error');
     }
 };
 
@@ -13715,14 +13688,14 @@ window.viewGroupDetails = async function(groupId) {
         const group = {
             id: groupDoc.id,
             ...groupDoc.data(),
-            createdAt: groupDoc.data().createdAt?.toDate() || new Date()
+            createdAt: groupDoc.data().createdAt?.toDate ? groupDoc.data().createdAt.toDate() : new Date(groupDoc.data().createdAt || Date.now())
         };
         
         currentGroupDetails = group;
         
         hideLoader();
         
-        renderGroupDetailsModal(group);
+        await renderGroupDetailsModal(group);
         
     } catch (error) {
         hideLoader();
@@ -13732,30 +13705,64 @@ window.viewGroupDetails = async function(groupId) {
 };
 
 // Render group details modal
-function renderGroupDetailsModal(group) {
-    const isCreator = group.creatorId === currentUser.uid;
-    const canStart = group.members.length >= 25 && group.status === 'forming';
-    const totalPool = group.rate * group.members.length;
+async function renderGroupDetailsModal(group) {
+    const isCreator = group.createdBy === currentUser.uid;
+    const memberCount = group.members?.length || 0;
+    const canStart = memberCount >= 25 && group.status === 'forming';
+    const totalPool = group.contributionAmount * memberCount;
+    
+    // Load member details
+    let membersHTML = '';
+    if (group.members && group.members.length > 0) {
+        for (const member of group.members) {
+            try {
+                const memberDoc = await getDoc(doc(db, 'users', member.userId));
+                const memberData = memberDoc.exists() ? memberDoc.data() : { firstName: 'Unknown', surname: 'User' };
+                
+                const isCurrentBeneficiary = group.currentBeneficiary?.userId === member.userId;
+                const joinDate = member.joinedAt instanceof Date ? member.joinedAt : (member.joinedAt?.toDate ? member.joinedAt.toDate() : new Date());
+                
+                membersHTML += `
+                    <div class="member-item ${isCurrentBeneficiary ? 'current' : ''} ${member.hasReceived ? 'completed' : ''}">
+                        <div class="member-avatar">${memberData.firstName.charAt(0)}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: #4a5568;">
+                                ${memberData.firstName} ${memberData.surname}
+                                ${member.userId === group.createdBy ? '<span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px;">CREATOR</span>' : ''}
+                            </div>
+                            <div style="font-size: 0.85rem; color: #718096;">
+                                Joined: ${joinDate.toLocaleDateString()}
+                            </div>
+                        </div>
+                        ${member.hasReceived ? '<span style="color: #48bb78; font-size: 1.2rem;">✓</span>' : ''}
+                        ${isCurrentBeneficiary ? '<span style="color: #f6cc33; font-size: 1.2rem;">🎯</span>' : ''}
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading member:', error);
+            }
+        }
+    }
     
     const content = `
         <h2 style="margin-bottom: 20px; color: #4a5568; text-align: center;">
-            ${group.name}
+            ${group.groupName}
             <span class="group-badge ${group.status}">${group.status.toUpperCase()}</span>
         </h2>
         
         <div style="text-align: center; margin-bottom: 25px;">
-            <p style="color: #718096; font-size: 1.1rem;">${group.description}</p>
+            <p style="color: #718096; font-size: 1.1rem;">${group.description || 'No description'}</p>
         </div>
         
         <!-- Group Statistics -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-bottom: 25px;">
             <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
-                <div style="font-size: 0.85rem; color: #718096;">Monthly Rate</div>
-                <div style="font-weight: 700; color: #4a5568; font-size: 1.3rem;">${formatCurrency(group.rate)}</div>
+                <div style="font-size: 0.85rem; color: #718096;">Contribution</div>
+                <div style="font-weight: 700; color: #4a5568; font-size: 1.3rem;">${formatCurrency(group.contributionAmount)}</div>
             </div>
             <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
                 <div style="font-size: 0.85rem; color: #718096;">Members</div>
-                <div style="font-weight: 700; color: #667eea; font-size: 1.3rem;">${group.members.length}/${group.maxMembers}</div>
+                <div style="font-weight: 700; color: #667eea; font-size: 1.3rem;">${memberCount}/${group.maxMembers}</div>
             </div>
             <div style="text-align: center; padding: 15px; background: #f7fafc; border-radius: 10px;">
                 <div style="font-size: 0.85rem; color: #718096;">Current Pool</div>
@@ -13771,8 +13778,8 @@ function renderGroupDetailsModal(group) {
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 25px;">
             <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 8px;">Group Code</div>
             <div style="font-size: 2rem; font-weight: 700; letter-spacing: 5px; font-family: monospace;">${group.groupCode}</div>
-            <button onclick="copyGroupCode('${group.groupCode}')" 
-                    style="background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px;">
+            <button onclick="copyGroupCode('{${group.groupCode}')"
+            style="background: rgba(255,255,255,0.2); border: 2px solid white; color: white; padding: 8px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px;">
                 📋 Copy Code
             </button>
         </div>
@@ -13781,25 +13788,7 @@ function renderGroupDetailsModal(group) {
         <div style="margin-bottom: 25px;">
             <h4 style="color: #4a5568; margin-bottom: 15px;">👥 Group Members</h4>
             <div class="member-list">
-                ${group.memberDetails.map((member, index) => {
-                    const isCurrentBeneficiary = group.currentBeneficiary?.userId === member.userId;
-                    return `
-                        <div class="member-item ${isCurrentBeneficiary ? 'current' : ''} ${member.hasReceived ? 'completed' : ''}">
-                            <div class="member-avatar">${member.name.charAt(0)}</div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #4a5568;">
-                                    ${member.name}
-                                    ${member.userId === group.creatorId ? '<span style="background: #667eea; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; margin-left: 5px;">CREATOR</span>' : ''}
-                                </div>
-                                <div style="font-size: 0.85rem; color: #718096;">
-                                    Joined: ${member.joinedAt.toDate ? member.joinedAt.toDate().toLocaleDateString() : new Date(member.joinedAt).toLocaleDateString()}
-                                </div>
-                            </div>
-                            ${member.hasReceived ? '<span style="color: #48bb78; font-size: 1.2rem;">✓</span>' : ''}
-                            ${isCurrentBeneficiary ? '<span style="color: #f6cc33; font-size: 1.2rem;">🎯</span>' : ''}
-                        </div>
-                    `;
-                }).join('')}
+                ${membersHTML || '<div style="text-align: center; color: #718096; padding: 20px;">No members yet</div>'}
             </div>
         </div>
         
@@ -13859,19 +13848,29 @@ window.closeGroupDetailsModal = function() {
 
 // Start group (creator only)
 window.startGroup = async function(groupId) {
-    if (!confirm('Start this group? This cannot be undone.')) return;
+    if (!confirm('Start this group? Once started, no new members can join and the contribution cycle begins.')) return;
     
     showLoader('Starting group');
     
     try {
         await updateDoc(doc(db, 'group_susu', groupId), {
             status: 'active',
-            startedAt: serverTimestamp()
+            startedAt: serverTimestamp(),
+            currentCycle: 1
         });
         
         hideLoader();
         
-        showAlert('✅ Group started successfully!', 'success');
+        showAlert('✅ Group started successfully! Contribution cycle has begun.', 'success');
+        
+        // Confetti
+        if (typeof confetti !== 'undefined') {
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 }
+            });
+        }
         
         closeGroupDetailsModal();
         await loadMyGroups();
@@ -13879,13 +13878,13 @@ window.startGroup = async function(groupId) {
     } catch (error) {
         hideLoader();
         console.error('Error starting group:', error);
-        showAlert('Error starting group', 'error');
+        showAlert('Error starting group: ' + error.message, 'error');
     }
 };
 
 // Leave group
 window.leaveGroup = async function(groupId) {
-    if (!confirm('Leave this group? You cannot rejoin later.')) return;
+    if (!confirm('Leave this group? You cannot rejoin later and will forfeit any contributions made.')) return;
     
     showLoader('Leaving group');
     
@@ -13893,12 +13892,11 @@ window.leaveGroup = async function(groupId) {
         const groupDoc = await getDoc(doc(db, 'group_susu', groupId));
         const group = groupDoc.data();
         
-        const updatedMembers = group.members.filter(m => m !== currentUser.uid);
-        const updatedMemberDetails = group.memberDetails.filter(m => m.userId !== currentUser.uid);
+        // Remove user from members array
+        const updatedMembers = group.members.filter(m => m.userId !== currentUser.uid);
         
         await updateDoc(doc(db, 'group_susu', groupId), {
-            members: updatedMembers,
-            memberDetails: updatedMemberDetails
+            members: updatedMembers
         });
         
         hideLoader();
@@ -13912,13 +13910,13 @@ window.leaveGroup = async function(groupId) {
     } catch (error) {
         hideLoader();
         console.error('Error leaving group:', error);
-        showAlert('Error leaving group', 'error');
+        showAlert('Error leaving group: ' + error.message, 'error');
     }
 };
 
 // Delete group (creator only)
 window.deleteGroup = async function(groupId) {
-    if (!confirm('Delete this group permanently? All members will be removed.')) return;
+    if (!confirm('Delete this group permanently? All members will be removed and this cannot be undone.')) return;
     
     showLoader('Deleting group');
     
@@ -13936,14 +13934,28 @@ window.deleteGroup = async function(groupId) {
     } catch (error) {
         hideLoader();
         console.error('Error deleting group:', error);
-        showAlert('Error deleting group', 'error');
+        showAlert('Error deleting group: ' + error.message, 'error');
     }
 };
 
-console.log('✅ Group Susu system loaded completely');
+// Contribute to group
+window.contributeToGroup = async function(groupId) {
+    // This will be implemented later with payment integration
+    showAlert('Contribution feature coming soon! This will integrate with mobile money payments.', 'info');
+};
+
+// Open voting modal
+window.openVotingModal = async function(groupId) {
+    // This will be implemented later for voting system
+    showAlert('Voting feature coming soon! Members will be able to vote for the next beneficiary.', 'info');
+};
+
+// Initialize when page loads
+if (document.getElementById('group-susu-page')) {
+    initGroupSusuPage();
+}
 
 
     </script>
 </body>
 </html>
-
